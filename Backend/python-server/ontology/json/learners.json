@@ -1,0 +1,57 @@
+[
+  {
+    "name": "N0",
+    "age": 21,
+    "gender": "Male",
+    "backgroundKnowledge": "Basic",
+    "qualification": "Graduate",
+    "active_reflective": 0,
+    "global_sequential": 1,
+    "sensitive_intuitive": 0,
+    "visual_verbal": 1
+  },
+  {
+    "name": "N1",
+    "age": 19,
+    "gender": "Unknow",
+    "backgroundKnowledge": "Expert",
+    "qualification": "Graduate",
+    "active_reflective": 0,
+    "global_sequential": 0,
+    "sensitive_intuitive": 0,
+    "visual_verbal": 0
+  },
+  {
+    "name": "N2",
+    "age": 28,
+    "gender": "Male",
+    "backgroundKnowledge": "Intermediate",
+    "qualification": "Post-graduate",
+    "active_reflective": 0,
+    "global_sequential": 1,
+    "sensitive_intuitive": 0,
+    "visual_verbal": 1
+  },
+  {
+    "name": "N3",
+    "age": 24,
+    "gender": "Unknow",
+    "backgroundKnowledge": "Basic",
+    "qualification": "Graduate",
+    "active_reflective": 0,
+    "global_sequential": 1,
+    "sensitive_intuitive": 0,
+    "visual_verbal": 1
+  },
+  {
+    "name": "N4",
+    "age": 16,
+    "gender": "Unknow",
+    "backgroundKnowledge": "Basic",
+    "qualification": "Graduate",
+    "active_reflective": 0,
+    "global_sequential": 1,
+    "sensitive_intuitive": 0,
+    "visual_verbal": 1
+  }
+]

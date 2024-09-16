@@ -1,0 +1,72 @@
+[
+  {
+    "learnerID": 4,
+    "lmID": 1,
+    "score": 10.0,
+    "time": 20.0,
+    "attempt": 2
+  },
+  {
+    "learnerID": 3,
+    "lmID": 2,
+    "score": 8.0,
+    "time": 10.0,
+    "attempt": 2
+  },
+  {
+    "learnerID": 1,
+    "lmID": 4,
+    "score": 8.0,
+    "time": 10.0,
+    "attempt": 1
+  },
+  {
+    "learnerID": 1,
+    "lmID": 3,
+    "score": 8.0,
+    "time": 40.0,
+    "attempt": 3
+  },
+  {
+    "learnerID": 4,
+    "lmID": 4,
+    "score": 9.0,
+    "time": 50.0,
+    "attempt": 7
+  },
+  {
+    "learnerID": 2,
+    "lmID": 2,
+    "score": 8.0,
+    "time": 20.0,
+    "attempt": 4
+  },
+  {
+    "learnerID": 3,
+    "lmID": 6,
+    "score": 8.0,
+    "time": 20.0,
+    "attempt": 4
+  },
+  {
+    "learnerID": 2,
+    "lmID": 7,
+    "score": 8.0,
+    "time": 20.0,
+    "attempt": 4
+  },
+  {
+    "learnerID": 1,
+    "lmID": 11,
+    "score": 8.0,
+    "time": 20.0,
+    "attempt": 4
+  },
+  {
+    "learnerID": 1,
+    "lmID": 12,
+    "score": 8.0,
+    "time": 20.0,
+    "attempt": 4
+  }
+]

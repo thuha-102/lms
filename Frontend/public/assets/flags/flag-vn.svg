@@ -1,0 +1,7 @@
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Flag Background -->
+  <rect width="36" height="36" fill="none"/>
+  <path d="M36 7H0V28.6H36V7Z" fill="#DA251D" />
+  <!-- Yellow Star -->
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M18 11.7069L19.9351 14.9892H23.8269L20.5307 17.4834L21.4653 20.772L18 18.2666L14.5347 20.772L15.4693 17.4834L12.1731 14.9892H16.065L18 11.7069Z" fill="#FFCD00"/>
+</svg>
