@@ -1,0 +1,173 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  username String
+  password String
+
+  @@unique([username])
+  @@map("users")
+}
+
+model Learner {
+  id Int @id @default(autoincrement())
+
+  TypeLearner                 TypeLearner     @relation(fields: [typeLearnerId], references: [id])
+  typeLearnerId               Int
+  SequenceCourse              SequenceCourse? @relation(fields: [sequenceCourseTypeLearnerId, sequenceCourseCourseId], references: [typeLearnerId, courseId])
+  sequenceCourseTypeLearnerId Int?
+  sequenceCourseCourseId      Int?
+
+  latestCourseInSequenceCourses Course? @relation(fields: [courseId], references: [id])
+  courseId                      Int?
+
+  RegisterCourses      RegisterCourse[]
+  HistoryStudiedCourse HistoryStudiedCourse[]
+
+  @@map("learners")
+}
+
+model TypeLearner {
+  id             Int              @id @default(autoincrement())
+  name           String
+  SequenceCourse SequenceCourse[]
+  Learner        Learner[]
+
+  startScore Float
+
+  @@unique([name])
+  @@map("type_learners")
+}
+
+model Course {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now()) @map("created_at")
+  updateddAt DateTime @default(now()) @map("updated_at")
+  name       String
+  labels     String[]
+
+  SequenceCourse SequenceCourse[]
+  Learner        Learner[]
+  Topic          Topic[]
+
+  @@map("courses")
+}
+
+model Topic {
+  id       Int    @id @default(autoincrement())
+  Course   Course @relation(fields: [courseId], references: [id])
+  courseId Int
+  name     String
+
+  Lessons Lesson[]
+
+  @@unique([courseId, name])
+  @@map("topics")
+}
+
+model Lesson {
+  name       String
+  createdAt  DateTime @default(now()) @map("created_at")
+  updateddAt DateTime @default(now()) @map("updated_at")
+
+  LearningMaterial   LearningMaterial? @relation(fields: [learningMaterialId], references: [id])
+  learningMaterialId Int?
+
+  Topic                Topic                  @relation(fields: [topicId], references: [id])
+  topicId              Int
+  HistoryStudiedCourse HistoryStudiedCourse[]
+
+  @@unique([topicId, name])
+  @@map("lessons")
+}
+
+model LearningMaterial {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now()) @map("created_at")
+  updateddAt DateTime @default(now()) @map("updated_at")
+  filepath   String
+
+  Lesson Lesson[]
+
+  @@map("learning_materials")
+}
+
+model RegisterCourse {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now()) @map("created_at")
+  updateddAt DateTime @default(now()) @map("updated_at")
+
+  Learner   Learner? @relation(fields: [learnerId], references: [id])
+  learnerId Int?     @map("lesson_id")
+
+  @@map("register_courses")
+}
+
+model HistoryStudiedCourse {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  Learner   Learner @relation(fields: [learnerId], references: [id])
+  learnerId Int     @map("learner_id")
+
+  Lesson        Lesson @relation(fields: [lessonTopicId, lessonName], references: [topicId, name])
+  lessonTopicId Int
+  lessonName    String
+
+  @@unique([lessonTopicId, lessonName, learnerId])
+  @@map("history_studied_course")
+}
+
+model SequenceCourse {
+  TypeLearner   TypeLearner @relation(fields: [typeLearnerId], references: [id])
+  typeLearnerId Int         @map("type_learner_id")
+
+  Course   Course @relation(fields: [courseId], references: [id])
+  courseId Int    @map("course_id")
+
+  Learner Learner[]
+
+  @@unique([typeLearnerId, courseId])
+  @@map("sequence_courses")
+}
+
+model IntroQuestion {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  question  String
+  answers   String[]
+  scores    Int[]
+
+  @@map("intro_questions")
+}
+
+enum LearningMaterialType {
+  PDF
+  VIDEO
+  QUIZ
+  WORD
+  CODE
+  PPT
+  QUIZZ
+}
+
+enum AccountType {
+  ADMIN
+  INSTRUCTOR
+  LEARNER
+}
+
+enum GenderType {
+  MALE
+  FEMALE
+  UNKNOWN
+}
