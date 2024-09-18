@@ -5,28 +5,29 @@ import * as parseRange from 'range-parser';
 import { stat } from 'fs/promises';
 import { createReadStream } from 'fs';
 import { join } from 'path';
+import { LearningMaterialType } from '@prisma/client';
 
 @Injectable()
 export class FileService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async upLoadFile(fileName: string, prefix: string, type: string) {
-    const file = await this.prismaService.file.create({
-      data: { name: fileName, prefix: prefix, type: type },
+  async upLoadFile(fileName: string, mimetype: string, type: LearningMaterialType) {
+    const file = await this.prismaService.learningMaterial.create({
+      data: { filepath: fileName, mimetype: mimetype, type: type },
       select: { id: true },
     });
     return { id: file.id };
   }
 
   async detail(id: number) {
-    const file = await this.prismaService.file.findFirst({ where: { id } });
+    const file = await this.prismaService.learningMaterial.findFirst({ where: { id } });
     if (!file) throw new NotFoundException('File not found');
 
     return FileDTO.fromEntity(file as any);
   }
 
   parseRange(range: string, fileSize: number, rangePass: number) {
-    if (rangePass) range = `bytes=0-${Math.round(rangePass*fileSize)}`
+    if (rangePass) range = `bytes=0-${Math.round(rangePass * fileSize)}`;
     const parseResult = parseRange(fileSize, range);
     if (parseResult === -1 || parseResult === -2 || parseResult.length !== 1) {
       throw new BadRequestException();

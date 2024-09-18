@@ -17,7 +17,7 @@ export class AnalyticsService {
 
   async getHistoryLog(field: 'month' | 'week') {
     const result = await this.prismaService.$queryRawUnsafe(
-          `SELECT 
+      `SELECT 
               count(*) as count
           FROM 
               learner_logs

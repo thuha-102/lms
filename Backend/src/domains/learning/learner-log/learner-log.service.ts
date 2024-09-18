@@ -109,7 +109,7 @@ export class LearnerLogService {
 
   async detail(learnerId: number, lmId: number) {
     const log = await this.prismaService.learnerLog.findMany({
-      where: { learnerId: learnerId, learningMaterialId: lmId ? Number(lmId) : undefined},
+      where: { learnerId: learnerId, learningMaterialId: lmId ? Number(lmId) : undefined },
       select: {
         learningMaterialId: true,
         learningMaterialVisittedTime: true,

@@ -5,7 +5,7 @@ export class AuthDTO {
   username: string;
   accountType: AccountType;
 
-  static fromEntity(e: Prisma.AuthenticatedUserGetPayload<unknown>) {
+  static fromEntity(e: Prisma.UserGetPayload<unknown>) {
     return {
       id: e.id,
       username: e.username,

@@ -12,9 +12,9 @@ export class LearningPathConttroller {
   async getRecommendedOnes(@Param('learnerId', ParseIntPipe) learnerId: number, @Body() body: GetRecommendedLearningPathREQ) {
     const learningPaths = await this.learningPathService.calculateRecommendedOnes(learnerId, body);
 
-    await this.learningPathService.generateGraph(learningPaths, learnerId)
+    await this.learningPathService.generateGraph(learningPaths, learnerId);
 
-    return learningPaths
+    return learningPaths;
   }
 
   @Post(':learnerId')

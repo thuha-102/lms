@@ -72,7 +72,7 @@ export const AuthProvider = (props) => {
 
   const initialize = useCallback(async () => {
     try {
-      const user = await Auth.currentAuthenticatedUser();
+      const user = await Auth.currentUser();
 
       // Here you should extract the complete user profile to make it
       // available in your entire app.

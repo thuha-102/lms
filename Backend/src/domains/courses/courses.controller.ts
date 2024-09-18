@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query } from '
 import { CourseService } from './courses.service';
 import { CourseCreateREQ } from './request/courses-create.request';
 import { CourseUpdateREQ } from './request/courses-update.request';
-import { CourseListREQ, CourseOwnListREQ } from './request/courses-list.request';
+import { CourseListREQ } from './request/courses-list.request';
 
 @Controller('courses')
 export class CourseController {
@@ -11,11 +11,6 @@ export class CourseController {
   @Post('')
   async create(@Body() body: CourseCreateREQ) {
     return await this.courseService.create(body);
-  }
-
-  @Get(':id/own')
-  async ownCourse(@Param('id', ParseIntPipe) id: number) {
-    return await this.courseService.ownCourse(id);
   }
 
   @Get(':id')

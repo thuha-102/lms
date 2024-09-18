@@ -7,14 +7,10 @@ export class LearnerHistoryCourseCreateREQ {
   @IsNumber()
   learnerId: number;
 
-  @IsNotEmpty()
-  @IsNumber()
-  courseId: number;
-
-  static toCreateInput(body: LearnerHistoryCourseCreateREQ): Prisma.HistoryOfCourseCreateInput {
+  static toCreateInput(body: LearnerHistoryCourseCreateREQ): Prisma.HistoryStudiedCourseCreateInput {
     return {
-      learner: connectRelation(body.learnerId),
-      course: connectRelation(body.courseId),
+      Learner: connectRelation(body.learnerId),
+      Lesson: connectRelation(0),
     };
   }
 }

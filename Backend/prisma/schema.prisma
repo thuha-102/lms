@@ -10,6 +10,7 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
 
   username String
   password String
@@ -49,15 +50,17 @@ model TypeLearner {
 }
 
 model Course {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now()) @map("created_at")
-  updateddAt DateTime @default(now()) @map("updated_at")
-  name       String
-  labels     String[]
+  id          Int      @id @default(autoincrement())
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @map("updated_at")
+  name        String
+  description String
+  labels      String[]
 
   SequenceCourse SequenceCourse[]
   Learner        Learner[]
   Topic          Topic[]
+  RegisterCourse RegisterCourse[]
 
   @@map("courses")
 }
@@ -67,6 +70,7 @@ model Topic {
   Course   Course @relation(fields: [courseId], references: [id])
   courseId Int
   name     String
+  order    Int
 
   Lessons Lesson[]
 
@@ -75,9 +79,11 @@ model Topic {
 }
 
 model Lesson {
-  name       String
-  createdAt  DateTime @default(now()) @map("created_at")
-  updateddAt DateTime @default(now()) @map("updated_at")
+  id        Int      @id @default(autoincrement())
+  title     String
+  order     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   LearningMaterial   LearningMaterial? @relation(fields: [learningMaterialId], references: [id])
   learningMaterialId Int?
@@ -86,29 +92,49 @@ model Lesson {
   topicId              Int
   HistoryStudiedCourse HistoryStudiedCourse[]
 
-  @@unique([topicId, name])
+  @@unique([topicId, title])
   @@map("lessons")
 }
 
 model LearningMaterial {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now()) @map("created_at")
-  updateddAt DateTime @default(now()) @map("updated_at")
-  filepath   String
+  id        Int                  @id @default(autoincrement())
+  createdAt DateTime             @default(now()) @map("created_at")
+  updatedAt DateTime             @default(now()) @map("updated_at")
+  filepath  String?
+  mimetype String
+  type      LearningMaterialType
 
   Lesson Lesson[]
+  Quiz   Quiz[]
 
   @@map("learning_materials")
 }
 
+model Quiz {
+  id               Int
+  LearningMaterial LearningMaterial @relation(fields: [id], references: [id])
+
+  index         Int      @default(0)
+  question      String
+  answers       String[]
+  correctAnswer Int      @map("correct_answer")
+
+  @@unique([id, index])
+  @@map("quizes")
+}
+
 model RegisterCourse {
-  id         Int      @id @default(autoincrement())
-  createdAt  DateTime @default(now()) @map("created_at")
-  updateddAt DateTime @default(now()) @map("updated_at")
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
   Learner   Learner? @relation(fields: [learnerId], references: [id])
   learnerId Int?     @map("lesson_id")
 
+  Course   Course? @relation(fields: [courseId], references: [id])
+  courseId Int?
+
+  @@unique([learnerId, courseId])
   @@map("register_courses")
 }
 
@@ -119,15 +145,17 @@ model HistoryStudiedCourse {
   Learner   Learner @relation(fields: [learnerId], references: [id])
   learnerId Int     @map("learner_id")
 
-  Lesson        Lesson @relation(fields: [lessonTopicId, lessonName], references: [topicId, name])
+  Lesson        Lesson @relation(fields: [lessonTopicId, lessonTitle], references: [topicId, title])
   lessonTopicId Int
-  lessonName    String
+  lessonTitle   String
 
-  @@unique([lessonTopicId, lessonName, learnerId])
+  @@unique([lessonTopicId, lessonTitle, learnerId])
   @@map("history_studied_course")
 }
 
 model SequenceCourse {
+  id            Int         @id @default(autoincrement())
+  createdAt     DateTime    @default(now()) @map("created_at")
   TypeLearner   TypeLearner @relation(fields: [typeLearnerId], references: [id])
   typeLearnerId Int         @map("type_learner_id")
 
@@ -152,12 +180,8 @@ model IntroQuestion {
 
 enum LearningMaterialType {
   PDF
-  VIDEO
   QUIZ
-  WORD
-  CODE
-  PPT
-  QUIZZ
+  VIDEO
 }
 
 enum AccountType {

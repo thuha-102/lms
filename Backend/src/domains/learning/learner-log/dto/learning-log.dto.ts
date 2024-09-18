@@ -25,7 +25,7 @@ export class LearningLogDTO {
       maxScore: e.learningMaterial.score,
       maxTime: e.learningMaterial.time,
       difficulty: e.learningMaterial.difficulty,
-      type: e.learningMaterial.type
+      type: e.learningMaterial.type,
     };
   }
 }

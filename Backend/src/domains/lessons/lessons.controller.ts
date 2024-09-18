@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { LessonService } from './lessons.service';
 import { LessonCreateREQ } from './request/lessons-create.request';
 import { LessonUpdateREQ } from './request/lessons-update.request';
@@ -18,7 +18,14 @@ export class LessonController {
   }
 
   @Patch(':id')
+  @HttpCode(204)
   async update(@Param('id', ParseIntPipe) id: number, @Body() body: LessonUpdateREQ) {
     await this.lessonService.update(id, body);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    await this.lessonService.delete(id);
   }
 }

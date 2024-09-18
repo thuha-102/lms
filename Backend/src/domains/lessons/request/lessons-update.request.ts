@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
-import { leanObject } from 'src/shared/prisma.helper';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { connectRelation, leanObject } from 'src/shared/prisma.helper';
 
 export class LessonUpdateREQ {
   @IsOptional()
@@ -8,18 +8,18 @@ export class LessonUpdateREQ {
   title: string;
 
   @IsOptional()
-  @IsBoolean()
-  visibility: boolean;
+  @IsNumber()
+  order: number;
 
   @IsOptional()
   @IsNumber()
-  amountOfTime: number;
+  fileId: number;
 
   static toUpdateInput(body: LessonUpdateREQ): Prisma.LessonUpdateInput {
     return leanObject({
       title: body.title,
-      visibility: body.visibility,
-      amountOfTime: body.amountOfTime,
+      order: body.order,
+      LearningMaterial: connectRelation(body.fileId),
     });
   }
 }
