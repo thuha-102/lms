@@ -1,12 +1,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma/prisma.service';
-import { AuthLoginREQ } from './request/auth-login.request';
+import { AuthREQ } from './request/auth-login.request';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AuthLoginRESP } from './response/auth-login.response';
 import { AuthDTO } from './dto/auth.dto';
-import { AccountType } from '@prisma/client';
-import { connectRelation } from 'src/shared/prisma.helper';
 
 @Injectable()
 export class AuthService {
@@ -15,8 +13,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async login(body: AuthLoginREQ) {
-    const user = await this.prismaService.authenticatedUser.findFirst({
+  async login(body: AuthREQ) {
+    const user = await this.prismaService.user.findFirst({
       where: { username: body.username },
     });
     if (!user) {
@@ -27,7 +25,15 @@ export class AuthService {
     if (!isMatch) throw new UnauthorizedException('Username or password incorrect');
 
     const jwtToken = await this.jwtService.signAsync({ user: AuthDTO.fromEntity(user as any) });
-    await this.prismaService.loginHistory.create({ data: { User: connectRelation(user.id) } });
     return AuthLoginRESP.fromEntity(user as any, jwtToken);
+  }
+
+  async signup(body: AuthREQ){
+    const existUser = await this.prismaService.user.findFirst({
+      where: { username: body.username },
+    });
+    if (existUser) throw new UnauthorizedException('Username is exist');
+    const user = await this.prismaService.user.create({data: body, select: {id: true}})
+    return {id: user.id}
   }
 }
