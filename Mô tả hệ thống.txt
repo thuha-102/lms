@@ -1,0 +1,67 @@
+Mô tả hệ thống
+GitHub: https://github.com/thuha-102/lms
+
+Users: (Admin + Learner) -> sign in/ sign up info
+
+Learner:
+	+ typeLearnerId
+	+ link to historyStudyCourse
+	+ link to registerCourses
+	+ latest of courseIdInSequenceCourses
+	+ link to SequenceCourse table
+
+HistoryStudyCourse:
+	+ [learnerId, courseId, lessonId]
+	+ time of studying
+
+RegisterCourses:
+	+ primary key -> [learnerId, courseId]
+	+ percent of processing (studied lessons / total lessons)
+	+ register Date
+
+Course: 
+	+ labels: string
+	+ add next attribute: show courseId of next course
+	+ add sequenceTopicId: link to SequenceTopic table
+	+ [topicNames]
+	+ [[lessonNames], [lessonNames], ...]
+	+ [[lmIds], [lmIds], ...]
+
+LearningMaterial:
+	+ [courseIds]
+	+ file path
+	
+SequenceCourse:
+	+ id, [courseIds] -> primary [id, courseId]
+	+ add typeLearnerId: link TypeLearner table (1-1)
+
+TypeLearner:
+	+ typeName
+	+ description
+	+ add sequenceTopicId (1, 1)
+	+ startScore [order asc]
+
+IntroQuestions:
+	+ question
+	+ [answers]
+	+ [scores]
+
+Tasks:
+	+ BE:
+		- Create database
+		- API:
+			+ Courses: create (lessons -> learning material), delete, update, list (filter options: [name, typeLearner, label]), details
+			+ Lessons: create (exist lm or new lm), delete, update, list, details
+			+ Users: create, delete, update, list (for admin, filter options: [name, typeLeaner]), details
+			+ SequenceCourse: create, delete, update, list, details (Mei)
+			+ TypeLearner: create, delete, update, list, details
+			+ Register Course: create, delete, list
+			+ History Course: create (studied lesson), list, details
+			+ IntroQuestions: create, delete, update, list (Mei)
+	+ FE:
+		- Chỉnh sửa giao diện bộ câu hỏi (Mei)
+		- Tạo giao diện tạo một lộ trình - (cho phép tạo course mới) (Mei)
+		- Chỉnh sửa giao diện lộ trình học như https://app.coursiv.io/auth/signin
+		- Chỉnh sửa các giao diện học tài liệu: video, pdf, quiz
+		- Chỉnh sửa các giao diện upload khóa học (Nhân)
+		- Chỉnh sửa giao diện tạo một tài liệu mới (chỉ có thể tạo từ việc tạo lesson mới) (Nhân)

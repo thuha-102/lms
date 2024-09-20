@@ -6,7 +6,7 @@ services:
     restart: always
     volumes: 
       - pgdata:/var/lib/postgresql/data
-      - $DUMP_SQL:/tmp/dump.sql
+      # - $DUMP_SQL:/tmp/dump.sql
     environment:
       - POSTGRES_PASSWORD=$DB_PASSWORD
       - POSTGRES_USER=$DB_USERNAME
