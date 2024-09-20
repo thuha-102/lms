@@ -17,6 +17,7 @@ import { ModelVariationModule } from './domains/modelVariation/modelVariation.mo
 import { DatasetModule } from './domains/dataset/dataset.module';
 import { NotebookModule } from './domains/notebook/notebook.module';
 import { PythonRunnerModule } from './domains/pythonRunner/pythonRunner.module';
+import { IntroQuestionModule } from './domains/introQuestion/introQuestion.module';
 import { join } from 'path';
 import { AnalyticsModule } from './domains/analytics/analytics.module';
 @Module({
@@ -37,6 +38,7 @@ import { AnalyticsModule } from './domains/analytics/analytics.module';
     DatasetModule,
     NotebookModule,
     PythonRunnerModule,
+    IntroQuestionModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',

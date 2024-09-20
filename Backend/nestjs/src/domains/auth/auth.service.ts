@@ -19,6 +19,7 @@ export class AuthService {
     const user = await this.prismaService.authenticatedUser.findFirst({
       where: { username: body.username },
     });
+    console.log(user);
     if (!user) {
       throw new UnauthorizedException('Username or password incorrect');
     }

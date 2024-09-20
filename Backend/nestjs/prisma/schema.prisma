@@ -457,6 +457,13 @@ model HistoryOfCourse {
   @@map("history_of_courses")
 }
 
+model IntroQuestions {
+  id               Int                @id @default(autoincrement())
+  question         String
+  answers          String[]
+  scores           Int[] 
+}
+
 enum LearningMaterialType {
   PDF
   VIDEO
