@@ -75,7 +75,7 @@ const Page = () => {
     }
     const newEditQuestions = {};
     Object.keys(editQuestions).forEach(key => {
-      (key > i) ? newEditQuestions[key + 1] = editQuestions[key] : newEditQuestions[key] = editQuestions[key];
+      (Number(key) > i) ? newEditQuestions[Number(key) + 1] = editQuestions[key] : newEditQuestions[key] = editQuestions[key];
     });
     newEditQuestions[i + 1] = newQues;
     setEditQuestions(newEditQuestions);
@@ -89,7 +89,7 @@ const Page = () => {
     } else {
       const newEditQuestions = {};
       Object.keys(editQuestions).forEach(key => {
-        (key == i) ? null : (key > i) ? newEditQuestions[key - 1] = editQuestions[key] : newEditQuestions[key] = editQuestions[key];
+        (Number(key) == i) ? null : (Number(key) > i) ? newEditQuestions[Number(key) - 1] = editQuestions[key] : newEditQuestions[key] = editQuestions[key];
       });
       setEditQuestions(newEditQuestions);
       setQuestions([...questions.slice(0, i), ...questions.slice(i + 1)]);
@@ -161,7 +161,8 @@ const Page = () => {
                 onFocus={() => setEditQuestions({})}
               />
             </Card>
-            <Stack spacing={2}>
+            {questions.length > 0
+            ? <Stack spacing={2}>
               {questions.map((q,i) => 
                 <div key={i}>
                   <Card 
@@ -188,7 +189,6 @@ const Page = () => {
                             newInfo.question = e.target.value;
                             setEditQuestions({...editQuestions, [i]: newInfo});
                           }}
-                          autoFocus
                           multiline
                         />
                       </Stack>
@@ -290,9 +290,16 @@ const Page = () => {
                     </Button>
                   </Stack>
                 </div>
-              )}
-              
+              )}  
             </Stack>
+            : <Stack>
+              <Typography color="text.primary" variant="h6">Chưa có câu hỏi</Typography>
+              <Stack flexDirection="row" pt={3}>
+                <Button variant="contained" onClick={() => HandleAddQues(-1)}>
+                  + Thêm câu hỏi
+                </Button>
+              </Stack>
+            </Stack>}
           </Stack>
         </Container>
       </Box>
