@@ -9,10 +9,10 @@ import { UserCreateREQ } from './request/user-create.request';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Post()
-  // async create(@Body() body: UserCreateREQ) {
-  //   return await this.userService.create(body);
-  // }
+  @Post()
+  async create(@Body() body: UserCreateREQ) {
+    return await this.userService.create(body);
+  }
 
   @Patch(':id')
   @HttpCode(204)

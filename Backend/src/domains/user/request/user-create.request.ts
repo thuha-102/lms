@@ -9,11 +9,15 @@ export class UserCreateREQ {
   @IsString()
   username: string;
 
+  @IsNotEmpty()
+  @IsString()
+  accountType: string;
+
   static toCreateInput(body: UserCreateREQ): Prisma.UserCreateInput {
     return {
       password: body.password,
       username: body.username,
-      accountType: 'LEARNER',
+      accountType: body.accountType,
     };
   }
 }

@@ -9,12 +9,12 @@ import { connectRelation } from 'src/shared/prisma.helper';
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  // async create(body: UserCreateREQ) {
-  //   const user = await this.prismaService.user.create({ data: UserCreateREQ.toCreateInput(body), select: { id: true } });
-  //   const learner = await this.prismaService.learner.create({ data: { User: connectRelation(user.id)}, select: {id:  true} });
+  async create(body: UserCreateREQ) {
+    const user = await this.prismaService.user.create({ data: UserCreateREQ.toCreateInput(body), select: { id: true } });
+    //const learner = await this.prismaService.learner.create({ data: { User: connectRelation(user.id)}, select: {id:  true} });
 
-  //   return { id: user.id };
-  // }
+    return { id: user.id };
+  }
 
   async update(id: number, body: UserUpdateREQ) {
     if (body.username) {
