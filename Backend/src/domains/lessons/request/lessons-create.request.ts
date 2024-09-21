@@ -1,23 +1,23 @@
 import { Prisma } from '@prisma/client';
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
-import { connectManyRelation, connectRelation } from 'src/shared/prisma.helper';
+import { IsNumber, IsString } from 'class-validator';
+import { connectRelation } from 'src/shared/prisma.helper';
 
 export class LessonCreateREQ {
   @IsString()
   title: string;
 
-  @IsOptional()
-  @IsBoolean()
-  updateCourse: boolean;
+  @IsNumber()
+  topicId: number;
 
   @IsNumber()
-  idCourse: number;
+  fileId: number;
 
-  static toCreateInput(body: LessonCreateREQ): Prisma.LessonCreateInput {
+  static toCreateInput(body: LessonCreateREQ, order: number): Prisma.LessonCreateInput {
     return {
       title: body.title,
-      amountOfTime: 0,
-      Course: connectRelation(body.idCourse),
+      order: order,
+      Topic: connectRelation(body.topicId),
+      LearningMaterial: connectRelation(body.fileId),
     };
   }
 }

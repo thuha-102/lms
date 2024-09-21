@@ -1,39 +1,38 @@
-import { BackgroundKnowledgeType, Prisma } from '@prisma/client';
-import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Prisma } from '@prisma/client';
+import { IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { connectManyRelation, connectRelation } from 'src/shared/prisma.helper';
+
+export class Lesson {
+  title: string;
+  fileId: number;
+}
 
 export class CourseCreateREQ {
   @IsString()
   name: string;
 
-  @IsNumber()
-  idInstructor: number;
-
   @IsOptional()
   @IsBoolean()
   visibility: boolean = false;
 
-  @IsEnum(BackgroundKnowledgeType)
-  level: BackgroundKnowledgeType;
+  @IsOptional()
+  @IsString()
+  labels: string[];
 
   @IsString()
   description: string;
 
-  @IsNumber()
-  amountOfTime: number;
+  @IsOptional()
+  topicNames: string[];
 
-  @IsNumber({}, { each: true })
-  lessonIds: number[];
+  @IsArray()
+  lessons: Lesson[][];
 
   static toCreateInput(body: CourseCreateREQ): Prisma.CourseCreateInput {
     return {
-      Instructor: connectRelation(body.idInstructor),
       name: body.name,
-      visibility: body.visibility,
-      level: body.level,
+      labels: body.labels,
       description: body.description,
-      amountOfTime: 0,
-      Lesson: connectManyRelation(body.lessonIds),
     };
   }
 }

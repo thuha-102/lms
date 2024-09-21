@@ -18,16 +18,3 @@ export class CourseListREQ {
     });
   }
 }
-
-export class CourseOwnListREQ {
-  @IsOptional()
-  @IsNumber()
-  userId: number;
-
-  static toCondition(query: CourseOwnListREQ): Prisma.CourseFindManyArgs['where'] {
-    console.log(query.userId);
-    return leanObject({
-      idInstructor: query.userId,
-    });
-  }
-}

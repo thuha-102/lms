@@ -1,11 +1,11 @@
-import { AccountType, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 export class AuthDTO {
   id: number;
   username: string;
-  accountType: AccountType;
+  accountType: string;
 
-  static fromEntity(e: Prisma.AuthenticatedUserGetPayload<unknown>) {
+  static fromEntity(e: Prisma.UserGetPayload<unknown>): AuthDTO {
     return {
       id: e.id,
       username: e.username,
