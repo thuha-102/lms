@@ -162,7 +162,6 @@ model SequenceCourse {
 
   Course   Course @relation(fields: [courseId], references: [id])
   courseId Int    @map("course_id")
-  order    Int
 
   @@unique([typeLearnerId, courseId, order])
   @@map("sequence_course")
