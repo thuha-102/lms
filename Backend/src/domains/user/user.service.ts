@@ -43,17 +43,21 @@ export class UserService {
         data: { percentOfStudying: updatePercent },
       });
 
+      const learner = await tx.learner.findFirst({
+        where: { id: learnerId }
+      })
+
       // register next course in sequence course if pass previous course
-      const sequenceCourse = await tx.learner.findMany({
-        orderBy: { SequenceCourse: { order: 'asc' } },
-        where: { id: learnerId },
-        select: { SequenceCourse: { select: { courseId: true, order: true } } },
+      const sequenceCourse = await tx.sequenceCourse.findMany({
+        orderBy: { order: 'asc' },
+        where: { typeLearnerId: learner.typeLearnerId },
+        select: { courseId: true, order: true },
       });
       if (updatePercent - 1.0 >= 0) {
         let nextCourseId = -1;
         for (let i = 1; i < sequenceCourse.length; i++)
-          if (sequenceCourse[i - 1].SequenceCourse.courseId === course.id) {
-            nextCourseId = sequenceCourse[i].SequenceCourse.courseId;
+          if (sequenceCourse[i - 1].courseId === course.id) {
+            nextCourseId = sequenceCourse[i].courseId;
             break;
           }
         if (nextCourseId !== -1) {

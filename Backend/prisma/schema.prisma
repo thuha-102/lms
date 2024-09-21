@@ -167,13 +167,13 @@ model SequenceCourse {
   @@map("sequence_course")
 }
 
-model IntroQuestions {
+model IntroQuestion {
   id       Int      @id @default(autoincrement())
   question String
   answers  String[]
   scores   Int[]
 
-  @@map("intro_questions")
+  @@map("intro_question")
 }
 
 enum LearningMaterialType {
