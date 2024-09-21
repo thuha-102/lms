@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { TopicCreateREQ } from './request/topics-create.request';
 import { connectRelation } from 'src/shared/prisma.helper';
@@ -9,13 +9,31 @@ import { TopicListREQ } from './request/topics-list.request';
 export class TopicService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(body: TopicCreateREQ) {
-    const topic = await this.prismaService.topic.create({
-      data: { name: body.name, order: body.order, Course: connectRelation(body.courseId) },
-      select: { id: true },
-    });
+  async create(body: TopicCreateREQ, tx?) {
+    let topic;
+    try {
+      const existTopic = await this.prismaService.topic.findMany({
+        orderBy: { order: 'desc' },
+        where: { courseId: body.courseId },
+        select: { order: true },
+      });
+      const nextOrder = existTopic.length != 0 ? existTopic[0].order + 1 : 0;
 
-    return { id: topic.id };
+      if (tx)
+        topic = await tx.topic.create({
+          data: { name: body.name, order: nextOrder, Course: connectRelation(body.courseId) },
+          select: { id: true },
+        });
+      else
+        topic = await this.prismaService.topic.create({
+          data: { name: body.name, order: nextOrder, Course: connectRelation(body.courseId) },
+          select: { id: true },
+        });
+
+      return { id: topic.id };
+    } catch (e) {
+      throw new ConflictException(e.meta.cause);
+    }
   }
 
   async update(id: number, body: TopicUpdateREQ) {

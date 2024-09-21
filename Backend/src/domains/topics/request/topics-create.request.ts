@@ -9,14 +9,11 @@ export class TopicCreateREQ {
   @IsString()
   name: string;
 
-  @IsNumber()
-  order: number;
-
-  static createTopicInput(body: TopicCreateREQ): Prisma.TopicCreateInput {
+  static createTopicInput(body: TopicCreateREQ, order: number): Prisma.TopicCreateInput {
     return {
       name: body.name,
       Course: connectRelation(body.courseId),
-      order: body.order,
+      order: order,
     };
   }
 }

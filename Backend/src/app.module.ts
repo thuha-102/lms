@@ -10,15 +10,19 @@ import { LessonModule } from './domains/lessons/lessons.module';
 import { FileModule } from './services/file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { TopicModule } from './domains/topics/topics.module';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './shared/http-exception.filter';
 
 @Module({
   imports: [
     PrismaModule,
-    // AuthModule,
-    // UserModule,
+    AuthModule,
+    UserModule,
     // LearningModule,
-    // CourseModule,
-    // LessonModule,
+    CourseModule,
+    TopicModule,
+    LessonModule,
     FileModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
@@ -26,6 +30,12 @@ import { join } from 'path';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

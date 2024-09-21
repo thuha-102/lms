@@ -1,66 +1,39 @@
 import { Prisma } from '@prisma/client';
-import { Quiz } from '../request/learning-material-create.request';
-
-export class CodeDTO {
-  name: string;
-  question: string;
-  exampleCode: string;
-  inputName: string;
-
-  static fromEntity(name: string, entity: Prisma.CodeGetPayload<{ include: { inputFile: true } }>): CodeDTO {
-    const { question, exampleCode } = entity;
-    return {
-      name,
-      question,
-      exampleCode,
-      inputName: entity.inputFile[0].prefix + '--' + entity.inputFile[0].name,
-    };
-  }
-}
+import readXlsxFile from 'read-excel-file/node';
 
 export class QuizDTO {
   name: string;
-  duration: number;
-  shuffle: boolean;
   questions: string[];
   choices: string[][];
   correctAnswers: number[];
 
-  static fromEntity(
-    name: string,
-    entity: Prisma.QuizGetPayload<{ include: { question: { include: { choice: true } } } }>,
-  ): QuizDTO {
-    const duration = entity.duration ? Number(entity.duration) : 0;
-    const choices = entity.question.map((q) => q.choice.map((c) => c.content));
-    const questions = entity.question.map((q) => q.content);
-    const correctAnswers = entity.question.map((q) => q.choice.findIndex((c) => c.correctness === true));
+  async fromEntity(filepath: String) {
+    let questionarie: { question: String; answers: String[]; correctAnswer: number }[];
+    await readXlsxFile(filepath as any).then((rows) => {
+      rows.map((row, index) => {
+        if (index !== 0) {
+          questionarie.push({
+            question: row[0] as string,
+            correctAnswer: Number((row[1] as string).toUpperCase().charCodeAt(0)) - 65,
+            answers: row.slice(2) as string[],
+          });
+        }
+      });
+    });
 
-    return {
-      name: name,
-      duration: duration,
-      shuffle: entity.shuffleQuestions,
-      questions: questions,
-      choices: choices,
-      correctAnswers,
-    };
+    return questionarie;
   }
 }
 
 export class InfoLMDTO {
-  name: string;
-  difficulty: number;
+  id: number;
   type: string;
-  rating: number;
-  score: number;
 
   static fromEntity(entity: Prisma.LearningMaterialGetPayload<unknown>): InfoLMDTO {
-    const { name, difficulty, type, rating, score } = entity;
+    const { id, type } = entity;
     return {
-      name,
-      difficulty,
+      id,
       type,
-      rating,
-      score,
     };
   }
 }

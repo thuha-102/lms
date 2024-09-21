@@ -23,6 +23,7 @@ export class LearningMaterialCreateREQ {
     return {
       Lesson: connectRelation(body.lessonId),
       type: body.type,
+      filepath: filepath,
     };
   }
 }

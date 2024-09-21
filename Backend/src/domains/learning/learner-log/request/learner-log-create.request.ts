@@ -33,28 +33,28 @@ export class LearnerLogCreateREQ {
   @Min(1)
   attempts: number;
 
-  static toCreateInput(userID: number, body: LearnerLogCreateREQ, score: number): Prisma.LearnerLogCreateInput {
-    return {
-      learningMaterialVisittedTime: Date.now(),
-      learningMaterialRating: body.rating,
-      score: score,
-      time: body.time,
-      attempts: 1,
-      learningMaterial: connectRelation(body.learningMaterialId),
-      learner: connectRelation(userID),
-    };
-  }
+  // static toCreateInput(userID: number, body: LearnerLogCreateREQ, score: number): Prisma.LearnerLogCreateInput {
+  //   return {
+  //     learningMaterialVisittedTime: Date.now(),
+  //     learningMaterialRating: body.rating,
+  //     score: score,
+  //     time: body.time,
+  //     attempts: 1,
+  //     learningMaterial: connectRelation(body.learningMaterialId),
+  //     learner: connectRelation(userID),
+  //   };
+  // }
 
-  static toCreateBatchInput(body: LearnerLogCreateREQ): Prisma.LearnerLogCreateInput {
-    let score = 0;
-    return {
-      learningMaterialVisittedTime: Date.now(),
-      learningMaterialRating: body.rating,
-      score: score,
-      time: body.time,
-      attempts: body.attempts,
-      learningMaterial: connectRelation(body.learningMaterialId),
-      learner: connectRelation(body.learnerId),
-    };
-  }
+  // static toCreateBatchInput(body: LearnerLogCreateREQ): Prisma.LearnerLogCreateInput {
+  //   let score = 0;
+  //   return {
+  //     learningMaterialVisittedTime: Date.now(),
+  //     learningMaterialRating: body.rating,
+  //     score: score,
+  //     time: body.time,
+  //     attempts: body.attempts,
+  //     learningMaterial: connectRelation(body.learningMaterialId),
+  //     learner: connectRelation(body.learnerId),
+  //   };
+  // }
 }

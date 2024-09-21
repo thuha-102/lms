@@ -13,6 +13,7 @@ export class UserCreateREQ {
     return {
       password: body.password,
       username: body.username,
+      accountType: 'LEARNER',
     };
   }
 }

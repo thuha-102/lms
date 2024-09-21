@@ -13,19 +13,19 @@ export class LearningLogDTO {
   difficulty: number;
   type?: string;
 
-  static fromEntity(e: Prisma.LearnerLogGetPayload<{ include: { learningMaterial: true } }>): LearningLogDTO {
-    return {
-      lmID: e.learningMaterial.id,
-      name: e.learningMaterial.name,
-      attempt: e.attempts,
-      score: e.score,
-      time: e.time,
-      topicId: e.learningMaterial.topicId,
-      rating: e.learningMaterial.rating,
-      maxScore: e.learningMaterial.score,
-      maxTime: e.learningMaterial.time,
-      difficulty: e.learningMaterial.difficulty,
-      type: e.learningMaterial.type,
-    };
-  }
+  // static fromEntity(e: Prisma.LearnerLogGetPayload<{ include: { learningMaterial: true } }>): LearningLogDTO {
+  //   return {
+  //     lmID: e.learningMaterial.id,
+  //     name: e.learningMaterial.name,
+  //     attempt: e.attempts,
+  //     score: e.score,
+  //     time: e.time,
+  //     topicId: e.learningMaterial.topicId,
+  //     rating: e.learningMaterial.rating,
+  //     maxScore: e.learningMaterial.score,
+  //     maxTime: e.learningMaterial.time,
+  //     difficulty: e.learningMaterial.difficulty,
+  //     type: e.learningMaterial.type,
+  //   };
+  // }
 }

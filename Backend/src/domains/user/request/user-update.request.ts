@@ -14,6 +14,7 @@ export class UserUpdateREQ {
     return leanObject({
       username: body.username,
       password: body.password,
+      updatedAt: new Date(),
     });
   }
 }

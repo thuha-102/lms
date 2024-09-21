@@ -10,26 +10,27 @@ datasource db {
 model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @default(now()) @map("updated_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
 
-  username String
-  password String
+  username    String
+  password    String
+  accountType String   @default("LEARNER") @map("account_type")
+  Learner     Learner?
 
   @@unique([username])
   @@map("users")
 }
 
 model Learner {
-  id Int @id @default(autoincrement())
+  id   Int  @id
+  User User @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  TypeLearner                 TypeLearner     @relation(fields: [typeLearnerId], references: [id])
-  typeLearnerId               Int
-  SequenceCourse              SequenceCourse? @relation(fields: [sequenceCourseTypeLearnerId, sequenceCourseCourseId], references: [typeLearnerId, courseId])
-  sequenceCourseTypeLearnerId Int?
-  sequenceCourseCourseId      Int?
+  SequenceCourse   SequenceCourse? @relation(fields: [typeLearnerId, sequenceCourseId], references: [typeLearnerId, courseId])
+  typeLearnerId    Int?            @map("type_learner_id")
+  sequenceCourseId Int?            @map("sequence_course_id")
 
-  latestCourseInSequenceCourses Course? @relation(fields: [courseId], references: [id])
-  courseId                      Int?
+  latestCourseInSequenceCourses Course? @relation(fields: [latestCourseId], references: [id])
+  latestCourseId                Int?    @map("latest_course_id")
 
   RegisterCourses      RegisterCourse[]
   HistoryStudiedCourse HistoryStudiedCourse[]
@@ -41,9 +42,7 @@ model TypeLearner {
   id             Int              @id @default(autoincrement())
   name           String
   SequenceCourse SequenceCourse[]
-  Learner        Learner[]
-
-  startScore Float
+  startScore     Float            @map("start_score")
 
   @@unique([name])
   @@map("type_learners")
@@ -67,8 +66,8 @@ model Course {
 
 model Topic {
   id       Int    @id @default(autoincrement())
-  Course   Course @relation(fields: [courseId], references: [id])
-  courseId Int
+  Course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  courseId Int    @map("course_id")
   name     String
   order    Int
 
@@ -86,10 +85,10 @@ model Lesson {
   updatedAt DateTime @default(now()) @map("updated_at")
 
   LearningMaterial   LearningMaterial? @relation(fields: [learningMaterialId], references: [id])
-  learningMaterialId Int?
+  learningMaterialId Int?              @map("learning_material_id")
 
-  Topic                Topic                  @relation(fields: [topicId], references: [id])
-  topicId              Int
+  Topic                Topic                  @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  topicId              Int                    @map("topic_id")
   HistoryStudiedCourse HistoryStudiedCourse[]
 
   @@unique([topicId, title])
@@ -101,7 +100,7 @@ model LearningMaterial {
   createdAt DateTime             @default(now()) @map("created_at")
   updatedAt DateTime             @default(now()) @map("updated_at")
   filepath  String?
-  mimetype String
+  mimetype  String?
   type      LearningMaterialType
 
   Lesson Lesson[]
@@ -112,7 +111,7 @@ model LearningMaterial {
 
 model Quiz {
   id               Int
-  LearningMaterial LearningMaterial @relation(fields: [id], references: [id])
+  LearningMaterial LearningMaterial @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   index         Int      @default(0)
   question      String
@@ -128,11 +127,11 @@ model RegisterCourse {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
-  Learner   Learner? @relation(fields: [learnerId], references: [id])
-  learnerId Int?     @map("lesson_id")
+  Learner   Learner? @relation(fields: [learnerId], references: [id], onUpdate: Cascade)
+  learnerId Int?     @map("learner_id")
 
-  Course   Course? @relation(fields: [courseId], references: [id])
-  courseId Int?
+  Course   Course? @relation(fields: [courseId], references: [id], onUpdate: Cascade)
+  courseId Int?    @map("course_id")
 
   @@unique([learnerId, courseId])
   @@map("register_courses")
@@ -186,7 +185,6 @@ enum LearningMaterialType {
 
 enum AccountType {
   ADMIN
-  INSTRUCTOR
   LEARNER
 }
 

@@ -10,17 +10,14 @@ export class LessonCreateREQ {
   topicId: number;
 
   @IsNumber()
-  order: number;
+  fileId: number;
 
-  @IsNumber()
-  fileid: number;
-
-  static toCreateInput(body: LessonCreateREQ): Prisma.LessonCreateInput {
+  static toCreateInput(body: LessonCreateREQ, order: number): Prisma.LessonCreateInput {
     return {
       title: body.title,
-      order: body.order,
+      order: order,
       Topic: connectRelation(body.topicId),
-      LearningMaterial: connectRelation(body.fileid),
+      LearningMaterial: connectRelation(body.fileId),
     };
   }
 }

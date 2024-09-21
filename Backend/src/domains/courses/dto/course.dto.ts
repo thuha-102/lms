@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { CodeDTO, QuizDTO } from 'src/domains/learning/learning-material/dto/learning-material.dto';
+import { QuizDTO } from 'src/domains/learning/learning-material/dto/learning-material.dto';
 import { TopicDTO } from 'src/domains/topics/dto/topics.dto';
 
 export class CourseDTO {
@@ -8,7 +8,7 @@ export class CourseDTO {
   updatedAt: Date;
   name: string;
   description: string;
-  topic: TopicDTO[]
+  topic: TopicDTO[];
 
   static selectFields(): Prisma.CourseSelect {
     return {
@@ -26,14 +26,14 @@ export class CourseDTO {
     };
   }
 
-  static fromEnTity(entity: Prisma.CourseGetPayload<unknown>, topic: TopicDTO[]): CourseDTO{
+  static fromEnTity(entity: Prisma.CourseGetPayload<unknown>, topic: TopicDTO[]): CourseDTO {
     return {
       id: entity.id,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       name: entity.name,
       description: entity.description,
-      topic: topic
+      topic: topic,
     };
   }
 }
