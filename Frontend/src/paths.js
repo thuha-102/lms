@@ -153,6 +153,7 @@ export const paths = {
     },
     topic_manage: '/dashboard/topic-manage',
     lm_manage: '/dashboard/lm-manage',
+    learning_path_manage: '/dashboard/learning-path-manage',
     account_manage: {
       index: '/dashboard/account-manage',
       create: '/dashboard/account-manage/create'

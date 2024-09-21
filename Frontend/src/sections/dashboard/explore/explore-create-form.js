@@ -22,18 +22,19 @@ import { QuillEditor } from '../../../components/quill-editor';
 import { paths } from '../../../paths';
 import { exploreApi } from '../../../api/explore';
 import { useMounted } from '../../../hooks/use-mounted';
+import CourseUploadTips from '../learning-path-manage/course-upload-tip';
 
 const BackgroundKnowledgeType = [
   {
-    label: 'BASIC',
+    label: 'Cơ bản',
     value: 'BASIC'
   },
   {
-    label: 'INTERMEDIATE',
+    label: 'Trung cấp',
     value: 'INTERMEDIATE'
   },
   {
-    label: 'EXPERT',
+    label: 'Chuyên gia',
     value: 'EXPERT'
   }
 ];
@@ -159,6 +160,8 @@ export const CourseCreateForm = (props) => {
     <form
       onSubmit={formik.handleSubmit}
       {...props}>
+    <Grid container spacing={2}>
+      <Grid item xs={12} md={8}>
       <Stack spacing={4}>
         <Card>
           <CardContent>
@@ -192,7 +195,7 @@ export const CourseCreateForm = (props) => {
                   <TextField
                     error={!!(formik.touched.level && formik.errors.level)}
                     fullWidth
-                    label="Level"
+                    label="Cấp độ của khoá học"
                     name="level"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
@@ -212,7 +215,7 @@ export const CourseCreateForm = (props) => {
                   <TextField
                     error={!!(formik.touched.amountOfTime && formik.errors.amountOfTime)}
                     fullWidth
-                    label="Thời lượng (phút)"
+                    label="Thời lượng của khoá học (phút)"
                     name="amountOfTime"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
@@ -245,7 +248,7 @@ export const CourseCreateForm = (props) => {
                   md={4}
                 >
                   <Typography variant="h6">
-                    Mô tả
+                    Mô tả về khoá học
                   </Typography>
               </Grid>
               <Grid
@@ -271,6 +274,94 @@ export const CourseCreateForm = (props) => {
             </Grid>
           </CardContent>
         </Card>
+        <Card>
+          <CardContent>
+              <Grid
+                  container
+                  spacing={3}
+                  >
+                  <Grid
+                      xs={12}
+                      md={4}
+                  >
+                      <Typography variant="h6">
+                      Chi phí khoá học
+                      </Typography>
+                  </Grid>
+                  <Grid
+                      xs={12}
+                      md={8}
+                  >
+                      <Stack spacing={3}>
+                      <TextField
+                          error={!!(formik.touched.regularPrice && formik.errors.regularPrice)}
+                          fullWidth
+                          label="Giá thông thường"
+                          name="regularPrice"
+                          onBlur={formik.handleBlur}
+                          onChange={formik.handleChange}
+                          type="number"
+                          value={formik.values.regularPrice}
+                      />
+                      <TextField
+                          error={!!(formik.touched.discountedPrice && formik.errors.discountedPrice)}
+                          fullWidth
+                          label="Giá sau giảm"
+                          name="discountedPrice"
+                          onBlur={formik.handleBlur}
+                          onChange={formik.handleChange}
+                          type="number"
+                          value={formik.values.discountedPrice}
+                      />
+                      <div>
+                          <FormControlLabel
+                          control={<Switch defaultChecked />}
+                          label="Đây là khoá học miễn phí"
+                          />
+                      </div>
+                      </Stack>
+                  </Grid>
+              </Grid>
+          </CardContent>
+      </Card>
+        <Card>
+          <CardContent>
+              <Grid
+              container
+              spacing={3}
+              >
+              <Grid
+                  xs={12}
+                  md={4}
+              >
+                  <Stack spacing={1}>
+                  <Typography variant="h6">
+                      Ảnh quảng bá khoá học
+                  </Typography>
+                  <Typography
+                      color="text.secondary"
+                      variant="body2"
+                  >
+                      Size: 700x430 pixels
+                  </Typography>
+                  </Stack>
+              </Grid>
+              <Grid
+                  xs={12}
+                  md={8}
+              >
+                  <FileDropzoneVn
+                  accept={{ '*//*': [] }}
+                  caption="(PDF, SVG, JPG, PNG, or gif maximum 900x400, ...)"
+                  files={files}
+                  onDrop={handleFilesDrop}
+                  onRemove={handleFileRemove}
+                  onRemoveAll={handleFilesRemoveAll}
+                  />
+              </Grid>
+          </Grid>
+          </CardContent>
+      </Card>
         <Stack
           alignItems="center"
           direction="row"
@@ -288,6 +379,11 @@ export const CourseCreateForm = (props) => {
           </Button>
         </Stack>
       </Stack>
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <CourseUploadTips />
+      </Grid>
+    </Grid>
     </form>
   );
 };
