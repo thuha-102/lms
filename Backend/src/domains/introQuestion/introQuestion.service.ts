@@ -28,6 +28,6 @@ export class IntroQuestionService {
   async deleteOne(id: number) {
     return await this.prismaService.introQuestion.delete({
       where: { id: id },
-    })
-  };
+    });
+  }
 }

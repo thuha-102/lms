@@ -1,6 +1,5 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma/prisma.service';
-import { UserCreateREQ } from './request/user-create.request';
 import { UserUpdateREQ } from './request/user-update.request';
 import { UserRegisterCourseCreateREQ } from './request/user-register-course-create.request';
 import { connectRelation } from 'src/shared/prisma.helper';
@@ -8,13 +7,6 @@ import { connectRelation } from 'src/shared/prisma.helper';
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
-
-  async create(body: UserCreateREQ) {
-    const user = await this.prismaService.user.create({ data: UserCreateREQ.toCreateInput(body), select: { id: true } });
-    //const learner = await this.prismaService.learner.create({ data: { User: connectRelation(user.id)}, select: {id:  true} });
-
-    return { id: user.id };
-  }
 
   async update(id: number, body: UserUpdateREQ) {
     if (body.username) {
@@ -29,6 +21,52 @@ export class UserService {
   async registerCourse(learnerId: number, courseId: number) {
     return await this.prismaService.registerCourse.create({
       data: UserRegisterCourseCreateREQ.toCreateInput(learnerId, courseId),
+    });
+  }
+
+  async studiedLesson(learnerId: number, lessonId: number) {
+    return await this.prismaService.$transaction(async (tx) => {
+      const lesson = await tx.lesson.findFirst({ where: { id: lessonId }, select: { topicId: true } });
+      const course = await tx.course.findFirst({
+        where: { Topic: { some: { id: lesson.topicId } } },
+        select: { id: true, totalLessons: true },
+      });
+
+      const registerCourse = await tx.registerCourse.findFirst({
+        where: { learnerId: learnerId, courseId: course.id },
+        select: { id: true, percentOfStudying: true },
+      });
+      if (!registerCourse) throw new NotFoundException("Learner didn't regiter this course");
+      const updatePercent = Math.min(1.0, registerCourse.percentOfStudying + 1.0 / course.totalLessons);
+      await tx.registerCourse.update({
+        where: { id: registerCourse.id },
+        data: { percentOfStudying: updatePercent },
+      });
+
+      // register next course in sequence course if pass previous course
+      const sequenceCourse = await tx.learner.findMany({
+        orderBy: { SequenceCourse: { order: 'asc' } },
+        where: { id: learnerId },
+        select: { SequenceCourse: { select: { courseId: true, order: true } } },
+      });
+      if (updatePercent - 1.0 >= 0) {
+        let nextCourseId = -1;
+        for (let i = 1; i < sequenceCourse.length; i++)
+          if (sequenceCourse[i - 1].SequenceCourse.courseId === course.id) {
+            nextCourseId = sequenceCourse[i].SequenceCourse.courseId;
+            break;
+          }
+        if (nextCourseId !== -1) {
+          await tx.registerCourse.create({ data: { learnerId: learnerId, courseId: nextCourseId } });
+          await tx.learner.update({
+            where: { id: learnerId },
+            data: { LatestCourseInSequenceCourses: connectRelation(nextCourseId) },
+          });
+        }
+      }
+
+      const historyStudied = await tx.historyStudiedCourse.findFirst({ where: { lessonId, learnerId } });
+      if (!historyStudied) await tx.historyStudiedCourse.create({ data: { learnerId, lessonId } });
     });
   }
 }

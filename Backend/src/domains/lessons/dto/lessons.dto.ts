@@ -5,7 +5,7 @@ export class LessonDTO {
   id: number;
   title: string;
   fileId: number;
-  filepath: string;
+  // filepath: string;
 
   static selectLessonField(): Prisma.LessonSelect {
     return {
@@ -25,7 +25,7 @@ export class LessonDTO {
       id: e.id,
       title: e.title,
       fileId: e.LearningMaterial.id,
-      filepath: e.LearningMaterial.filepath,
+      // filepath: e.LearningMaterial.filepath,
     };
   }
 }
