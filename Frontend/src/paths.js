@@ -1,3 +1,5 @@
+import { introQuestionApi } from "./api/introQuestion";
+
 export const paths = {
   index: '/',
   checkout: '/checkout',
@@ -157,7 +159,8 @@ export const paths = {
     account_manage: {
       index: '/dashboard/account-manage',
       create: '/dashboard/account-manage/create'
-    }
+    },
+    introQuestionManage: '/dashboard/introQuestionManage',
   },
   components: {
     index: '/components',

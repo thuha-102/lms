@@ -142,7 +142,6 @@ model SequenceCourse {
 
 model IntroQuestion {
   id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now()) @map("created_at")
   question  String
   answers   String[]
   scores    Int[]

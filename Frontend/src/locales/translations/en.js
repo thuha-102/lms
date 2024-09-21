@@ -73,4 +73,5 @@ export const en = {
   [tokens.nav.lm_manage]: 'Manange LM',
   [tokens.nav.account_manage]: 'Manage Account',
   [tokens.nav.topic_manage]: 'Manage Topic',
+  [tokens.nav.introQuestionManage]: 'Manage Intro Questions',
 };
