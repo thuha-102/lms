@@ -18,13 +18,18 @@ export class CourseController {
     return await this.courseService.detail(id);
   }
 
-  @Get('')
-  async getAll(@Body() query: CourseListREQ) {
-    return await this.courseService.getAll(query);
+  @Get(':id/user/:userId')
+  async studiedCourse(@Param('id', ParseIntPipe) id: number, @Param('userId', ParseIntPipe) userId: number) {
+    return await this.courseService.studiedCourse(id, userId);
   }
 
   @Patch(':id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() body: CourseUpdateREQ) {
     await this.courseService.update(id, body);
+  }
+
+  @Get('')
+  async getAll(@Body() query: CourseListREQ) {
+    return await this.courseService.getAll(query);
   }
 }

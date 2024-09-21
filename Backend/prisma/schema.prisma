@@ -25,12 +25,11 @@ model Learner {
   id   Int  @id
   User User @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  SequenceCourse   SequenceCourse? @relation(fields: [typeLearnerId, sequenceCourseId], references: [typeLearnerId, courseId])
-  typeLearnerId    Int?            @map("type_learner_id")
-  sequenceCourseId Int?            @map("sequence_course_id")
+  SequenceCourse   SequenceCourse? @relation(fields: [sequenceCourseId], references: [id])
+  sequenceCourseId Int?
 
-  latestCourseInSequenceCourses Course? @relation(fields: [latestCourseId], references: [id])
-  latestCourseId                Int?    @map("latest_course_id")
+  LatestCourseInSequenceCourses Course? @relation(fields: [latestCourseInSequenceId], references: [id])
+  latestCourseInSequenceId      Int?    @map("latest_course_in_sequence_id")
 
   RegisterCourses      RegisterCourse[]
   HistoryStudiedCourse HistoryStudiedCourse[]
@@ -49,12 +48,13 @@ model TypeLearner {
 }
 
 model Course {
-  id          Int      @id @default(autoincrement())
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @default(now()) @map("updated_at")
-  name        String
-  description String
-  labels      String[]
+  id           Int      @id @default(autoincrement())
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @default(now()) @map("updated_at")
+  name         String
+  description  String
+  labels       String[]
+  totalLessons Int      @default(0) @map("total_lessons")
 
   SequenceCourse SequenceCourse[]
   Learner        Learner[]
@@ -133,6 +133,8 @@ model RegisterCourse {
   Course   Course? @relation(fields: [courseId], references: [id], onUpdate: Cascade)
   courseId Int?    @map("course_id")
 
+  percentOfStudying Float @default(0) @map("percent_of_studying")
+
   @@unique([learnerId, courseId])
   @@map("register_courses")
 }
@@ -144,11 +146,10 @@ model HistoryStudiedCourse {
   Learner   Learner @relation(fields: [learnerId], references: [id])
   learnerId Int     @map("learner_id")
 
-  Lesson        Lesson @relation(fields: [lessonTopicId, lessonTitle], references: [topicId, title])
-  lessonTopicId Int
-  lessonTitle   String
+  Lesson   Lesson @relation(fields: [lessonId], references: [id])
+  lessonId Int
 
-  @@unique([lessonTopicId, lessonTitle, learnerId])
+  @@unique([lessonId, learnerId])
   @@map("history_studied_course")
 }
 
@@ -160,18 +161,19 @@ model SequenceCourse {
 
   Course   Course @relation(fields: [courseId], references: [id])
   courseId Int    @map("course_id")
+  order    Int
 
   Learner Learner[]
 
-  @@unique([typeLearnerId, courseId])
+  @@unique([typeLearnerId, courseId, order])
   @@map("sequence_courses")
 }
 
-model IntroQuestion {
-  id        Int      @id @default(autoincrement())
-  question  String
-  answers   String[]
-  scores    Int[]
+model IntroQuestions {
+  id       Int      @id @default(autoincrement())
+  question String
+  answers  String[]
+  scores   Int[]
 
   @@map("intro_questions")
 }

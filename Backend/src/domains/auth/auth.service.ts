@@ -38,7 +38,7 @@ export class AuthService {
     });
     if (existUser) throw new UnauthorizedException('Username is exist');
     const user = await this.prismaService.user.create({ data: body });
-    await this.prismaService.learner.create({ data: { User: connectRelation(user.id)}});
+    await this.prismaService.learner.create({ data: { User: connectRelation(user.id) } });
 
     const jwtToken = await this.jwtService.signAsync({ user: AuthDTO.fromEntity(user as any) });
     return AuthLoginRESP.fromEntity(user as any, jwtToken);

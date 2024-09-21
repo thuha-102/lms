@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Get,
-  Param,
-  ParseIntPipe,
-  NotFoundException,
-  Put,
-  Query,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, ParseIntPipe, NotFoundException, Put, Query, Delete } from '@nestjs/common';
 import { IntroQuestionService } from './introQuestion.service';
 import * as IntroQuestionDto from './dto/introQuestion.dto';
 
@@ -35,10 +24,11 @@ export class IntroQuestionController {
   async getMany(@Query() queryParams) {
     try {
       const { searchString } = queryParams;
-      const result = await this.introQuestionService.getMany(searchString ? {OR: [
-        { question: {contains: searchString, mode: 'insensitive'} },
-        { answers: {hasSome: [searchString ] }},
-      ]} : {});
+      const result = await this.introQuestionService.getMany(
+        searchString
+          ? { OR: [{ question: { contains: searchString, mode: 'insensitive' } }, { answers: { hasSome: [searchString] } }] }
+          : {},
+      );
       return JSON.stringify(result);
     } catch (error) {
       console.log(error);

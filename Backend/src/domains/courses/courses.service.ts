@@ -21,13 +21,18 @@ export class CourseService {
     return this.prismaService.$transaction(async (tx) => {
       const course = await tx.course.create({ data: CourseCreateREQ.toCreateInput(body), select: { id: true } });
 
+      let numberLessons = 0;
+
       for (let i = 0; i < body.topicNames.length; i++) {
         const { id } = await this.topicService.create({ courseId: course.id, name: body.topicNames[i] }, tx);
         for (let j = 0; j < body.lessons[i].length; j++) {
           const lesson = body.lessons[i][j];
           await this.lessonService.create({ title: lesson.title, fileId: lesson.fileId, topicId: id }, tx);
         }
+        numberLessons += body.lessons[i].length;
       }
+
+      await tx.course.update({ where: { id: course.id }, data: { totalLessons: numberLessons } });
       return { id: course.id };
     });
   }
@@ -41,7 +46,7 @@ export class CourseService {
       where: { courseId: course.id },
       select: TopicDTO.selectTopicField(),
     });
-    let topcicDTOs: TopicDTO[];
+    let topcicDTOs: TopicDTO[] = [];
 
     for (let i = 0; i < topics.length; i++) {
       const lessons = await this.prismaService.lesson.findMany({
@@ -58,6 +63,20 @@ export class CourseService {
     }
 
     return CourseDTO.fromEnTity(course as any, topcicDTOs);
+  }
+
+  async studiedCourse(courseId: number, learnerId: number) {
+    const lessonIds = (
+      await this.prismaService.topic.findMany({ where: { courseId }, select: { Lessons: { select: { id: true } } } })
+    )
+      .map((topic) => topic.Lessons.map((lesson) => lesson.id))
+      .flat(1);
+
+    const studiedLesson = (await this.prismaService.historyStudiedCourse.findMany({
+      where: { learnerId: learnerId, lessonId: { in: lessonIds } },
+    })).map(history => (history.lessonId));
+
+    return {studiedLesson: studiedLesson}
   }
 
   async getAll(query: CourseListREQ) {
