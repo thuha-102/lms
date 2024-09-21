@@ -11,6 +11,7 @@ import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
 import ModelTrainingOutlinedIcon from '@mui/icons-material/ModelTrainingOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
 import { tokens } from '../../locales/tokens';
 import { paths } from '../../paths';
 
@@ -183,6 +184,15 @@ export const getSections = (t, accountType) => [
         icon: (
           <SvgIcon fontSize="small">
             <ManageAccountsOutlinedIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: t(tokens.nav.introQuestionManage),
+        path: paths.dashboard.introQuestionManage,
+        icon: (
+          <SvgIcon fontSize="small">
+            <QuizOutlinedIcon />
           </SvgIcon>
         )
       },

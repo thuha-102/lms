@@ -74,5 +74,6 @@ export const tokens = {
     lm_manage: 'nav.lm_manage',
     topic_manage: 'nav.topic_manage',
     account_manage: 'nav.account_manage',
+    introQuestionManage: 'nav.introQuestionManage', 
   }
 };
