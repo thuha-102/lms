@@ -45,29 +45,17 @@ const initialTopics = [
 
 const subjectOptions = [
   {
-    label: 'FUNDAMENTALS',
-    value: 'FUNDAMENTALS'
+    label: 'Cơ bản',
+    value: 'BASIC'
   },
   {
-    label: 'DATA SCIENTIST',
-    value: 'DATA_SCIENTIST'
+    label: 'Trung cấp',
+    value: 'INTEMEDIATE'
   },
   {
-    label: 'MACHINE LEARNING',
-    value: 'MACHINE_LEARNING'
+    label: 'Chuyên gia',
+    value: 'EXPERT'
   },
-  {
-    label: 'DEEP LEARNING',
-    value: 'DEEP_LEARNING'
-  },
-  {
-    label: 'DATA ENGINEER',
-    value: 'DATA_ENGINEER'
-  },
-  {
-    label: 'BIG DATA ENGINEER',
-    value: 'BIG_DATA_ENGINEER'
-  }
 ];
 const categoryOptions = [
   {
@@ -112,7 +100,7 @@ const initialValues = {
   // description: '',
   // images: [],
   group_name: ''
-  // duration : 0,
+  // score : 0,
   // difficulty: 0,
   // newPrice: 0,
   // oldPrice: 0,
@@ -128,7 +116,7 @@ const validationSchema = Yup.object({
   subject: Yup.string().max(255).required(),
   preCourseId: Yup.number().min(0),
   postCourseId: Yup.number().min(0)
-  // duration : Yup.number().min(0).required(),
+  // score : Yup.number().min(0).required(),
   // difficulty: Yup.number().min(0).required(),
   // newPrice: Yup.number().min(0).required(),
   // oldPrice: Yup.number().min(0),
@@ -246,6 +234,16 @@ export const LearningPathCreateForm = (props) => {
                   <TextField
                     error={!!(formik.touched.group_name && formik.errors.group_name)}
                     fullWidth
+                    label="Tên nhóm người học"
+                    name="group_name"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    type="group_name"
+                    value={formik.values.group_name}
+                  />
+                  {/* <TextField
+                    error={!!(formik.touched.group_name && formik.errors.group_name)}
+                    fullWidth
                     helperText={formik.touched.group_name && formik.errors.group_name}
                     label="Tên nhóm người học"
                     name="group_name"
@@ -277,7 +275,7 @@ export const LearningPathCreateForm = (props) => {
                       initialGroupName={initialGroupName}
                       openGroupCreateDialog={openGroupCreateDialog}
                       setOpenGroupCreateDialog={setOpenGroupCreateDialog}
-                  />
+                  /> */}
                   <TextField
                     error={!!(formik.touched.subject && formik.errors.subject)}
                     fullWidth
@@ -299,6 +297,16 @@ export const LearningPathCreateForm = (props) => {
                     ))}
                   </TextField>
                   <TextField
+                    error={!!(formik.touched.score && formik.errors.score)}
+                    fullWidth
+                    label="Điểm khảo sát của nhóm người học"
+                    name="score"
+                    onBlur={formik.handleBlur}
+                    onChange={formik.handleChange}
+                    type="number"
+                    value={formik.values.score}
+                  />
+                  {/* <TextField
                     error={!!(formik.touched.preCourseId && formik.errors.preCourseId)}
                     fullWidth
                     label="Chủ đề liền trước"
@@ -335,7 +343,7 @@ export const LearningPathCreateForm = (props) => {
                         {option.title}
                       </MenuItem>
                     ))}
-                  </TextField>
+                  </TextField> */}
                   {/* <TextField
                     error={!!(formik.touched.category && formik.errors.category)}
                     fullWidth

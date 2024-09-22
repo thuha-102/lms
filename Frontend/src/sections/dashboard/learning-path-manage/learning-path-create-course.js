@@ -205,6 +205,48 @@ export const LearningPathCreateCourse = (props) => {
     setFiles([]);
   }, []);
 
+
+  // Hàm xử lý khi click vào Edit
+  const handleEdit = async (topicId) => {
+    const topicToEdit = topics.find(topic => topic.id === topicId);
+    if (topicToEdit) {
+      // Thực hiện hành động chỉnh sửa, ví dụ mở một form để chỉnh sửa
+      console.log("Editing topic:", topicToEdit);
+    //   setEditingTopic(topicToEdit); // Lưu topic cần chỉnh sửa vào state
+    try {
+        // NOTE: Make API request
+        // console.log(formik.values);
+        // await learning_path_manageApi.createCourse({
+        //   title: values.name,
+        //   subject: values.subject,
+        //   preCourseIds: [values.preCourseId],
+        //   postCourseIds: [values.postCourseId],
+        // })
+        toast.success('Tên khoá học đã được sửa');
+        router.push(`${paths.dashboard.explore}/course/1`);
+      } catch (err) {
+        console.error(err);
+        toast.error('Something went wrong!');
+        helpers.setStatus({ success: false });
+        helpers.setErrors({ submit: err.message });
+        helpers.setSubmitting(false);
+      }
+      // Bạn có thể hiển thị form chỉnh sửa ở đây
+    }
+  };
+
+  // Hàm xử lý khi click vào Delete
+  const handleDelete = (topicId) => {
+    // Xác nhận trước khi xóa
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa mục này không?");
+    if (confirmDelete) {
+      // Xóa topic bằng cách lọc ra khỏi mảng topics
+      const updatedTopics = topics.filter(topic => topic.id !== topicId);
+      setTopics(updatedTopics);
+      console.log("Deleted topic with id:", topicId);
+    }
+  };
+
   return (
     <>
     <DragDropContext onDragEnd={handleDragEnd}>
@@ -223,11 +265,17 @@ export const LearningPathCreateCourse = (props) => {
                         <Typography variant="body1" sx={{ flexGrow: 1 }}>
                         {topic.title}
                         </Typography>
-                        <IconButton aria-label="edit">
-                        <EditIcon />
+                        <IconButton 
+                            aria-label="edit"   
+                            onClick={() => handleEdit(topic.id)}    
+                        >
+                            <EditIcon />
                         </IconButton>
-                        <IconButton aria-label="delete">
-                        <DeleteIcon />
+                        <IconButton 
+                            aria-label="delete"
+                            onClick={() => handleDelete(topic.id)} // Gọi hàm khi click
+                        >
+                            <DeleteIcon />
                         </IconButton>
                     </Paper>
                     )}
@@ -249,11 +297,12 @@ export const LearningPathCreateCourse = (props) => {
         backgroundColor: '#e3e7ea'
     }}
     // onClick={handleAddTopic}
-    onClick={() => setOpenCreateCourseDialog(true) }
+    // onClick={() => setOpenCreateCourseDialog(true) }
+    onClick={() => router.push(`${paths.dashboard.explore}/create`)}
     >
     <QueueIcon/>
     <Typography variant="body1" sx={{px: 2, ml: 2}}>
-        Thêm bài học mới 
+        Thêm khoá học mới 
     </Typography>
     </Paper>
     <CreateCourseDialog
