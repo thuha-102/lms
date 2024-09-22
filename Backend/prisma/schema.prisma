@@ -25,7 +25,7 @@ model Learner {
   id   Int  @id
   User User @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  typeLearnerId    Int?            @map("type_learner_id")
+  typeLearnerId Int? @map("type_learner_id")
 
   LatestCourseInSequenceCourses Course? @relation(fields: [latestCourseInSequenceId], references: [id])
   latestCourseInSequenceId      Int?    @map("latest_course_in_sequence_id")
@@ -41,24 +41,27 @@ model TypeLearner {
   name           String
   SequenceCourse SequenceCourse[]
   startScore     Float            @map("start_score")
-  createdAt      DateTime    @default(now()) @map("created_at")
-  updatedAt      DateTime    @default(now()) @map("updated_at")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @default(now()) @map("updated_at")
 
   @@unique([name])
   @@map("type_learners")
 }
 
 model Course {
-  id           Int      @id @default(autoincrement())
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @default(now()) @map("updated_at")
-  avatarLink   String   @default("") @map("avatar_link")
+  id           Int        @id @default(autoincrement())
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @default(now()) @map("updated_at")
+  avatarId     Int        @default(1) @map("avatar_id")
   name         String
   description  String
-  price        String
+  price        String?
   labels       String[]
-  totalLessons Int      @default(0) @map("total_lessons")
-  totalTopics  Int      @default(0) @map("total_topics")
+  totalLessons Int        @default(0) @map("total_lessons")
+  totalTopics  Int        @default(0) @map("total_topics")
+  amountOfTime Int        @default(180) // caculate in minutes
+  visibility   Boolean    @default(true)
+  level        LevelType?
 
   SequenceCourse SequenceCourse[]
   Learner        Learner[]
@@ -185,6 +188,13 @@ enum LearningMaterialType {
   PDF
   QUIZ
   VIDEO
+  IMAGE
+}
+
+enum LevelType {
+  BEGINNER
+  INTERMEDIAN
+  EXPERT
 }
 
 enum AccountType {

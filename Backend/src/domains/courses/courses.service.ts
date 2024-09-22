@@ -21,7 +21,8 @@ export class CourseService {
     return this.prismaService.$transaction(async (tx) => {
       const course = await tx.course.create({ data: CourseCreateREQ.toCreateInput(body), select: { id: true } });
 
-      let numberLessons = 0, numberTopics = body.topicNames.length;
+      let numberLessons = 0,
+        numberTopics = body.topicNames.length;
 
       for (let i = 0; i < body.topicNames.length; i++) {
         const { id } = await this.topicService.create({ courseId: course.id, name: body.topicNames[i] }, tx, i);
@@ -72,11 +73,13 @@ export class CourseService {
       .map((topic) => topic.Lessons.map((lesson) => lesson.id))
       .flat(1);
 
-    const studiedLesson = (await this.prismaService.historyStudiedCourse.findMany({
-      where: { learnerId: learnerId, lessonId: { in: lessonIds } },
-    })).map(history => (history.lessonId));
+    const studiedLesson = (
+      await this.prismaService.historyStudiedCourse.findMany({
+        where: { learnerId: learnerId, lessonId: { in: lessonIds } },
+      })
+    ).map((history) => history.lessonId);
 
-    return {studiedLesson: studiedLesson}
+    return { studiedLesson: studiedLesson };
   }
 
   async getAll(query: CourseListREQ) {
@@ -95,17 +98,17 @@ export class CourseService {
   async update(id: number, body: CourseUpdateREQ) {
     const course = await this.prismaService.course.findFirst({ where: { id } });
     if (!course) throw new NotFoundException('Course not found');
-    
+
     //update order of topicIds
-    if(body.orderTopicIds){
+    if (body.orderTopicIds) {
       body.orderTopicIds.map(async (id, index) => {
-        await this.prismaService.topic.update({where: {id}, data: {order: index}})
-      })
+        await this.prismaService.topic.update({ where: { id }, data: { order: index } });
+      });
     }
-    if(body.orderLessonIds){
-      for (let i = 0; i < body.orderLessonIds.length; i++){
-        const lessonIds = body.orderLessonIds[i]
-        lessonIds.map(async (id, index) => await this.prismaService.lesson.update({where: {id}, data: {order: index}}))
+    if (body.orderLessonIds) {
+      for (let i = 0; i < body.orderLessonIds.length; i++) {
+        const lessonIds = body.orderLessonIds[i];
+        lessonIds.map(async (id, index) => await this.prismaService.lesson.update({ where: { id }, data: { order: index } }));
       }
     }
 
@@ -113,6 +116,6 @@ export class CourseService {
   }
 
   async delete(id: number) {
-    await this.prismaService.course.delete({where: {id}})
+    await this.prismaService.course.delete({ where: { id } });
   }
 }

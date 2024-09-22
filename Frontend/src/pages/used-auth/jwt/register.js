@@ -47,11 +47,11 @@ const initialValues = {
 };
 
 const validationSchema = Yup.object({
-  email: Yup
-    .string()
-    .email('Phải đúng định dạng email')
-    .max(255)
-    .required('Email không được trống'),
+  // email: Yup
+  //   .string()
+  //   .email('Phải đúng định dạng email')
+  //   .max(255)
+  //   .required('Email không được trống'),
   username: Yup
     .string()
     .max(255)
@@ -73,7 +73,7 @@ const Page = () => {
     validationSchema,
     onSubmit: async (values, helpers) => {
       try {
-        await signUp({email: values.email, username: values.username, password: values.password, accountType: values.accountType});
+        await signUp({username: values.username, password: values.password});
 
         if (isMounted()) {
           router.push(returnTo || paths.dashboard.index);
@@ -138,7 +138,7 @@ const Page = () => {
                   onChange={formik.handleChange}
                   value={formik.values.username}
                 />
-                <TextField
+                {/* <TextField
                   error={!!(formik.touched.email && formik.errors.email)}
                   fullWidth
                   helperText={formik.touched.email && formik.errors.email}
@@ -148,7 +148,7 @@ const Page = () => {
                   onChange={formik.handleChange}
                   type="email"
                   value={formik.values.email}
-                />
+                /> */}
                 <TextField
                   error={!!(formik.touched.password && formik.errors.password)}
                   fullWidth
@@ -160,7 +160,7 @@ const Page = () => {
                   type="password"
                   value={formik.values.password}
                 />
-                <Select
+                {/* <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   label="Who are you?"
@@ -171,7 +171,7 @@ const Page = () => {
                 >
                   <MenuItem value={"LEARNER"}>LEARNER</MenuItem>
                   <MenuItem value={"INSTRUCTOR"}>INSTRUCTOR</MenuItem>
-              </Select>
+              </Select> */}
             </Stack>
               {/* <Box
                 sx={{

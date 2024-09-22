@@ -13,13 +13,14 @@ class UserApi {
   }
 
   getUserCourses(id, take) {
-    const url = take ? `${apiUrl}/${id}/courses?take=${take}` : `${apiUrl}/${id}/courses`
+    const url = take ? `${apiUrl}/${id}/courses/studied?take=${take}` : `${apiUrl}/${id}/courses/studied`
     return axios.get(url);
   }
 
-  getOwnCourses(id){
-    console.log(id)
-    return axios.get(`${process.env.NEXT_PUBLIC_SERVER_API}/courses/${id}/own`);
+  getOwnCourses(id, keyword, visibility){
+    let url = keyword ? `${apiUrl}/${id}/courses/own?keyword=${keyword}` : `${apiUrl}/${id}/courses/own`;
+    url = visibility ? (keyword ? url + `&visibility=${visibility}` : url + `?visibility=${visibility}`) : url;
+    return axios.get(url);
   }
 
   getBaseInfo(userId) {

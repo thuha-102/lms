@@ -3,9 +3,9 @@ import axios from 'axios';
 const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}`;
 
 class AuthApi {
-  signIn(request) {
+  async signIn(request) {
     const { username, password } = request;
-
+    
     return axios.post(`${apiUrl}/login`, {
       "username": username,
       "password": password
@@ -13,7 +13,7 @@ class AuthApi {
   }
 
   async signUp(request) {
-    return axios.post(`${apiUrl}/users`, request)
+    return axios.post(`${apiUrl}/signup`, request)
   }
 
   me(id) {

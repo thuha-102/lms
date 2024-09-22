@@ -12,11 +12,11 @@ export class CourseUpdateREQ {
   description: string;
 
   @IsOptional()
-  @IsNumber({}, {each: true})
-  orderTopicIds: number[]
+  @IsNumber({}, { each: true })
+  orderTopicIds: number[];
 
   @IsOptional()
-  orderLessonIds: number[][]
+  orderLessonIds: number[][];
 
   static toUpdateInput(body: CourseUpdateREQ): Prisma.CourseUpdateInput {
     return leanObject({

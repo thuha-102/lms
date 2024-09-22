@@ -28,11 +28,16 @@ export class CourseCreateREQ {
   @IsArray()
   lessons: Lesson[][];
 
+  @IsOptional()
+  @IsNumber()
+  avatarId: number;
+
   static toCreateInput(body: CourseCreateREQ): Prisma.CourseCreateInput {
     return {
       name: body.name,
       labels: body.labels,
       description: body.description,
+      avatarId: body.avatarId,
     };
   }
 }

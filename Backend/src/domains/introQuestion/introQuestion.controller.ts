@@ -15,15 +15,15 @@ export class IntroQuestionController {
       await this.introQuestionService.updateMany(
         {
           order: {
-            gte: body.order
-          }
+            gte: body.order,
+          },
         },
         {
           order: {
-            increment: 1
-          }
-        }
-      )
+            increment: 1,
+          },
+        },
+      );
       const result = await this.introQuestionService.create(body);
       return JSON.stringify(result);
     } catch (error) {
@@ -57,31 +57,25 @@ export class IntroQuestionController {
         if (body.order > curOrder) {
           await this.introQuestionService.updateMany(
             {
-              AND: [
-                { order: { gt: curOrder } },
-                { order: { lte: body.order }}
-              ]
+              AND: [{ order: { gt: curOrder } }, { order: { lte: body.order } }],
             },
             {
               order: {
-                decrement: 1
-              }
-            }
-          )
+                decrement: 1,
+              },
+            },
+          );
         } else {
           await this.introQuestionService.updateMany(
             {
-              AND: [
-                { order: { gte: body.order } },
-                { order: { lt: curOrder }}
-              ]
+              AND: [{ order: { gte: body.order } }, { order: { lt: curOrder } }],
             },
             {
               order: {
-                increment: 1
-              }
-            }
-          )
+                increment: 1,
+              },
+            },
+          );
         }
       }
       const result = await this.introQuestionService.updateOne(id, body);
@@ -99,15 +93,15 @@ export class IntroQuestionController {
       await this.introQuestionService.updateMany(
         {
           order: {
-            gt: result.order
-          }
+            gt: result.order,
+          },
         },
         {
           order: {
-            decrement: 1
-          }
-        }
-      )
+            decrement: 1,
+          },
+        },
+      );
       if (result == null) {
         throw new NotFoundException(`IntroQuestion with id ${id} not found`);
       }

@@ -42,15 +42,16 @@ const useCourses = (id, accountType, filter) => {
 
   const getListCourses = useCallback(async (filter) => {
     try {
-        const response = accountType === "LEARNER" ? await userApi.getUserCourses(id) : await userApi.getOwnCourses(id);
+        console.log(filter)
+        const response = accountType === "LEARNER" ? await userApi.getUserCourses(id) : await userApi.getOwnCourses(id, filter?.keyword, filter?.visibility);
         
         let courses = response.data
         
-        if (filter) {
-          courses = courses.filter(c => c.name.toLowerCase().includes(filter.name.toLowerCase()))          
-          if (filter.level !== "NONE") courses = courses.filter(c => c.level.includes(filter.level))
-          courses = courses.filter(c => c.visibility === filter.visibility)
-        }
+        // if (filter) {
+        //   courses = courses.filter(c => c.name.toLowerCase().includes(filter.name.toLowerCase()))          
+        //   if (filter.level !== "NONE") courses = courses.filter(c => c.level.includes(filter.level))
+        //   courses = courses.filter(c => c.visibility === filter.visibility)
+        // }
         
         if (isMounted()) {
           setListCourses(courses);

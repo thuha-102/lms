@@ -2,11 +2,21 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { UserUpdateREQ } from './request/user-update.request';
 import { UserRegisterCourseCreateREQ } from './request/user-register-course-create.request';
-import { connectRelation } from 'src/shared/prisma.helper';
+import { connectRelation, leanObject } from 'src/shared/prisma.helper';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
+
+  async detail(id: number) {
+    const user = await this.prismaService.user.findUnique({
+      where: { id },
+      select: { id: true, username: true, accountType: true },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
 
   async update(id: number, body: UserUpdateREQ) {
     if (body.username) {
@@ -44,8 +54,8 @@ export class UserService {
       });
 
       const learner = await tx.learner.findFirst({
-        where: { id: learnerId }
-      })
+        where: { id: learnerId },
+      });
 
       // register next course in sequence course if pass previous course
       const sequenceCourse = await tx.sequenceCourse.findMany({
@@ -73,4 +83,26 @@ export class UserService {
       if (!historyStudied) await tx.historyStudiedCourse.create({ data: { learnerId, lessonId } });
     });
   }
+
+  async ownCourse(filter?: string, visibility?: boolean) {
+    let orQuery: Prisma.CourseWhereInput[] = [
+      filter ? { name: { contains: filter, mode: Prisma.QueryMode.insensitive } } : undefined,
+      filter ? { labels: { has: filter } } : undefined,
+      visibility !== undefined ? { visibility: { equals: visibility } } : undefined,
+    ].filter(Boolean);
+
+    return await this.prismaService.course.findMany({
+      where: orQuery.length ? { OR: orQuery } : undefined,
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        amountOfTime: true,
+        description: true,
+        avatarId: true,
+      },
+    });
+  }
+
+  async studiedCourse(filter?: string) {}
 }

@@ -49,18 +49,18 @@ const categoryOptions = [
     label: 'QUIZ',
     value: 'QUIZ'
   },
-  {
-    label: 'WORD',
-    value: 'WORD'
-  },
-  {
-    label: 'CODE',
-    value: 'CODE'
-  },
-  {
-    label: 'PPT',
-    value: 'PPT'
-  }
+  // {
+  //   label: 'WORD',
+  //   value: 'WORD'
+  // },
+  // {
+  //   label: 'CODE',
+  //   value: 'CODE'
+  // },
+  // {
+  //   label: 'PPT',
+  //   value: 'PPT'
+  // }
 ];
 
 export const LMManageListTable = (props) => {
@@ -230,12 +230,12 @@ export const LMManageListTable = (props) => {
                         <Typography variant="subtitle2">
                           Loại hình: {LM.type} 
                         </Typography>
-                        <Typography variant="subtitle2">
+                        {/* <Typography variant="subtitle2">
                           Thời gian: {LM.time} phút
                         </Typography>
                         <Typography variant="subtitle2">
                           Topic: {LM.Topic.title}
-                        </Typography>
+                        </Typography> */}
                       </Stack>
                     </TableCell>
                     {/* <TableCell>

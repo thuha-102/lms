@@ -16,6 +16,7 @@ export class CourseDTO {
       updatedAt: true,
       name: true,
       description: true,
+      price: true,
       Topic: {
         select: {
           id: true,

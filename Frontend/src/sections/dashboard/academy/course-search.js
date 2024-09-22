@@ -10,18 +10,18 @@ const levelOptions = [
   "EXPERT"
 ];
 
-const visibilityOptions = ["VISIBLE", "NON_VISIBLE"];
+const visibilityOptions = ["VISIBLE", "NON_VISIBLE", "BOTH"];
 
 export const CourseSearch = (props) => {
   const {onFilter, isInstructor} = props
-  const [name, setName] = useState("")
+  const [keyword, setKeyword] = useState("")
   const [level, setLevel] = useState("NONE")
-  const [visibility, setVisibility] = useState(true)
+  const [visibility, setVisibility] = useState("BOTH")
 
 
   const handleSearchButton = useCallback(() => {
-    onFilter({name, level, visibility})
-  }, [name, level, visibility])
+    onFilter({keyword, level, visibility})
+  }, [keyword, level, visibility])
 
   return (
     <Card>
@@ -36,17 +36,17 @@ export const CourseSearch = (props) => {
           <TextField
             defaultValue=""
             fullWidth
-            label="Tên khóa học"
-            onChange={(event) => setName(event.target.value)}
-            name="query"
+            label="Từ khóa"
+            onChange={(event) => setKeyword(event.target.value)}
+            keyword="query"
           />
         </Box>
-        <Box sx={{ flexGrow: 1 }}>
+        {/* <Box sx={{ flexGrow: 1 }}>
           <TextField
             defaultValue="NONE"
             fullWidth
             label="Phân loại"
-            name="subject"
+            keyword="subject"
             select
             SelectProps={{ native: true }}
             onChange={(event) => setLevel(event.target.value)}
@@ -60,7 +60,7 @@ export const CourseSearch = (props) => {
               </option>
             ))}
           </TextField>
-        </Box>
+        </Box>*/}
         {
           isInstructor && 
           <Box sx={{ flexGrow: 1 }}>
@@ -68,10 +68,10 @@ export const CourseSearch = (props) => {
               defaultValue="NONE"
               fullWidth
               label="Phân loại"
-              name="subject"
+              keyword="subject"
               select
               SelectProps={{ native: true }}
-              onChange={(event) => setVisibility(event.target.value === "VISIBLE")}
+              onChange={(event) => setVisibility(event.target.value)}
             >
               {visibilityOptions.map((option) => (
                 <option
@@ -83,7 +83,7 @@ export const CourseSearch = (props) => {
               ))}
             </TextField>
           </Box>
-        }
+        } 
         <Button
           size="large"
           startIcon={(

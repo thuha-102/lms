@@ -13,8 +13,8 @@ export class IntroQuestionService {
         id: true,
         question: true,
         answers: true,
-        scores: true
-      }
+        scores: true,
+      },
     });
   }
 
@@ -22,20 +22,20 @@ export class IntroQuestionService {
     return await this.prismaService.introQuestion.findMany({
       where: criteria,
       orderBy: {
-        order: 'asc'
+        order: 'asc',
       },
       select: {
         id: true,
         question: true,
         answers: true,
-        scores: true
-      }
+        scores: true,
+      },
     });
   }
 
   async getOne(id) {
     return await this.prismaService.introQuestion.findFirst({
-      where: { id: id}
+      where: { id: id },
     });
   }
 
@@ -47,21 +47,21 @@ export class IntroQuestionService {
         id: true,
         question: true,
         answers: true,
-        scores: true
-      }
+        scores: true,
+      },
     });
   }
 
   async deleteOne(id: number) {
     return await this.prismaService.introQuestion.delete({
-      where: { id: id }
+      where: { id: id },
     });
   }
 
   async updateMany(criteria, data: Prisma.IntroQuestionUncheckedUpdateInput) {
     return await this.prismaService.introQuestion.updateMany({
       where: criteria,
-      data: data
-    })
+      data: data,
+    });
   }
 }

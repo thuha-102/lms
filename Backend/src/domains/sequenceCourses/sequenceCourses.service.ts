@@ -17,8 +17,8 @@ export class SequenceCoursesService {
       where: criteria,
       include: {
         Course: {
-          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true }
-        }
+          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true },
+        },
       },
       orderBy: orderBy,
     });
@@ -27,6 +27,6 @@ export class SequenceCoursesService {
   async deleteMany(criteria) {
     return await this.prismaService.sequenceCourse.deleteMany({
       where: criteria,
-    })
-  };
+    });
+  }
 }

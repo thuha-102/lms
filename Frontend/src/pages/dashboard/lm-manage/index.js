@@ -52,46 +52,46 @@ const useLMs = (search) => {
       // const response = await lm_manageApi.getLMs(search);
       const response = await lm_manageApi.getLMs();
       let data = response.data;
-      if (typeof search.filters !== 'undefined') {
-        data = data.filter((lm) => {
-          if (typeof search.name !== 'undefined' && search.name !== '') {
-            const nameMatched = lm.name.toLowerCase().includes(search.name.toLowerCase());
+      // if (typeof search.filters !== 'undefined') {
+      //   data = data.filter((lm) => {
+      //     if (typeof search.name !== 'undefined' && search.name !== '') {
+      //       const nameMatched = lm.name.toLowerCase().includes(search.name.toLowerCase());
   
-            if (!nameMatched) {
-              return false;
-            }
-          }
+      //       if (!nameMatched) {
+      //         return false;
+      //       }
+      //     }
   
-          // It is possible to select multiple type options
-          if (typeof search.filters.type !== 'undefined' && search.filters.type.length > 0) {
-            const categoryMatched = search.filters.type.includes(lm.type);
+      //     // It is possible to select multiple type options
+      //     if (typeof search.filters.type !== 'undefined' && search.filters.type.length > 0) {
+      //       const categoryMatched = search.filters.type.includes(lm.type);
   
-            if (!categoryMatched) {
-              return false;
-            }
-          }
+      //       if (!categoryMatched) {
+      //         return false;
+      //       }
+      //     }
   
-          // It is possible to select multiple topicId options
-          if (typeof search.filters.topicId !== 'undefined' && search.filters.topicId.length > 0) {
-            const statusMatched = search.filters.topicId.includes(lm.topicId);
+      //     // It is possible to select multiple topicId options
+      //     if (typeof search.filters.topicId !== 'undefined' && search.filters.topicId.length > 0) {
+      //       const statusMatched = search.filters.topicId.includes(lm.topicId);
   
-            if (!statusMatched) {
-              return false;
-            }
-          }
+      //       if (!statusMatched) {
+      //         return false;
+      //       }
+      //     }
   
-          // Present only if filter required
-          if (typeof search.filters.inStock !== 'undefined') {
-            const stockMatched = lm.inStock === search.filters.inStock;
+      //     // Present only if filter required
+      //     if (typeof search.filters.inStock !== 'undefined') {
+      //       const stockMatched = lm.inStock === search.filters.inStock;
   
-            if (!stockMatched) {
-              return false;
-            }
-          }
+      //       if (!stockMatched) {
+      //         return false;
+      //       }
+      //     }
   
-          return true;
-        });
-      }
+      //     return true;
+      //   });
+      // }
   
       // if (typeof search.page !== 'undefined' && typeof search.rowsPerPage !== 'undefined') {
       //   data = applyPagination(data, search.page, search.rowsPerPage);

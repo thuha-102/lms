@@ -2,7 +2,7 @@
 // import { forumDetail, forums } from './data';
 import axios from 'axios';
 
-const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/learning-materials`;
+const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/files`;
 
 class lm_manage_Api {
   createLM(request) {

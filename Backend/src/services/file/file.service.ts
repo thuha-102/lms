@@ -1,13 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { FileDTO, QuizDTO, VideoDTO } from './dto/file.dto';
-import * as parseRange from 'range-parser';
 import { stat } from 'fs/promises';
 import { createReadStream } from 'fs';
-import { join } from 'path';
-import { LearningMaterialType } from '@prisma/client';
+import { LearningMaterialType, Prisma } from '@prisma/client';
 import readXlsxFile from 'read-excel-file/node';
-import { error } from 'console';
+import { contains } from 'class-validator';
 
 @Injectable()
 export class FileService {
@@ -58,7 +56,7 @@ export class FileService {
     const file = await this.prismaService.learningMaterial.findFirst({ where: { id } });
     if (!file) throw new NotFoundException('File not found');
 
-    if (file.type === 'PDF') return FileDTO.fromEntity(file as any);
+    if (file.type !== 'QUIZ') return FileDTO.fromEntity(file as any);
     else {
       const quiz = await this.prismaService.quiz.findMany({
         where: { id: file.id },
@@ -89,5 +87,18 @@ export class FileService {
     const streamableFile = createReadStream(`uploads/materialFiles/${file.filepath}`, { start, end });
 
     return VideoDTO.fromEntity(file.mimetype, start, end, fileSize, streamableFile);
+  }
+
+  async getAll(name?: string, type?: string) {
+    const query: Prisma.LearningMaterialWhereInput[] = [
+      name ? {filepath: {contains: name, mode: Prisma.QueryMode.insensitive}} : undefined,
+      type ? {type :  type as LearningMaterialType} : undefined
+    ].filter(Boolean);
+
+    const lms = (await this.prismaService.learningMaterial.findMany({ where: query ? {OR: query} : undefined, select: { id: true, type: true, filepath: true } })).map(
+      (lm) => ({ id: lm.id, type: lm.type, name: (lm.filepath = lm.filepath.split('--')[1]) }),
+    );
+
+    return lms;
   }
 }

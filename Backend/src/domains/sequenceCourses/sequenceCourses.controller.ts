@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Get,
-  Param,
-  ParseIntPipe,
-  NotFoundException,
-  Put,
-  Query,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, ParseIntPipe, NotFoundException, Put, Query, Delete } from '@nestjs/common';
 import { SequenceCoursesService } from './sequenceCourses.service';
 import { TypeLearnerService } from '../typeLearner/typeLearner.service';
 import * as SequenceCoursesDto from './dto/sequenceCourses.dto';
@@ -21,28 +10,33 @@ import { DatetimeService } from 'src/services/datetime/datetime.service';
 //@UseGuards(AuthGuard)
 @Controller('sequenceCourses')
 export class SequenceCoursesController {
-  constructor(private readonly sequenceCoursesService: SequenceCoursesService, private readonly typeLearnerService: TypeLearnerService) {}
+  constructor(
+    private readonly sequenceCoursesService: SequenceCoursesService,
+    private readonly typeLearnerService: TypeLearnerService,
+  ) {}
 
   @Post()
   async create(@Body() body: SequenceCoursesDto.SequenceCoursesCreateRequestDto) {
     try {
-      const typeLearner = await this.typeLearnerService.getOne({name: body.typeLearnerName});
+      const typeLearner = await this.typeLearnerService.getOne({ name: body.typeLearnerName });
       if (typeLearner) {
-        throw new error("typeLearner name already existed");     
+        throw new error('typeLearner name already existed');
       }
-      
+
       const newTypeLearner = await this.typeLearnerService.create({
         name: body.typeLearnerName,
         startScore: body.typeLearnerStartScore,
       });
 
-      await this.sequenceCoursesService.createMany(body.courseIds.map((courseId, i) => ({
-        typeLearnerId: newTypeLearner.id,
-        courseId: courseId,
-        order: i
-      })));
+      await this.sequenceCoursesService.createMany(
+        body.courseIds.map((courseId, i) => ({
+          typeLearnerId: newTypeLearner.id,
+          courseId: courseId,
+          order: i,
+        })),
+      );
 
-      const sequenceCourses = await this.sequenceCoursesService.getMany({typeLearnerId: newTypeLearner.id}, {order: 'asc'})
+      const sequenceCourses = await this.sequenceCoursesService.getMany({ typeLearnerId: newTypeLearner.id }, { order: 'asc' });
 
       return JSON.stringify({
         courses: sequenceCourses.map((course) => course.Course),
@@ -50,7 +44,7 @@ export class SequenceCoursesController {
         typeLearnerStartScore: newTypeLearner.startScore,
         typeLearnerName: newTypeLearner.name,
         createdAt: DatetimeService.formatVNTime(newTypeLearner.createdAt),
-        updatedAt: DatetimeService.formatVNTime(newTypeLearner.updatedAt)
+        updatedAt: DatetimeService.formatVNTime(newTypeLearner.updatedAt),
       });
     } catch (error) {
       console.log(error);
@@ -62,15 +56,15 @@ export class SequenceCoursesController {
   async getMany(@Query() queryParams) {
     try {
       const { typeLearnerId } = queryParams;
-      const sequenceCourses = await this.sequenceCoursesService.getMany({typeLearnerId: typeLearnerId}, {order: 'asc'})
-      const typeLearner = await this.typeLearnerService.getOne({id: typeLearnerId});
+      const sequenceCourses = await this.sequenceCoursesService.getMany({ typeLearnerId: typeLearnerId }, { order: 'asc' });
+      const typeLearner = await this.typeLearnerService.getOne({ id: typeLearnerId });
       return JSON.stringify({
         courses: sequenceCourses.map((course) => course.Course),
         typeLearnerId: typeLearner.id,
         typeLearnerStartScore: typeLearner.startScore,
         typeLearnerName: typeLearner.name,
         createdAt: DatetimeService.formatVNTime(typeLearner.createdAt),
-        updatedAt: DatetimeService.formatVNTime(typeLearner.updatedAt)
+        updatedAt: DatetimeService.formatVNTime(typeLearner.updatedAt),
       });
     } catch (error) {
       console.log(error);
@@ -79,34 +73,39 @@ export class SequenceCoursesController {
   }
 
   @Put(':typeLearnerId')
-  async update(@Param('typeLearnerId', ParseIntPipe) typeLearnerId: number, @Body() body: SequenceCoursesDto.SequenceCoursesUpdateRequestDto) {
+  async update(
+    @Param('typeLearnerId', ParseIntPipe) typeLearnerId: number,
+    @Body() body: SequenceCoursesDto.SequenceCoursesUpdateRequestDto,
+  ) {
     try {
-      await this.sequenceCoursesService.deleteMany({typeLearnerId: typeLearnerId})
-      
+      await this.sequenceCoursesService.deleteMany({ typeLearnerId: typeLearnerId });
+
       if (body.typeLearnerName || body.typeLearnerStartScore) {
         await this.typeLearnerService.updateOne(typeLearnerId, {
           name: body.typeLearnerName,
-          startScore: body.typeLearnerStartScore
-        })
+          startScore: body.typeLearnerStartScore,
+        });
       }
 
       if (body.courseIds) {
-        await this.sequenceCoursesService.createMany(body.courseIds.map((courseId, i) => ({
-          typeLearnerId: typeLearnerId,
-          courseId: courseId,
-          order: i
-        })));
+        await this.sequenceCoursesService.createMany(
+          body.courseIds.map((courseId, i) => ({
+            typeLearnerId: typeLearnerId,
+            courseId: courseId,
+            order: i,
+          })),
+        );
       }
-      
-      const sequenceCourses = await this.sequenceCoursesService.getMany({typeLearnerId: typeLearnerId}, {order: 'asc'})
-      const typeLearner = await this.typeLearnerService.getOne({id: typeLearnerId});
+
+      const sequenceCourses = await this.sequenceCoursesService.getMany({ typeLearnerId: typeLearnerId }, { order: 'asc' });
+      const typeLearner = await this.typeLearnerService.getOne({ id: typeLearnerId });
       return JSON.stringify({
         courses: sequenceCourses.map((course) => course.Course),
         typeLearnerId: typeLearner.id,
         typeLearnerStartScore: typeLearner.startScore,
         typeLearnerName: typeLearner.name,
         createdAt: DatetimeService.formatVNTime(typeLearner.createdAt),
-        updatedAt: DatetimeService.formatVNTime(typeLearner.updatedAt)
+        updatedAt: DatetimeService.formatVNTime(typeLearner.updatedAt),
       });
     } catch (error) {
       console.log(error);
@@ -117,7 +116,7 @@ export class SequenceCoursesController {
   @Delete(':typeLearnerId')
   async deleteOne(@Param('typeLearnerId', ParseIntPipe) typeLearnerId: number) {
     try {
-      await this.sequenceCoursesService.deleteMany({typeLearnerId: typeLearnerId});
+      await this.sequenceCoursesService.deleteMany({ typeLearnerId: typeLearnerId });
       await this.typeLearnerService.delete(typeLearnerId);
       return JSON.stringify({});
     } catch (error) {

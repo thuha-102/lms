@@ -6,7 +6,7 @@ import { AuthREQ } from './request/auth-login.request';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Get('login')
+  @Post('login')
   async login(@Body() body: AuthREQ) {
     return this.authService.login(body);
   }

@@ -14,13 +14,13 @@ export class TypeLearnerService {
 
   async getOne(criteria) {
     return await this.prismaService.typeLearner.findFirst({
-      where: criteria
-    })
+      where: criteria,
+    });
   }
 
   async updateOne(id: number, data: Prisma.TypeLearnerUncheckedUpdateInput) {
     return await this.prismaService.typeLearner.update({
-      where: {id: id},
+      where: { id: id },
       data: data,
     });
   }
@@ -28,6 +28,6 @@ export class TypeLearnerService {
   async delete(id: number) {
     return await this.prismaService.typeLearner.delete({
       where: { id: id },
-    })
-  };
+    });
+  }
 }

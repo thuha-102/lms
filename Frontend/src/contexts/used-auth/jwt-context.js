@@ -115,8 +115,7 @@ export const AuthProvider = (props) => {
     []);
 
   const signIn = useCallback(async (username, password) => {
-    // const { id, accessToken } = (await authApi.signIn({ username, password })).data;
-    const { id, accessToken } = {id: 0, accessToken: "1"}
+    const { accessToken, id, accountType } = (await authApi.signIn({ username, password })).data;
     // const user = await authApi.me(id);
 
     localStorage.setItem(STORAGE_KEY, accessToken);
@@ -125,16 +124,19 @@ export const AuthProvider = (props) => {
     dispatch({
       type: ActionType.SIGN_IN,
       payload: {
-        // user: user.data
-        user: { id: id, accountType: "ADMIN" }
+        user: {
+          id,
+          accountType,
+          accessToken
+        }
       }
     });
   }, [dispatch]);
 
   const signUp = useCallback(async (request) => {
     await authApi.signUp(request);
-    const { accessToken, id } = (await authApi.signIn({ "username": request.username, "password": request.password })).data;
-    const user = await authApi.me(id)
+    const { accessToken, id, accountType } = (await authApi.signIn(request)).data;
+    // const user = await authApi.me(id)
 
     localStorage.setItem(STORAGE_KEY, accessToken);
     localStorage.setItem(ID, id);
@@ -142,7 +144,11 @@ export const AuthProvider = (props) => {
     dispatch({
       type: ActionType.SIGN_UP,
       payload: {
-        user: user.data
+        user: {
+          id,
+          accountType,
+          accessToken
+        }
       }
     });
   }, [dispatch]);
