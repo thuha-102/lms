@@ -15,7 +15,9 @@ import {
   SvgIcon,
   Typography,
   Input,
-  TextField
+  TextField,
+  Select,
+  MenuItem
 } from '@mui/material';
 import { introQuestionApi } from '../../../api/introQuestion';
 import { BreadcrumbsSeparator } from '../../../components/breadcrumbs-separator';
@@ -56,7 +58,7 @@ const Page = () => {
   const HandleEditQues = useCallback(async (i) => {
     try {
       const {id, ...rest} = editQuestions[i];
-      const response = id ? await introQuestionApi.putIntroQuestion(id, rest) : await introQuestionApi.postIntroQuestion(rest);
+      const response = id ? await introQuestionApi.putIntroQuestion(id, rest) : await introQuestionApi.postIntroQuestion({order: i + 1, ...rest});
       const newQuestions = questions;
       newQuestions[i] = response.data;
       const { [i]: _, ...newEditQuestions } = editQuestions; 
@@ -71,7 +73,7 @@ const Page = () => {
     const newQues = {
       "question": "",
       "answers": [],
-      "scores": []
+      "scores": [],
     }
     const newEditQuestions = {};
     Object.keys(editQuestions).forEach(key => {
@@ -94,8 +96,17 @@ const Page = () => {
       setEditQuestions(newEditQuestions);
       setQuestions([...questions.slice(0, i), ...questions.slice(i + 1)]);
     }
-    
   }, [editQuestions, questions]);
+
+  const HandleChangeOrderQues = useCallback(async (i, newOrder) => {
+    if (i + 1 == newOrder) {
+      return;
+    }
+    const response = await introQuestionApi.putIntroQuestion(questions[i].id, { order: newOrder });
+    const newQuestions = [...questions.slice(0, i), ...questions.slice(i + 1)];
+    newQuestions.splice(newOrder - 1, 0, response.data);
+    setQuestions(newQuestions);
+  }, [questions]);
   
   usePageView();
 
@@ -161,8 +172,19 @@ const Page = () => {
                 onFocus={() => setEditQuestions({})}
               />
             </Card>
-            {questions.length > 0
-            ? <Stack spacing={2}>
+            <Stack
+              alignItems="center"
+              direction="row"
+              justifyContent="space-around"
+            >
+              <Button
+                sx={{ maxWidth: 40, minWidth: 40, minHeight: 40, maxHeight: 40, borderRadius: "100%", fontSize: 25}}
+                onClick={() => HandleAddQues(-1)}
+              >
+                +
+              </Button>
+            </Stack>
+            <Stack spacing={2}>
               {questions.map((q,i) => 
                 <div key={i}>
                   <Card 
@@ -259,6 +281,15 @@ const Page = () => {
                     <Stack flexDirection="row" width="100%" alignItems="center" justifyContent="space-between">
                       <Typography color="text.primary" variant="h6" mb={2} sx={{ width: "90%"}}>Câu {i + 1}: {q.question}</Typography>
                       <Stack flexDirection="row" alignItems="center">
+                        <Select
+                          value={i + 1}
+                          onChange={(e) => HandleChangeOrderQues(i, Number(e.target.value))}
+                          autoWidth
+                          label="Thứ tự"
+                          sx={{ marginRight: 2 }}
+                        >
+                          {questions.map((_, ind) => <MenuItem key={ind} value={ind + 1}>{ind+1}</MenuItem>)}
+                        </Select>
                         <Button style={{ borderRadius: '100%', maxWidth: 40, minWidth: 40, minHeight: 40, maxHeight: 40, marginRight: 10 }} variant='outlined' onClick={() => {setEditQuestions({...editQuestions, [i]: q})}}>
                           <CreateOutlinedIcon fontSize='small'/>
                         </Button>
@@ -278,6 +309,7 @@ const Page = () => {
                   </Stack>}
                   </Card>
                   <Stack
+                    mt={2}
                     alignItems="center"
                     direction="row"
                     justifyContent="space-around"
@@ -292,14 +324,6 @@ const Page = () => {
                 </div>
               )}  
             </Stack>
-            : <Stack>
-              <Typography color="text.primary" variant="h6">Chưa có câu hỏi</Typography>
-              <Stack flexDirection="row" pt={3}>
-                <Button variant="contained" onClick={() => HandleAddQues(-1)}>
-                  + Thêm câu hỏi
-                </Button>
-              </Stack>
-            </Stack>}
           </Stack>
         </Container>
       </Box>

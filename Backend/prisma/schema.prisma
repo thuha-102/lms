@@ -172,6 +172,7 @@ model IntroQuestion {
   question String
   answers  String[]
   scores   Int[]
+  order    Int
 
   @@map("intro_question")
 }
