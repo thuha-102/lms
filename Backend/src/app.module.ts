@@ -9,6 +9,7 @@ import { LessonModule } from './domains/lessons/lessons.module';
 import { FileModule } from './services/file/file.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { IntroQuestionModule } from './domains/introQuestion/introQuestion.module';
+import { SequenceCoursesModule } from './domains/sequenceCourses/sequenceCourses.module';
 import { join } from 'path';
 import { TopicModule } from './domains/topics/topics.module';
 import { APP_FILTER } from '@nestjs/core';
@@ -26,6 +27,7 @@ import { SequenceCourseModule } from './domains/sequenceCourse/sequenceCourse.mo
     LessonModule,
     FileModule,
     IntroQuestionModule,
+    SequenceCoursesModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',

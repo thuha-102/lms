@@ -188,6 +188,15 @@ export const getSections = (t, accountType) => [
         )
       },
       {
+        title: t(tokens.nav.learning_path_manage),
+        path: paths.dashboard.learning_path_manage,
+        icon: (
+          <SvgIcon fontSize="small">
+            <AccountTreeOutlinedIcon />
+          </SvgIcon>
+        )
+      },
+      {
         title: t(tokens.nav.introQuestionManage),
         path: paths.dashboard.introQuestionManage,
         icon: (

@@ -69,6 +69,8 @@ export const vn = {
   [tokens.nav.notebookList]: 'Danh sách',
   [tokens.nav.lm_manage]: 'Quản lý tài liệu',
   [tokens.nav.topic_manage]: 'Quản lý chủ đề',
+  [tokens.nav.learning_path_manage]: 'Quản lý lộ trình học',
   [tokens.nav.account_manage]: 'Quản lý tài khoản',
-  [tokens.nav.introQuestionManage]: 'Quản lý câu hỏi phân loại'
+  [tokens.nav.account_manage]: 'Quản lý tài khoản',
+  [tokens.nav.introQuestionManage]: 'Quản lý câu hỏi phân loại',
 };

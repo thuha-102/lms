@@ -5403,10 +5403,10 @@
   dependencies:
     glob "7.1.7"
 
-"@next/swc-win32-x64-msvc@13.0.7":
+"@next/swc-darwin-arm64@13.0.7":
   version "13.0.7"
-  resolved "https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-13.0.7.tgz"
-  integrity sha512-kvdnlLcrnEq72ZP0lqe2Z5NqvB9N5uSCvtXJ0PhKvNncWWd0fEG9Ec9erXgwCmVlM2ytw41k9/uuQ+SVw4Pihw==
+  resolved "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-13.0.7.tgz"
+  integrity sha512-F/mU7csN1/J2cqXJPMgTQ6MwAbc1pJ6sp6W+X0z5JEY4IFDzxKd3wRc3pCiNF7j8xW381JlNpWxhjCctnNmfaw==
 
 "@noble/hashes@^1.1.5":
   version "1.4.0"
@@ -7823,10 +7823,10 @@ can-use-dom@^0.1.0:
   resolved "https://registry.npmjs.org/can-use-dom/-/can-use-dom-0.1.0.tgz"
   integrity sha512-ceOhN1DL7Y4O6M0j9ICgmTYziV89WMd96SvSl0REd8PMgrY0B/WBOPoed5S1KUmJqXgUXh8gzSe6E3ae27upsQ==
 
-caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001646:
-  version "1.0.30001660"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001660.tgz"
-  integrity sha512-GacvNTTuATm26qC74pt+ad1fW15mlQ/zuTzzY1ZoIzECTP8HURDfF43kNxPgf7H1jmelCBQTTbBNxdSXOA7Bqg==
+caniuse-lite@^1.0.30001406, caniuse-lite@^1.0.30001587:
+  version "1.0.30001591"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001591.tgz"
+  integrity sha512-PCzRMei/vXjJyL5mJtzNiUCKP59dm8Apqc3PH8gJkMnMXZGox93RbE76jHsmLwmIo6/3nsYIpJtx0O7u5PqFuQ==
 
 castable-video@~1.0.6:
   version "1.0.7"
@@ -9582,6 +9582,11 @@ fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
+
+fsevents@^2.3.2, fsevents@~2.3.2:
+  version "2.3.3"
+  resolved "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz"
+  integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
 function-bind@^1.1.1, function-bind@^1.1.2:
   version "1.1.2"
