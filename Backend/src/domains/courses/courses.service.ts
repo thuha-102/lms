@@ -21,18 +21,18 @@ export class CourseService {
     return this.prismaService.$transaction(async (tx) => {
       const course = await tx.course.create({ data: CourseCreateREQ.toCreateInput(body), select: { id: true } });
 
-      let numberLessons = 0;
+      let numberLessons = 0, numberTopics = body.topicNames.length;
 
       for (let i = 0; i < body.topicNames.length; i++) {
-        const { id } = await this.topicService.create({ courseId: course.id, name: body.topicNames[i] }, tx);
+        const { id } = await this.topicService.create({ courseId: course.id, name: body.topicNames[i] }, tx, i);
         for (let j = 0; j < body.lessons[i].length; j++) {
           const lesson = body.lessons[i][j];
-          await this.lessonService.create({ title: lesson.title, fileId: lesson.fileId, topicId: id }, tx);
+          await this.lessonService.create({ title: lesson.title, fileId: lesson.fileId, topicId: id }, tx, j);
         }
         numberLessons += body.lessons[i].length;
       }
 
-      await tx.course.update({ where: { id: course.id }, data: { totalLessons: numberLessons } });
+      await tx.course.update({ where: { id: course.id }, data: { totalLessons: numberLessons, totalTopics: numberTopics } });
       return { id: course.id };
     });
   }
@@ -95,7 +95,24 @@ export class CourseService {
   async update(id: number, body: CourseUpdateREQ) {
     const course = await this.prismaService.course.findFirst({ where: { id } });
     if (!course) throw new NotFoundException('Course not found');
+    
+    //update order of topicIds
+    if(body.orderTopicIds){
+      body.orderTopicIds.map(async (id, index) => {
+        await this.prismaService.topic.update({where: {id}, data: {order: index}})
+      })
+    }
+    if(body.orderLessonIds){
+      for (let i = 0; i < body.orderLessonIds.length; i++){
+        const lessonIds = body.orderLessonIds[i]
+        lessonIds.map(async (id, index) => await this.prismaService.lesson.update({where: {id}, data: {order: index}}))
+      }
+    }
 
     await this.prismaService.course.update({ where: { id }, data: CourseUpdateREQ.toUpdateInput(body) });
+  }
+
+  async delete(id: number) {
+    await this.prismaService.course.delete({where: {id}})
   }
 }

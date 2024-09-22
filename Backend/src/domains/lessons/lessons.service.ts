@@ -9,15 +9,10 @@ import { Prisma } from '@prisma/client';
 export class LessonService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(body: LessonCreateREQ, tx?) {
+  async create(body: LessonCreateREQ, tx?, order?) {
     try {
       let lesson;
-      const existLesson = await this.prismaService.lesson.findMany({
-        orderBy: { order: 'desc' },
-        where: { topicId: body.topicId },
-        select: { order: true },
-      });
-      const nextOrder = existLesson.length != 0 ? existLesson[0].order + 1 : 0;
+      const nextOrder = order ? order : 0;
 
       if (tx) lesson = await tx.lesson.create({ data: LessonCreateREQ.toCreateInput(body, nextOrder), select: { id: true } });
       else

@@ -3,7 +3,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './services/prisma/prisma.module';
 import { UserModule } from './domains/user/user.module';
-import { LearningModule } from './domains/learning/learning.module';
 import { AuthModule } from './domains/auth/auth.module';
 import { CourseModule } from './domains/courses/courses.module';
 import { LessonModule } from './domains/lessons/lessons.module';
@@ -14,13 +13,14 @@ import { join } from 'path';
 import { TopicModule } from './domains/topics/topics.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/http-exception.filter';
+import { SequenceCourseModule } from './domains/sequenceCourse/sequenceCourse.module';
 
 @Module({
   imports: [
     PrismaModule,
     AuthModule,
     UserModule,
-    // LearningModule,
+    SequenceCourseModule,
     CourseModule,
     TopicModule,
     LessonModule,

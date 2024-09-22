@@ -1,5 +1,4 @@
 import { Prisma } from '@prisma/client';
-import { QuizDTO } from 'src/domains/learning/learning-material/dto/learning-material.dto';
 import { TopicDTO } from 'src/domains/topics/dto/topics.dto';
 
 export class CourseDTO {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { CourseService } from './courses.service';
 import { CourseCreateREQ } from './request/courses-create.request';
 import { CourseUpdateREQ } from './request/courses-update.request';
@@ -26,6 +26,11 @@ export class CourseController {
   @Patch(':id')
   async update(@Param('id', ParseIntPipe) id: number, @Body() body: CourseUpdateREQ) {
     await this.courseService.update(id, body);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    await this.courseService.delete(id);
   }
 
   @Get('')

@@ -9,15 +9,10 @@ import { TopicListREQ } from './request/topics-list.request';
 export class TopicService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(body: TopicCreateREQ, tx?) {
-    let topic;
+  async create(body: TopicCreateREQ, tx?, order?) {
     try {
-      const existTopic = await this.prismaService.topic.findMany({
-        orderBy: { order: 'desc' },
-        where: { courseId: body.courseId },
-        select: { order: true },
-      });
-      const nextOrder = existTopic.length != 0 ? existTopic[0].order + 1 : 0;
+      let topic;
+      const nextOrder = order ? order : 0;
 
       if (tx)
         topic = await tx.topic.create({
