@@ -6,27 +6,27 @@ import { Prisma } from '@prisma/client';
 export class IntroQuestionService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(data: Prisma.IntroQuestionsUncheckedCreateInput) {
-    return await this.prismaService.introQuestions.create({
+  async create(data: Prisma.IntroQuestionUncheckedCreateInput) {
+    return await this.prismaService.introQuestion.create({
       data: data,
     });
   }
 
   async getMany(criteria) {
-    return await this.prismaService.introQuestions.findMany({
+    return await this.prismaService.introQuestion.findMany({
       where: criteria,
     });
   }
 
-  async updateOne(id: number, data: Prisma.IntroQuestionsUncheckedUpdateInput) {
-    return await this.prismaService.introQuestions.update({
+  async updateOne(id: number, data: Prisma.IntroQuestionUncheckedUpdateInput) {
+    return await this.prismaService.introQuestion.update({
       where: { id: id },
       data: data,
     });
   }
 
   async deleteOne(id: number) {
-    return await this.prismaService.introQuestions.delete({
+    return await this.prismaService.introQuestion.delete({
       where: { id: id },
     });
   }
