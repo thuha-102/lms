@@ -1,6 +1,9 @@
-import { IsNotEmpty, IsString, ArrayNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsString, ArrayNotEmpty, IsNumber } from 'class-validator';
 
 class IntroQuestionCreateRequestDto {
+  @IsNumber()
+  order: number;
+
   @IsNotEmpty()
   @IsString()
   question: string;
@@ -13,15 +16,18 @@ class IntroQuestionCreateRequestDto {
 }
 
 class IntroQuestionUpdateRequestDto {
+  @IsNumber()
+  order?: number;
+
   @IsNotEmpty()
   @IsString()
-  question: string;
+  question?: string;
 
   @ArrayNotEmpty()
-  answers: string[];
+  answers?: string[];
 
   @ArrayNotEmpty()
-  scores: number[];
+  scores?: number[];
 }
 
 export { IntroQuestionCreateRequestDto, IntroQuestionUpdateRequestDto };
