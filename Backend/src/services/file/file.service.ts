@@ -89,16 +89,23 @@ export class FileService {
     return VideoDTO.fromEntity(file.mimetype, start, end, fileSize, streamableFile);
   }
 
-  async getAll(name?: string, type?: string) {
+  async getAll(name?: string, type?: string[]) {
     const query: Prisma.LearningMaterialWhereInput[] = [
       name ? {filepath: {contains: name, mode: Prisma.QueryMode.insensitive}} : undefined,
-      type ? {type :  type as LearningMaterialType} : undefined
+      type ? {type :  {in: type as LearningMaterialType[]}} : undefined
     ].filter(Boolean);
 
-    const lms = (await this.prismaService.learningMaterial.findMany({ where: query ? {OR: query} : undefined, select: { id: true, type: true, filepath: true } })).map(
+    const lms = (await this.prismaService.learningMaterial.findMany({ where: query.length !== 0 ? {OR: query} : undefined, select: { id: true, type: true, filepath: true } })).map(
       (lm) => ({ id: lm.id, type: lm.type, name: (lm.filepath = lm.filepath.split('--')[1]) }),
     );
 
     return lms;
+  }
+
+  async getInformation(id: number){
+    const lm = await this.prismaService.learningMaterial.findFirst({where: {id}, select: {Lesson: {select: {title: true }}, type: true}})
+    return {
+      type: lm.type
+    }
   }
 }

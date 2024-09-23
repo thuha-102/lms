@@ -88,8 +88,8 @@ export class CourseService {
       orderBy: {
         id: 'asc',
       },
-      where: condition,
-      select: { id: true, name: true, createdAt: true, updatedAt: true },
+      where: query.keyword ? condition : undefined,
+      select: CourseListDTO.selectFields(),
     });
 
     return courses.map((c) => CourseListDTO.fromEntity(c as any));

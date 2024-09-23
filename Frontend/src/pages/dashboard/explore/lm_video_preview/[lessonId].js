@@ -36,7 +36,7 @@ const Page = () => {
         preload="none"
         onTimeUpdate={handleVideoSeek}
       >
-        <source src={`${process.env.NEXT_PUBLIC_SERVER_API}/learning-materials/531`} type="video/mp4" />
+        <source src={`${process.env.NEXT_PUBLIC_SERVER_API}/files/video/53`} type="video/mp4" />
         <track
           src="/path/to/captions.vtt"
           kind="subtitles"

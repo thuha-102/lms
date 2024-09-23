@@ -136,7 +136,7 @@ const LessonList = () => {
   const { LMs, LMsCount } = useLMs(search);
   const courseUrl = window.location.href.split('/');
   const courseId = (courseUrl[courseUrl.length - 1]);
-  const [lessonList, setLessonList] = useState([]);
+  const [topicList, setTopicList] = useState([]);
   const [courseTitle, setCourseTitle] = useState("");
   const [courseDescription, setCourseDescription] = useState("");
   const [instructor, setInstructor] = useState("");
@@ -149,11 +149,9 @@ const LessonList = () => {
   useEffect(() => {(async () => {
     try {
       const response = await exploreApi.detailCourse(courseId);
-      setLessonList(response.data.lessons)
+      setTopicList(response.data.topics)
       setCourseTitle(response.data.name)
       setCourseDescription(response.data.description)
-      setInstructor(response.data.instructor)
-      setRating(response.data.rating)
       setLevel(response.data.level)
       setUpdated(response.data.updatedAt.slice(8, 10) + '-' + response.data.updatedAt.slice(5, 7) + '-' + response.data.updatedAt.slice(0, 4))
       if (!registered) setRegistered(user.registerCourseIds?.includes(Number(courseId)));
@@ -238,7 +236,7 @@ const LessonList = () => {
                 direction="row"
                 spacing={3}
               > 
-                {user.accountType !== 'LEARNER' && user.id === instructor.id && 
+                {user.accountType !== 'LEARNER'  && 
                 <>
                 <Button
                   component={NextLink}
@@ -318,9 +316,9 @@ const LessonList = () => {
               /> */}
               <CollapsibleTable 
                 accountType = {user.accountType}
-                isInstructor = {user.id === instructor.id}
-                registered = {registered}
-                rows={lessonList}  
+                // isInstructor = {user.id === 1}
+                // registered = {registered}
+                rows={topicList}  
               />
             </Card>
           </Stack>

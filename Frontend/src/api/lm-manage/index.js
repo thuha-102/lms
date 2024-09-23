@@ -65,8 +65,11 @@ class lm_manage_Api {
     return data;
   }
 
-  getLMs() {
-    return axios.get(apiUrl);
+  getLMs(name, type) {
+    let url = name ? `${apiUrl}?name=${name}` : apiUrl;
+    let types = type.join(',');
+    url = types !== "" ? (name ? url + `&type=${types}` : url + "?type=${types}") : url;
+    return axios.get(url);
     //return Promise.resolve(deepCopy(forums));
   }
 

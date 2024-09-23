@@ -120,14 +120,14 @@ const StepIcon = (props) => {
   
     const steps = useMemo(() => {
       console.log(resultDT)
-      return resultDT[3]?.[1].map((question, index) => (index != resultDT[3][1]?.length - 1 ? {
+      return resultDT[1]?.[1].map((question, index) => (index != resultDT[1][1]?.length - 1 ? {
           label: `Câu hỏi ${index + 1}`,
           content: (
             <JobCategoryStep
               onBack={handleBack}
               onNext={handleNext}
               question={question}
-              choices={resultDT[4][1][index]}
+              choices={resultDT[2][1][index]}
               index={index}
               answers={answers}
               updateAnswer={updateAnswer}
@@ -140,7 +140,7 @@ const StepIcon = (props) => {
                   onBack={handleBack}
                   onNext={handleComplete}
                   question={question}
-                  choices={resultDT[4][1][index]}
+                  choices={resultDT[2][1][index]}
                   index={index}
                   answers={answers}
                   updateAnswer={updateAnswer}
