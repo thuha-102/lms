@@ -27,7 +27,7 @@ export class LessonDTO {
       id: e.id,
       title: e.title,
       fileId: e.LearningMaterial.id,
-      type: e.LearningMaterial.type
+      type: e.LearningMaterial.type,
       // filepath: e.LearningMaterial.filepath,
     };
   }

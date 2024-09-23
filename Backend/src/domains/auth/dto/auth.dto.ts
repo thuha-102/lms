@@ -11,7 +11,7 @@ export class AuthDTO {
       id: e.id,
       username: e.username,
       accountType: e.accountType,
-      registerCourseIds: registerCourseIds
+      registerCourseIds: registerCourseIds,
     };
   }
 }

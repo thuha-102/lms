@@ -25,7 +25,11 @@ export class CourseService {
         numberTopics = body.topicNames.length;
 
       for (let i = 0; i < body.topicNames.length; i++) {
-        const { id } = await this.topicService.create({ courseId: course.id, name: body.topicNames[i] }, tx, i);
+        const { id } = await this.topicService.create(
+          { courseId: course.id, name: body.topicNames[i], totalLessons: body.lessons[i].length } as any,
+          tx,
+          i,
+        );
         for (let j = 0; j < body.lessons[i].length; j++) {
           const lesson = body.lessons[i][j];
           await this.lessonService.create({ title: lesson.title, fileId: lesson.fileId, topicId: id }, tx, j);

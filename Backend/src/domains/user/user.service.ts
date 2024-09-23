@@ -11,10 +11,13 @@ import { UserInfoDTO } from './dto/user-infomation.dto';
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getAll(username?: string){    
-    const learners = await this.prismaService.learner.findMany({where: {User: {username: {contains: username ? username: ""}}}, select: {id: true, User: {select: {username: true, createdAt: true}}, TypeLearner: {select: {name: true}}}})
+  async getAll(username?: string) {
+    const learners = await this.prismaService.learner.findMany({
+      where: { User: { username: { contains: username ? username : '' } } },
+      select: { id: true, User: { select: { username: true, createdAt: true } }, TypeLearner: { select: { name: true } } },
+    });
 
-    return learners.map(learner => LearnerListREPS.fromEntity(learner as any))
+    return learners.map((learner) => LearnerListREPS.fromEntity(learner as any));
   }
 
   async detail(id: number) {
@@ -23,7 +26,9 @@ export class UserService {
       select: { id: true, username: true, accountType: true },
     });
     if (!user) throw new NotFoundException('User not found');
-    const registerCourseIds = (await this.prismaService.registerCourse.findMany({where: {learnerId: user.id}, select: {courseId: true}})).map(register => register.courseId);
+    const registerCourseIds = (
+      await this.prismaService.registerCourse.findMany({ where: { learnerId: user.id }, select: { courseId: true } })
+    ).map((register) => register.courseId);
 
     return UserInfoDTO.fromEntity(user as any, registerCourseIds);
   }
@@ -40,16 +45,14 @@ export class UserService {
 
   async registerCourse(learnerId: number, courseId: number) {
     return await this.prismaService.$transaction(async (tx) => {
-      try{
-
+      try {
         return await this.prismaService.registerCourse.create({
           data: UserRegisterCourseCreateREQ.toCreateInput(learnerId, courseId),
         });
+      } catch (e) {
+        return e;
       }
-      catch (e) {
-        return e
-      }
-    })
+    });
   }
 
   async studiedLesson(learnerId: number, lessonId: number) {
@@ -68,27 +71,29 @@ export class UserService {
         const historyStudied = await tx.historyStudiedCourse.findFirst({ where: { lessonId, learnerId } });
         if (!historyStudied) await tx.historyStudiedCourse.create({ data: { learnerId, lessonId } });
 
-        const updatePercent = historyStudied ? registerCourse.percentOfStudying : Math.min(1.0, registerCourse.percentOfStudying + 1.0 / course.totalLessons);
+        const updatePercent = historyStudied
+          ? registerCourse.percentOfStudying
+          : Math.min(1.0, registerCourse.percentOfStudying + 1.0 / course.totalLessons);
         await tx.registerCourse.update({
           where: { id: registerCourse.id },
           data: { percentOfStudying: updatePercent },
         });
-        
+
         const learner = await tx.learner.findFirst({
           where: { id: learnerId },
-          select: {typeLearnerId: true}
+          select: { typeLearnerId: true },
         });
-        
+
         // register next course in sequence course if pass previous course
         const sequenceCourse = await tx.sequenceCourse.findMany({
           orderBy: { order: 'asc' },
-          where: { typeLearnerId: learner.typeLearnerId ? learner.typeLearnerId : -1},
+          where: { typeLearnerId: learner.typeLearnerId ? learner.typeLearnerId : -1 },
           select: { courseId: true, order: true },
         });
 
         if (sequenceCourse.length !== 0 && updatePercent - 1.0 >= 0) {
           let nextCourseId = -1;
-          for (let i = 1; i < sequenceCourse.length; i++){
+          for (let i = 1; i < sequenceCourse.length; i++) {
             if (sequenceCourse[i - 1].courseId === course.id) {
               nextCourseId = sequenceCourse[i].courseId;
               break;
@@ -102,9 +107,8 @@ export class UserService {
             });
           }
         }
-      }
-      catch (e) {
-        return e
+      } catch (e) {
+        return e;
       }
     });
   }
@@ -130,14 +134,16 @@ export class UserService {
   }
 
   async studiedCourse(learnerId: number, keyword?: string) {
-    const registeredIds = (await this.prismaService.registerCourse.findMany({where: {learnerId}, select: {courseId: true}})).map(register => register.courseId)
+    const registeredIds = (
+      await this.prismaService.registerCourse.findMany({ where: { learnerId }, select: { courseId: true } })
+    ).map((register) => register.courseId);
     let orQuery: Prisma.CourseWhereInput[] = [
       keyword ? { name: { contains: keyword, mode: Prisma.QueryMode.insensitive } } : undefined,
       keyword ? { labels: { has: keyword } } : undefined,
     ].filter(Boolean);
 
     return await this.prismaService.course.findMany({
-      where: orQuery.length ? { OR: orQuery, id: {in: registeredIds } } : {id: {in: registeredIds}},
+      where: orQuery.length ? { OR: orQuery, id: { in: registeredIds } } : { id: { in: registeredIds } },
       select: {
         id: true,
         name: true,

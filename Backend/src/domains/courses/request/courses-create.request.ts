@@ -34,7 +34,7 @@ export class CourseCreateREQ {
 
   @IsOptional()
   @IsEnum(LevelType)
-  level: LevelType
+  level: LevelType;
 
   static toCreateInput(body: CourseCreateREQ): Prisma.CourseCreateInput {
     return {

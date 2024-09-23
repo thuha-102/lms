@@ -1,11 +1,13 @@
 import { Prisma } from '@prisma/client';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { leanObject } from 'src/shared/prisma.helper';
 
 export class TopicUpdateREQ {
+  @IsOptional()
   @IsString()
   name: string;
 
+  @IsOptional()
   @IsNumber()
   order: number;
 

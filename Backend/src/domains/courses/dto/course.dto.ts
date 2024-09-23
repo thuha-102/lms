@@ -42,7 +42,7 @@ export class CourseDTO {
       name: entity.name,
       description: entity.description,
       price: entity.price,
-      avatarId:entity.avatarId,
+      avatarId: entity.avatarId,
       amountOfTime: entity.amountOfTime,
       topics: topic,
     };
@@ -74,7 +74,6 @@ export class CourseListDTO {
     };
   }
 
-
   static fromEntity(entity: Prisma.CourseGetPayload<unknown>): CourseListDTO {
     return {
       id: entity.id,
@@ -85,7 +84,7 @@ export class CourseListDTO {
       description: entity.description,
       avatarId: entity.avatarId,
       price: entity.price,
-      amountOfTime: entity.amountOfTime
+      amountOfTime: entity.amountOfTime,
     };
   }
 }

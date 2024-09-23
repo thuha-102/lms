@@ -26,7 +26,9 @@ export class AuthService {
     const isMatch = body.password == user.password;
 
     if (!isMatch) throw new UnauthorizedException('Username or password incorrect');
-    const registerCourseIds = (await this.prismaService.registerCourse.findMany({where: {learnerId: user.id}, select: {courseId: true}})).map(register => register.courseId)
+    const registerCourseIds = (
+      await this.prismaService.registerCourse.findMany({ where: { learnerId: user.id }, select: { courseId: true } })
+    ).map((register) => register.courseId);
 
     const jwtToken = await this.jwtService.signAsync({ user: AuthDTO.fromEntity(user as any, registerCourseIds) });
     return AuthLoginRESP.fromEntity(user as any, registerCourseIds, jwtToken);

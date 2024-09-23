@@ -6,7 +6,7 @@ export class UserInfoDTO {
   id: number;
   username: string;
   accountType: string;
-  registerCourseIds: number[]
+  registerCourseIds: number[];
 
   static selectUser(): Prisma.UserSelect {
     return {
