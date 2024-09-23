@@ -51,89 +51,89 @@ const useSearch = () => {
 };
 
 
-const useLMs = (search) => {
-  const isMounted = useMounted();
-  const [state, setState] = useState({
-    LMs: [],
-    LMsCount: 0
-  });
+// const useLMs = (search) => {
+//   const isMounted = useMounted();
+//   const [state, setState] = useState({
+//     LMs: [],
+//     LMsCount: 0
+//   });
 
-  const getLMs = useCallback(async () => {
-    try {
-      // const response = await lm_manageApi.getLMs(search);
-      const response = await lm_manageApi.getLMs();
-      let data = response.data;
-      if (typeof search.filters !== 'undefined') {
-        data = data.filter((lm) => {
-          if (typeof search.filters.name !== 'undefined' && search.filters.name !== '') {
-            const nameMatched = lm.name.toLowerCase().includes(filters.name.toLowerCase());
+//   const getLMs = useCallback(async () => {
+//     try {
+//       // const response = await lm_manageApi.getLMs(search);
+//       const response = await lm_manageApi.getLMs();
+//       let data = response.data;
+//       if (typeof search.filters !== 'undefined') {
+//         data = data.filter((lm) => {
+//           if (typeof search.filters.name !== 'undefined' && search.filters.name !== '') {
+//             const nameMatched = lm.name.toLowerCase().includes(filters.name.toLowerCase());
   
-            if (!nameMatched) {
-              return false;
-            }
-          }
+//             if (!nameMatched) {
+//               return false;
+//             }
+//           }
   
-          // It is possible to select multiple type options
-          if (typeof search.filters.type !== 'undefined' && search.filters.type.length > 0) {
-            const categoryMatched = search.filters.type.includes(lm.type);
+//           // It is possible to select multiple type options
+//           if (typeof search.filters.type !== 'undefined' && search.filters.type.length > 0) {
+//             const categoryMatched = search.filters.type.includes(lm.type);
   
-            if (!categoryMatched) {
-              return false;
-            }
-          }
+//             if (!categoryMatched) {
+//               return false;
+//             }
+//           }
   
-          // It is possible to select multiple topicId options
-          if (typeof search.filters.topicId !== 'undefined' && search.filters.topicId.length > 0) {
-            const statusMatched = search.filters.topicId.includes(lm.topicId);
+//           // It is possible to select multiple topicId options
+//           if (typeof search.filters.topicId !== 'undefined' && search.filters.topicId.length > 0) {
+//             const statusMatched = search.filters.topicId.includes(lm.topicId);
   
-            if (!statusMatched) {
-              return false;
-            }
-          }
+//             if (!statusMatched) {
+//               return false;
+//             }
+//           }
   
-          // Present only if filter required
-          if (typeof search.filters.inStock !== 'undefined') {
-            const stockMatched = lm.inStock === search.filters.inStock;
+//           // Present only if filter required
+//           if (typeof search.filters.inStock !== 'undefined') {
+//             const stockMatched = lm.inStock === search.filters.inStock;
   
-            if (!stockMatched) {
-              return false;
-            }
-          }
+//             if (!stockMatched) {
+//               return false;
+//             }
+//           }
   
-          return true;
-        });
-      }
+//           return true;
+//         });
+//       }
   
-      // if (typeof search.page !== 'undefined' && typeof search.rowsPerPage !== 'undefined') {
-      //   data = applyPagination(data, search.page, search.rowsPerPage);
-      // }
+//       // if (typeof search.page !== 'undefined' && typeof search.rowsPerPage !== 'undefined') {
+//       //   data = applyPagination(data, search.page, search.rowsPerPage);
+//       // }
 
-      if (isMounted()) {
-        setState({
-          LMs: data,
-          LMsCount: data.length
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [search, isMounted]);
+//       if (isMounted()) {
+//         setState({
+//           LMs: data,
+//           LMsCount: data.length
+//         });
+//       }
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   }, [search, isMounted]);
 
-  useEffect(() => {
-      getLMs();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [search]);
+//   useEffect(() => {
+//       getLMs();
+//     },
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//     [search]);
 
-  return state;
-};
+//   return state;
+// };
 
 
 
 const LessonList = () => {
   const { search, updateSearch } = useSearch();
   const { user } = useAuth();
-  const { LMs, LMsCount } = useLMs(search);
+  // const { LMs, LMsCount } = useLMs(search);
   const courseUrl = window.location.href.split('/');
   const courseId = (courseUrl[courseUrl.length - 1]);
   const [topicList, setTopicList] = useState([]);
@@ -158,7 +158,7 @@ const LessonList = () => {
     } catch (err) {
       console.error(err);
     }
-  })()}, [registered]);
+  })()}, []);
 
   usePageView();
 
@@ -236,7 +236,8 @@ const LessonList = () => {
                 direction="row"
                 spacing={3}
               > 
-                {user.accountType !== 'LEARNER'  && 
+                {console.log(user?.accountType)}
+                {user?.accountType !== 'LEARNER'  && 
                 <>
                 <Button
                   component={NextLink}
@@ -262,7 +263,7 @@ const LessonList = () => {
                 </>
                 }
                 {
-                  user.accountType === 'LEARNER' && !registered && <Button
+                  user?.accountType === 'LEARNER' && !registered && <Button
                     onClick={handleRegisterCourse}                    
                     startIcon={(
                       <SvgIcon>
@@ -275,7 +276,7 @@ const LessonList = () => {
                   </Button>
                 }
                 {
-                  user.accountType === 'LEARNER' && registered && 
+                  user?.accountType === 'LEARNER' && registered && 
                   <Alert variant="filled" severity="success" sx={{ color: 'white' }}>
                     Bạn đang học khóa học này
                   </Alert>
@@ -315,9 +316,9 @@ const LessonList = () => {
                 rowsPerPage={search.rowsPerPage}
               /> */}
               <CollapsibleTable 
-                accountType = {user.accountType}
+                accountType = {user?.accountType}
                 // isInstructor = {user.id === 1}
-                // registered = {registered}
+                registered = {registered}
                 rows={topicList}  
               />
             </Card>

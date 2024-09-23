@@ -42,9 +42,8 @@ const useCourses = (id, accountType, filter) => {
 
   const getListCourses = useCallback(async (filter) => {
     try {
-        console.log(filter)
-        const response = accountType === "LEARNER" ? await userApi.getUserCourses(id) : await userApi.getOwnCourses(id, filter?.keyword, filter?.visibility);
-        
+      const response = accountType === "LEARNER" ? await userApi.getUserCourses(id, filter?.keyword) : await userApi.getOwnCourses(id, filter?.keyword, filter?.visibility);
+
         let courses = response.data
         
         // if (filter) {
@@ -157,13 +156,13 @@ const Page = () => {
               { 
                 user.accountType === "LEARNER" && courses.length !== 0 && courses
                 .slice(page*consts.FORUMS_PER_PAGE, page*consts.FORUMS_PER_PAGE + consts.FORUMS_PER_PAGE)
-                .map((history) => (
+                .map((course) => (
                   <Grid
-                    key={history.course?.id}
+                    key={course?.id}
                     xs={12}
                     md={4}
                   >
-                    {history.course && <CourseCard course={history.course}/>}
+                    {course && <CourseCard course={course}/>}
                   </Grid>
               ))
               }
@@ -175,7 +174,7 @@ const Page = () => {
                     key={course?.id}
                     xs={12}
                     md={4}
-                  >
+                  > 
                     {course && <CourseCardDelete course={course}/>}
                   </Grid>
               ))

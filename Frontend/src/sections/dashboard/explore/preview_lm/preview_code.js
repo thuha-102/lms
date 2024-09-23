@@ -74,11 +74,11 @@ const PreviewCode = ({lmId, value, setValue, hover, setHover}) => {
   const createCodeLog = async (lmId, user) => {
     try {
       const response = await learning_logApi.createLog(user.id, {
-        rating: 3,
-        learnerAnswer: content[0].code,
-        time: 1200, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        attempts: 1,
-        learningMaterialId: lmId,
+        // rating: 3,
+        // learnerAnswer: content[0].code,
+        // time: 1200, //chỗ này cần phải lấy time của lm sau đó gắn vào
+        // attempts: 1,
+        lessonId: lmId,
       });
       console.log(response);
       setScore([response.data.score, response.data.maxScore])

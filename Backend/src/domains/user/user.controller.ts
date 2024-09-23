@@ -42,7 +42,7 @@ export class UserController {
   
   @Get(':id/courses/studied')
   async studiedCourse(@Param('id', ParseIntPipe) id: number, @Query() query?: { keyword: string }) {
-    return this.userService.studiedCourse(query.keyword);
+    return this.userService.studiedCourse(id, query.keyword);
   }
   
   @Get()

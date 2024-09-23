@@ -292,9 +292,10 @@ const useLMs = (search) => {
 
 
 
-const PreviewLM = () => {
+const PreviewLM = (props) => {
   const previewlmformUrl = window.location.href.split('/');
   const lmId = (previewlmformUrl[previewlmformUrl.length - 1]);
+  const {lessonId} = props
   const [currentTime, setCurrentTime] = useState(0); //current time for video
   const [valueRating, setValueRating] = useState(3);
   const [hoverRating, setHoverRating] = useState(3);
@@ -324,13 +325,13 @@ const PreviewLM = () => {
     }
   }, [lm])
 
-  const createFileLog = async (lmId, user) => {
+  const createFileLog = async (lessonId, user) => {
     try {
       const response = await learning_logApi.createLog(user.id, {
-        rating: valueRating,
-        time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        attempts: 1,
-        learningMaterialId: lmId,
+        // rating: valueRating,
+        // time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
+        // attempts: 1,
+        lessonId: lessonId,
       });
       console.log(response);
 
@@ -439,18 +440,19 @@ const PreviewLM = () => {
             </Stack> */}
             <Card style={{borderRadius: 0}}>
               {
-                lm.type === "VIDEO" ? <PreviewVideo lmId = {parseInt(lmId, 10)} 
+                lm.type === "VIDEO" ? <PreviewVideo lessonId={parseInt(lmId, 10)} lmId = {parseInt(lmId, 10)} 
                                                     // currentTime={currentTime} 
                                                     // setCurrentTime={setCurrentTime}
                                                     valueRating={valueRating} 
                                                     /> : <></>
               }{
-                lm.type === "PDF" || lm.type === "WORD" || lm.type === 'PPT'? <PreviewOfficeFile lmId = {parseInt(lmId, 10)} /> : <></>
+                lm.type === "PDF" || lm.type === "WORD" || lm.type === 'PPT'? <PreviewOfficeFile lessonId={parseInt(lmId, 10)} lmId = {parseInt(lmId, 10)} /> : <></>
               }
             </Card>
             {/* {console.log(lm)} */}
               {
                 lm.type === "QUIZ" ? <PreviewQuestion 
+                                        lessonId={parseInt(lmId, 10)}
                                         lmId = {parseInt(lmId, 10)} 
                                         user={user}/> : <></>
               }
