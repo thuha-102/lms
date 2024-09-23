@@ -10,6 +10,8 @@ import { paths } from '../../../paths';
 import { topic_manageApi } from '../../../api/topic-manage';
 import { LearningPathCreateForm } from '../../../sections/dashboard/learning-path-manage/learning-path-manage-create-form';
 import { TopicGraph } from '../../../sections/dashboard/topic-manage/topic-graph';
+import { CourseCreateForm } from '../../../sections/dashboard/explore/explore-create-form';
+
 
 const useSearch = () => {
   const [search, setSearch] = useState({
@@ -84,7 +86,7 @@ const LearningPathCreate = () => {
           <Stack spacing={3}>
             <Stack spacing={1}>
               <Typography variant="h4">
-                Tạo một lộ trình học mới
+                Tạo khoá học mới
               </Typography>
               <Breadcrumbs separator={<BreadcrumbsSeparator />}>
                 <Link
@@ -103,16 +105,24 @@ const LearningPathCreate = () => {
                 >
                   Quản lý lộ trình học
                 </Link>
+                <Link
+                  color="text.primary"
+                  component={NextLink}
+                  href={`${paths.dashboard.learning_path_manage}/create`}
+                  variant="subtitle2"   
+                >
+                  Tạo lộ trình học mới
+                </Link>
                 <Typography
                   color="text.secondary"
                   variant="subtitle2"
                 >
-                  Tạo mới
+                  Tạo khoá học mới
                 </Typography>
               </Breadcrumbs>
             </Stack>
             <TopicGraph topics={Topics}/>
-            <LearningPathCreateForm />
+            <CourseCreateForm />
           </Stack>
         </Container>
       </Box>

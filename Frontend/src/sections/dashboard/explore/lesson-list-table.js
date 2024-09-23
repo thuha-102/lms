@@ -369,9 +369,13 @@ export default function CollapsibleTable({accountType, rows, isInstructor, regis
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {rows && rows.length > 0 ? (rows.map((row) => (
             <Row key={row.id} row={row} accountType={accountType} isInstructor={isInstructor} registered={registered}/>
-          ))}
+          ))): (
+            <TableRow>
+              <TableCell colSpan={4}>No data available</TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </TableContainer>

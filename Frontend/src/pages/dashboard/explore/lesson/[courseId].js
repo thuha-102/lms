@@ -61,7 +61,7 @@ const LessonCreate = (props) => {
               </Breadcrumbs>
             </Stack>
             <CreateLessonDialog 
-              // courseid = {courseId}
+              courseid = {courseId}
               openCreateLessonDialog={openCreateLessonDialog}
               setOpenCreateLessonDialog={setOpenCreateLessonDialog}
             />

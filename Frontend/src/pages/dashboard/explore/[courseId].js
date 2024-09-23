@@ -238,7 +238,8 @@ const LessonList = () => {
                 direction="row"
                 spacing={3}
               > 
-                {user.accountType !== 'LEARNER' && user.id === instructor.id && 
+                {
+                // user.accountType !== 'LEARNER' && user.id === instructor.id && 
                 <>
                 <Button
                   component={NextLink}
@@ -264,7 +265,8 @@ const LessonList = () => {
                 </>
                 }
                 {
-                  user.accountType === 'LEARNER' && !registered && <Button
+                  // user.accountType === 'LEARNER' && !registered && 
+                  <Button
                     onClick={handleRegisterCourse}                    
                     startIcon={(
                       <SvgIcon>
@@ -277,7 +279,7 @@ const LessonList = () => {
                   </Button>
                 }
                 {
-                  user.accountType === 'LEARNER' && registered && 
+                  // user.accountType === 'LEARNER' && registered && 
                   <Alert variant="filled" severity="success" sx={{ color: 'white' }}>
                     Bạn đang học khóa học này
                   </Alert>
@@ -317,8 +319,10 @@ const LessonList = () => {
                 rowsPerPage={search.rowsPerPage}
               /> */}
               <CollapsibleTable 
-                accountType = {user.accountType}
-                isInstructor = {user.id === instructor.id}
+                // accountType = {user.accountType}
+                accountType = {"ADMIN"}
+                // isInstructor = {user.id === instructor.id}
+                isInstructor = {true}
                 registered = {registered}
                 rows={lessonList}  
               />

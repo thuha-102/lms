@@ -298,7 +298,7 @@ export const LearningPathCreateCourse = (props) => {
     }}
     // onClick={handleAddTopic}
     // onClick={() => setOpenCreateCourseDialog(true) }
-    onClick={() => router.push(`${paths.dashboard.explore}/create`)}
+    onClick={() => router.push(`${paths.dashboard.learning_path_manage}/create-course`)}
     >
     <QueueIcon/>
     <Typography variant="body1" sx={{px: 2, ml: 2}}>
