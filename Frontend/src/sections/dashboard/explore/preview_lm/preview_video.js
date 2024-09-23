@@ -167,9 +167,9 @@ const PreviewVideo = ({lmId, valueRating}) => {
   };
 
   const getCanSkip = useCallback(async () => {
-    const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_API}/learner-logs/${user.id}?lmId=${lmId}`)
-    const canSkip = response.data.length === 0 || response.data[0].score < response.data[0].maxScore && response.data[0].type !== 'VIDEO'? false : true
-    setCanSkip(canSkip);
+    // const response = await axios.get(`${process.env.NEXT_PUBLIC_SERVER_API}/learner-logs/${user.id}?lmId=${lmId}`)
+    // const canSkip = response.data.length === 0 || response.data[0].score < response.data[0].maxScore && response.data[0].type !== 'VIDEO'? false : true
+    // setCanSkip(canSkip);
   }, [])
 
   useEffect(() => {
@@ -180,24 +180,24 @@ const PreviewVideo = ({lmId, valueRating}) => {
     <div>
       <ReactPlayer
         ref={playerRef}
-        url={`${process.env.NEXT_PUBLIC_SERVER_API}/learning-materials/${lmId}`}
+        url={`${process.env.NEXT_PUBLIC_SERVER_API}/files/video/${lmId}`}
         // url="https://www.youtube.com/watch?v=GHTA143_b-s"
         playing={isPlaying}
-        controls={canSkip ? true : false}
+        controls={true}
         // onProgress={handleProgress}
         // onDuration={handleDuration}
         // onSeek={handleSeekChange}
         width="100%"
         height="600px"
       />
-      {!canSkip && <Button
+      {/* {!canSkip && <Button
         className={`control-button ${isPlaying ? "pause" : "play"}`}
         onClick={handlePlayPause}
         startIcon={isPlaying ? <PauseCircleIcon /> : <PlayCircleIcon />}
         style={{ left: '48%', zIndex: 1 }}
       >
         {isPlaying ? "Pause" : "Play"}
-      </Button>}
+      </Button>} */}
       {/* <input
         type="range"
         min={0}

@@ -185,10 +185,8 @@ import { Layout as DashboardLayout } from '../../../../layouts/dashboard';
 import { paths } from '../../../../paths';
 import { exploreApi } from '../../../../api/explore';
 
-import PreviewFile from '../../../../sections/dashboard/explore/preview_lm/preview_file'
 import PreviewVideo from '../../../../sections/dashboard/explore/preview_lm/preview_video'
 import PreviewOfficeFile from '../../../../sections/dashboard/explore/preview_lm/preview_office'
-import PreviewCode from '../../../../sections/dashboard/explore/preview_lm/preview_code'
 import { PreviewQuestion } from '../../../../sections/dashboard/explore/preview_lm/preview_question';
 import { LmRating } from '../../../../sections/dashboard/explore/preview_lm/lm_rating'
 import { learning_logApi } from '../../../../api/learning-log';
@@ -409,14 +407,14 @@ const PreviewLM = () => {
       >
         <Container maxWidth="xl">
           <Stack spacing={4}>
-            <Stack
+            {/* <Stack
               direction="row"
               justifyContent="space-between"
               spacing={4}
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  {/* {courseTitle} */}
+                  {courseTitle}
                   {lm.name}
                 </Typography>
                 <Breadcrumbs separator={<BreadcrumbsSeparator />}>
@@ -438,8 +436,8 @@ const PreviewLM = () => {
                   </Link>
                 </Breadcrumbs>
               </Stack>
-            </Stack>
-            <Card>
+            </Stack> */}
+            <Card style={{borderRadius: 0}}>
               {
                 lm.type === "VIDEO" ? <PreviewVideo lmId = {parseInt(lmId, 10)} 
                                                     // currentTime={currentTime} 
@@ -455,13 +453,6 @@ const PreviewLM = () => {
                 lm.type === "QUIZ" ? <PreviewQuestion 
                                         lmId = {parseInt(lmId, 10)} 
                                         user={user}/> : <></>
-              }
-              {
-                lm.type === "CODE" ? <PreviewCode lmId = {parseInt(lmId, 10)}
-                                                  value={valueRating} 
-                                                  setValue={setValueRating} 
-                                                  hover={hoverRating} 
-                                                  setHover={setHoverRating} /> : <></>
               }
             <Card>
               {lm.type === "VIDEO" || lm.type === "PDF" 

@@ -34,7 +34,7 @@ export class CourseController {
   }
 
   @Get('')
-  async getAll(@Body() query: CourseListREQ) {
+  async getAll(@Query() query: CourseListREQ) {
     return await this.courseService.getAll(query);
   }
 }

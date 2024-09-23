@@ -7,7 +7,10 @@ export class CourseDTO {
   updatedAt: Date;
   name: string;
   description: string;
-  topic: TopicDTO[];
+  price: string;
+  amountOfTime: number;
+  avatarId: number;
+  topics: TopicDTO[];
 
   static selectFields(): Prisma.CourseSelect {
     return {
@@ -17,6 +20,8 @@ export class CourseDTO {
       name: true,
       description: true,
       price: true,
+      avatarId: true,
+      amountOfTime: true,
       Topic: {
         select: {
           id: true,
@@ -33,7 +38,10 @@ export class CourseDTO {
       updatedAt: entity.updatedAt,
       name: entity.name,
       description: entity.description,
-      topic: topic,
+      price: entity.price,
+      avatarId:entity.avatarId,
+      amountOfTime: entity.amountOfTime,
+      topics: topic,
     };
   }
 }
@@ -44,6 +52,23 @@ export class CourseListDTO {
   createdAt: Date;
   updatedAt: Date;
   description: string;
+  avatarId: number;
+  price: string;
+  amountOfTime: number;
+
+  static selectFields(): Prisma.CourseSelect {
+    return {
+      id: true,
+      createdAt: true,
+      updatedAt: true,
+      name: true,
+      description: true,
+      price: true,
+      avatarId: true,
+      amountOfTime: true,
+    };
+  }
+
 
   static fromEntity(entity: Prisma.CourseGetPayload<unknown>): CourseListDTO {
     return {
@@ -52,6 +77,9 @@ export class CourseListDTO {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       description: entity.description,
+      avatarId: entity.avatarId,
+      price: entity.price,
+      amountOfTime: entity.amountOfTime
     };
   }
 }

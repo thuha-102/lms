@@ -8,8 +8,8 @@ class UserApi {
     return axios.get(`${apiUrl}/${id}`);
   }
 
-  getAllUser() {
-    return axios.get(`${apiUrl}`);
+  getAllUser(username) {
+    return axios.get(username ? `${apiUrl}?username=${username}` : apiUrl);
   }
 
   getUserCourses(id, take) {

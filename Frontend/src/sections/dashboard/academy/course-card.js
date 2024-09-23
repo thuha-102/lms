@@ -24,7 +24,7 @@ export const CourseCard = (props) => {
       <CardMedia
         component={NextLink}
         href={`${paths.dashboard.explore}/${course.id}`}
-        image={'/assets/cards/card-visa.png'}
+        image={`${process.env.NEXT_PUBLIC_SERVER_API}/files/${course.avatarId}`}
         sx={{ height: 180 }}
       />
       <CardContent>
@@ -57,7 +57,7 @@ export const CourseCard = (props) => {
             color="text.secondary"
             variant="caption"
           >
-            {course.amountOfTime > 3600 ? `${Math.floor(course.amountOfTime/3600)}h${Math.floor((course.amountOfTime%3600)/60)}p` : `${Math.floor(course.amountOfTime/60)}p`}
+            {course.amountOfTime > 60 ? `${Math.floor(course.amountOfTime/60)}h` + ( Math.floor(course.amountOfTime%60) === 0 ? "" : `${Math.floor(course.amountOfTime%60)}p`) : `${Math.floor(course.amountOfTime)}p`}
           </Typography>
         </Stack>
       </CardContent>

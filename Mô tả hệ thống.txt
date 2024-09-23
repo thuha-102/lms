@@ -61,7 +61,7 @@ Tasks:
 	+ FE:
 		- Chỉnh sửa giao diện bộ câu hỏi (Mei)
 		- Tạo giao diện tạo một lộ trình - (cho phép tạo course mới) (Mei)
-		- Chỉnh sửa giao diện lộ trình học như https://app.coursiv.io/auth/signin
-		- Chỉnh sửa các giao diện học tài liệu: video, pdf, quiz
+		- Chỉnh sửa giao diện lộ trình học như https://app.coursiv.io/auth/signin (Mei)
+		- Chỉnh sửa các giao diện học tài liệu: video, pdf, quiz (Hà)
 		- Chỉnh sửa các giao diện upload khóa học (Nhân)
 		- Chỉnh sửa giao diện tạo một tài liệu mới (chỉ có thể tạo từ việc tạo lesson mới) (Nhân)
