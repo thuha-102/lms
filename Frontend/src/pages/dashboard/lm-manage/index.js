@@ -28,8 +28,6 @@ const useSearch = () => {
     filters: {
       name: undefined,
       type: [],
-      topicId: [],
-      inStock: undefined
     },
     page: 0,
     rowsPerPage: 5
@@ -50,7 +48,8 @@ const useLMs = (search) => {
   const getLMs = useCallback(async () => {
     try {
       // const response = await lm_manageApi.getLMs(search);
-      const response = await lm_manageApi.getLMs();
+      console.log(search)
+      const response = await lm_manageApi.getLMs(search.name, search.filters.type);
       let data = response.data;
       // if (typeof search.filters !== 'undefined') {
       //   data = data.filter((lm) => {

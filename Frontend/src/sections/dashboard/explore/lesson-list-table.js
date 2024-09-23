@@ -160,25 +160,25 @@ function Row(props) {
   const menuRef = useRef(null);
   const { user } = useAuth();
   const [openMenu, setOpenMenu] = useState(false);
-  const { row, accountType, isInstructor, registered } = props;
+  const { row, accountType } = props;
   const [open, setOpen] = React.useState(false);
   const [listLMAccordingToLesson, setListLMAccordingToLesson] = useState({
-    "title": "",
-    "learningMaterial": [
+    "id": -1, 
+    "name": "",
+    "lessons": [
         {
             "id": 9,
-            "name": "Document21"
+            "type": "PDF",
+            "title": "Document21",
+            "fileId": 1
         }
     ],
-    "amountOfTime": 0,
-    "visibility": true,
-    "courseId": 1
 });
   const [fileGet, setFileGet] = useState("")
   const [openDialog, setOpenDialog] = useState(false)
   const getLesson = useCallback(async (id) => {
     try {
-      const response = await exploreApi.getLesson(id);
+      const response = await exploreApi.getTopic(id);
 
       if (isMounted()) {
         setListLMAccordingToLesson(response.data);
@@ -217,14 +217,17 @@ function Row(props) {
     }
   }
 
-  const getFile = useCallback(async (id) => {
+  const getFile = useCallback(async (id, type) => {
     try {
       // const response = await fileApi.getFileFromGGDrive(id);
 
       if (isMounted()) {
         // console.log(response.data)
         // setFileGet(response.data.url);
-        window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/learning-materials/${id}`, '_blank');
+        if (type === 'VIDEO')
+          window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/files/video/${id}`, '_blank');
+        else
+          window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/files/${id}`, '_blank');
         // console.log(fileGet)
 
       }
@@ -239,21 +242,21 @@ function Row(props) {
       // Gửi api createFileLog và getFile
       switch(lm.type) {
         case "VIDEO":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.id}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
           break;
         case "PDF":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.id}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
           break;
         case "QUIZ":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.id}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
           break;
         case "CODE":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.id}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
           break;
         default:
           // code block
           createFileLog(lm, user)
-          getFile(lm.id)
+          getFile(lm.fileId, lm.type)
       }
     }
   }
@@ -292,10 +295,10 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.title}
+          {row.name}
         </TableCell>
         {
-          accountType !== "LEARNER" && isInstructor &&
+          accountType !== "LEARNER"  &&
           <TableCell align="right">
               <IconButton
                   onClick={handleMenuOpen}
@@ -312,7 +315,7 @@ function Row(props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-                {listLMAccordingToLesson.learningMaterial.map((_lm) => (
+                {row.lessons.map((_lm) => (
                 <div key={_lm.id}>
                   <Item
                       sx={{
@@ -320,11 +323,11 @@ function Row(props) {
                       mx: 'auto',
                       p: 1,
                       }}
-                      onClick={() => handlePageChange(_lm, registered)}
+                      onClick={() => handlePageChange(_lm, accountType === 'ADMIN')}
                   >
                       <Stack spacing={2} direction="row" alignItems="center">
                           <FileIcon extension={_lm.type} />
-                          <Typography noWrap>{_lm.name}</Typography>
+                          <Typography noWrap>{_lm.title}</Typography>
                       </Stack>
                   </Item>
                   {/* {console.log(_lm.id)}
@@ -332,11 +335,11 @@ function Row(props) {
                 </div>
                 ))}
             </Box>
-            {console.log(listLMAccordingToLesson["learningMaterial"])}
+            {console.log(listLMAccordingToLesson["lessons"])}
           </Collapse>
         </TableCell>
       </TableRow>
-      {accountType !== "LEARNER" && isInstructor && <ItemMenu
+      {accountType !== "LEARNER" && <ItemMenu
         anchorEl={menuRef.current}
         onClose={handleMenuClose}
         onDelete={handleDeleteLesson}
@@ -357,7 +360,7 @@ Row.propTypes = {
   }).isRequired,
 };
 
-export default function CollapsibleTable({accountType, rows, isInstructor, registered}) {
+export default function CollapsibleTable({accountType, rows }) {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -370,7 +373,7 @@ export default function CollapsibleTable({accountType, rows, isInstructor, regis
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <Row key={row.id} row={row} accountType={accountType} isInstructor={isInstructor} registered={registered}/>
+            <Row key={row.id} row={row} accountType={accountType}/>
           ))}
         </TableBody>
       </Table>

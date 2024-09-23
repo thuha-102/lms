@@ -6,18 +6,18 @@ import { MultiSelect } from '../../../components/multi-select';
 import { useUpdateEffect } from '../../../hooks/use-update-effect';
 
 const typeOptions = [
-  {
-    label: 'ADMIN',
-    value: 'ADMIN'
-  },
-  {
-    label: 'INSTRUCTOR',
-    value: 'INSTRUCTOR'
-  },
-  {
-    label: 'LEARNER',
-    value: 'LEARNER'
-  },
+  // {
+  //   label: 'ADMIN',
+  //   value: 'ADMIN'
+  // },
+  // {
+  //   label: 'INSTRUCTOR',
+  //   value: 'INSTRUCTOR'
+  // },
+  // {
+  //   label: 'LEARNER',
+  //   value: 'LEARNER'
+  // },
   // {
   //   label: 'WORD',
   //   value: 'WORD'
@@ -282,7 +282,7 @@ export const AccountManageListSearch = (props) => {
           // value={query}
         />
       </Stack>
-      <Divider />
+      {/* <Divider />
       {showChips
         ? (
           <Stack
@@ -331,8 +331,8 @@ export const AccountManageListSearch = (props) => {
             </Typography>
           </Box>
         )}
-      <Divider />
-      <Stack
+      <Divider /> */}
+      {/*<Stack
         alignItems="center"
         direction="row"
         flexWrap="wrap"
@@ -345,7 +345,7 @@ export const AccountManageListSearch = (props) => {
           options={typeOptions}
           value={typeValues}
         />
-        {/* <MultiSelect
+         <MultiSelect
           label="TopicId"
           onChange={handleStatusChange}
           options={statusOptions}
@@ -356,8 +356,8 @@ export const AccountManageListSearch = (props) => {
           onChange={handleStockChange}
           options={stockOptions}
           value={stockValues}
-        /> */}
-      </Stack>
+        /> 
+      </Stack>*/}
     </div>
   );
 };

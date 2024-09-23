@@ -5,6 +5,7 @@ export class LessonDTO {
   id: number;
   title: string;
   fileId: number;
+  type: string;
   // filepath: string;
 
   static selectLessonField(): Prisma.LessonSelect {
@@ -14,6 +15,7 @@ export class LessonDTO {
       LearningMaterial: {
         select: {
           id: true,
+          type: true,
           filepath: true,
         },
       },
@@ -25,6 +27,7 @@ export class LessonDTO {
       id: e.id,
       title: e.title,
       fileId: e.LearningMaterial.id,
+      type: e.LearningMaterial.type
       // filepath: e.LearningMaterial.filepath,
     };
   }

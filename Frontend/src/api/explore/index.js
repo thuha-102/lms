@@ -20,8 +20,8 @@ class ExploreApi {
     return axios.get(`${apiUrl}/courses/${id}`);
   }
 
-  getLesson(id) {
-    return axios.get(`${apiUrl}/lessons/${id}`);
+  getTopic(id) {
+    return axios.get(`${apiUrl}/topics/${id}`);
   }
 
   getListCourse(){

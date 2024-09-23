@@ -41,18 +41,18 @@ import { lm_manageApi } from '../../../api/lm-manage';
 import { paths } from '../../../paths';
 
 const categoryOptions = [
-  {
-    label: 'ADMIN',
-    value: 'ADMIN'
-  },
-  {
-    label: 'INSTRUCTOR',
-    value: 'INSTRUCTOR'
-  },
-  {
-    label: 'LEARNER',
-    value: 'LEARNER'
-  }
+  // {
+  //   label: 'ADMIN',
+  //   value: 'ADMIN'
+  // },
+  // {
+  //   label: 'INSTRUCTOR',
+  //   value: 'INSTRUCTOR'
+  // },
+  // {
+  //   label: 'LEARNER',
+  //   value: 'LEARNER'
+  // }
   // {
   //   label: 'WORD',
   //   value: 'WORD'
@@ -136,11 +136,11 @@ export const AccountManageListTable = (props) => {
                 Người dùng
               </TableCell>
               <TableCell>
-                Mô tả
+                Ngày tạo
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 Trạng thái
-              </TableCell>
+              </TableCell> */}
               {/* <TableCell width="25%">
                 Đánh giá
               </TableCell> */}
@@ -231,22 +231,28 @@ export const AccountManageListTable = (props) => {
                             ml: 2
                           }}
                         >
-                          <Typography variant="subtitle1">
+                          {/* <Typography variant="subtitle1">
                             {Account.name}
-                          </Typography>
+                          </Typography> */}
                           <Typography variant="subtitle2">
-                            Tên truy cập: {Account.username}
+                            {Account.username}
                           </Typography>
-                          <Typography
+                          {/* <Typography
                             color="text.secondary"
                             variant="body2"
                           >
                             Vai trò: {Account.accountType}
-                          </Typography>
+                          </Typography> */}
                         </Box>
                       </Box>
                     </TableCell>
                     <TableCell>
+                      <Typography variant="subtitle2">
+                        {Account.createdAt}
+                      </Typography>
+                      <Typography variant="subtitle2">
+                        {Account.typeLearner}
+                      </Typography>
                       {/* <LinearProgress
                         value={Account.quantity}
                         variant="determinate"
@@ -265,7 +271,7 @@ export const AccountManageListTable = (props) => {
                         in stock
                         {hasManyVariants && ` in ${Account.variants} variants`}
                       </Typography> */}
-                      <Stack space={4}>
+                      {/* <Stack space={4}>
                         <Typography variant="subtitle2">
                           Email: {Account.email} 
                         </Typography>
@@ -275,25 +281,25 @@ export const AccountManageListTable = (props) => {
                         <Typography variant="subtitle2">
                           Giới tính: {Account.gender}
                         </Typography>
-                        {/* <Typography variant="subtitle2">
+                        <Typography variant="subtitle2">
                           Topic: {Account.accountType}
-                        </Typography> */}
+                        </Typography> 
                         <Typography variant="subtitle2">
                           Ngôn ngữ: {Account.language}
                         </Typography>
-                      </Stack>
+                      </Stack> */}
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                       <SeverityPill color={statusColor}>
                         {Account.state ? "ACTIVE": "INACTIVE"}
                       </SeverityPill>
-                      {/* <Typography
+                      <Typography
                         color="textSecondary"
                         variant="body2"
                       >
                         {Account.state}
-                      </Typography> */}
-                    </TableCell> 
+                      </Typography>
+                    </TableCell>  */}
                     <TableCell align="right">
                       <IconButton onClick={() => handleAccountToggle(Account)}   >
                         <SvgIcon>
@@ -423,7 +429,7 @@ export const AccountManageListTable = (props) => {
                               <Typography variant="h6">
                                 Mô tả
                               </Typography>
-                              <Divider sx={{ my: 2 }} />
+                              {/* <Divider sx={{ my: 2 }} />
                               <Grid
                                 container
                                 spacing={3}
@@ -434,7 +440,7 @@ export const AccountManageListTable = (props) => {
                                   xs={12}
                                 >
                                   <TextField
-                                    defaultValue={Account.accountType}
+                                    defaultValue={'LEARNER'}
                                     fullWidth
                                     label="Vai trò"
                                     name="Accounttype"
@@ -489,7 +495,7 @@ export const AccountManageListTable = (props) => {
                                     label="Trạng thái"
                                   />
                                   {console.log(currentAccount)}
-                                </Grid>
+                                </Grid> */}
                                 {/* <Grid
                                   item
                                   md={6}
@@ -501,8 +507,8 @@ export const AccountManageListTable = (props) => {
                                     label="Vai trò"
                                     name="topicTitle"
                                   />
-                                </Grid> */}
-                              </Grid>
+                                </Grid> 
+                              </Grid>*/}
                             </Grid>
                           </Grid>
                         </CardContent>

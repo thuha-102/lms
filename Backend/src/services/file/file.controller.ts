@@ -106,6 +106,11 @@ export class FileController {
     }
   }
 
+  @Get(':id/information')
+  async getInformation(@Param('id', ParseIntPipe) id: number) {
+    return await this.fileService.getInformation(id)
+  }
+
   @Get('video/:id')
   @HttpCode(206)
   async streamVideo(@Param('id', ParseIntPipe) id: number, @Res({ passthrough: true }) res: Response, @Req() req: Request) {
@@ -122,6 +127,6 @@ export class FileController {
 
   @Get('')
   async getAll(@Query() query?: { name: string; type: string }) {
-    return this.fileService.getAll(query?.name, query?.type);
+    return this.fileService.getAll(query?.name, query?.type?.split(','));
   }
 }
