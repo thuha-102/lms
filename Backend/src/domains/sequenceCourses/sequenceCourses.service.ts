@@ -17,7 +17,7 @@ export class SequenceCoursesService {
       where: criteria,
       select: {
         Course: {
-          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true },
+          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true},
         },
       },
       orderBy: orderBy,

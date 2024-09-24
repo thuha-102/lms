@@ -87,8 +87,8 @@ export class SequenceCoursesController {
               name: c.Course.name,
               description: c.Course.description,
               lessonsCount: c.Course.totalLessons,
-              time: 2.5,
-              score: i === -1 ? 0 : sequenceCoursesStudiedHistory[i].percentOfStudying
+              time: c.Course.amountOfTime,
+              score: i === -1 ? 0 : sequenceCoursesStudiedHistory[i].percentOfStudying * 100
           }
         });
         return JSON.stringify({
