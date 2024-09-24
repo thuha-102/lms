@@ -144,11 +144,13 @@ const LessonList = () => {
   const [rating, setRating] = useState("");
   const [updatedAt, setUpdated] = useState("");
   const [registered, setRegistered] = useState(null);
+  const [avatarId, setAvatarId] = useState(null);
   const [openCreateLessonDialog, setOpenCreateLessonDialog] = useState(false)
 
   useEffect(() => {(async () => {
     try {
       const response = await exploreApi.detailCourse(courseId);
+      setAvatarId(response.data.avatarId)
       setTopicList(response.data.topics)
       setCourseTitle(response.data.name)
       setCourseDescription(response.data.description)
@@ -284,7 +286,7 @@ const LessonList = () => {
             </Stack>
             <Grid>
               <Stack direction={"row"} spacing={3}>
-                <img src="/assets/cards/card-visa.png" width={600} height={300}/>
+                <img src={avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
                 <Stack container spacing={3} direction={"column"}>
                   <Stack direction={"column"} spacing={5}>
                     <Stack direction={"row"} spacing={3}>  
