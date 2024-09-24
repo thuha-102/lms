@@ -28,7 +28,7 @@ class UserApi {
   }
 
   registerCourse(userId, courseId) {
-    return axios.post(`${apiUrl}/${userId}/courses`, {courseId});
+    return axios.post(`${apiUrl}/${userId}/register/${courseId}`);
   }
 }
 
