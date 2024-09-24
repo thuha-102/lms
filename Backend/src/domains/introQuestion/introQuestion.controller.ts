@@ -113,7 +113,7 @@ export class IntroQuestionController {
     }
   }
 
-  @Post()
+  @Post("/submit")
   async submitAnswerScore(@Body() body: IntroQuestionDto.IntroQuestionSubmitRequestDto) {
     try {
       const typeLearnerId = (await this.introQuestionService.getTypeLearner(body.score)).id;

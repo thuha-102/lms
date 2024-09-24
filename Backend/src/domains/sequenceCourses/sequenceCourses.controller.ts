@@ -80,17 +80,17 @@ export class SequenceCoursesController {
 
         const sequenceCourses = await this.sequenceCoursesService.getMany({ typeLearnerId: learnerInfo.typeLearnerId }, { order: 'asc' });
         const sequenceCoursesStudiedHistory = await this.sequenceCoursesService.getLearnerStudiedCoursesHistory(Number(learnerId), sequenceCourses.map(course => course.Course.id));
-        const courses = sequenceCourses.map(c => ({
-          id: c.Course.id,
-          name: c.Course.name,
-          description: c.Course.description,
-          lessonsCount: c.Course.totalLessons,
-          time: 2.5,
-          score: (() => {
-            const i = sequenceCoursesStudiedHistory.findIndex(course => course.Course.id === c.Course.id);
-            return i === -1 ? 0 : sequenceCoursesStudiedHistory[i].percentOfStudying;
-          })
-        }));
+        const courses = sequenceCourses.map(c => {
+          const i = sequenceCoursesStudiedHistory.findIndex(course => course.Course.id === c.Course.id);
+          return {
+              id: c.Course.id,
+              name: c.Course.name,
+              description: c.Course.description,
+              lessonsCount: c.Course.totalLessons,
+              time: 2.5,
+              score: i === -1 ? 0 : sequenceCoursesStudiedHistory[i].percentOfStudying
+          }
+        });
         return JSON.stringify({
           currentCourseOrder: sequenceCourses.findIndex(c => c.Course.id === learnerInfo.latestCourseInSequenceId),
           courses: courses
