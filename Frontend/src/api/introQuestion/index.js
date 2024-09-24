@@ -20,7 +20,7 @@ class IntroQuestionApi {
   }
 
   submitIntroQuestionsAnswers(request) {
-    return {"typeLearnerId": 0}
+    return axios.post(`${apiUrl}/submit`, request)
   }
 }
 

@@ -122,7 +122,7 @@ const Page = () => {
               <Typography variant="h5" mb={4}>
                 Khóa học sắp tới
               </Typography>
-              {(sequenceCourses.currentCourseOrder == searchCourse.courses.length - 1) 
+              {(sequenceCourses.currentCourseOrder == sequenceCourses.courses.length - 1) 
               ? <Typography variant="body1">
                   Không có khóa học mới trong lộ trình
                 </Typography>
@@ -151,7 +151,7 @@ const Page = () => {
               <Typography variant="h5" mb={4}>
                 Khóa học hoàn thành gần đây
               </Typography>
-              {(sequenceCourses.currentCourseOrder == searchCourse.courses.length - 1) 
+              {(sequenceCourses.currentCourseOrder == 0) 
               ? <Typography variant="body1">
                   Chưa có khóa học hoàn thành trong lộ trình
                 </Typography>

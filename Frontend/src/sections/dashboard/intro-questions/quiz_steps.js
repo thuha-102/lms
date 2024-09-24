@@ -22,8 +22,9 @@ export const QuizSteps = (props) => {
   const handleSubmitQuiz = useCallback(async () => {
     try {
       console.log(questions.reduce((accumulator, currentQues, i) => accumulator + currentQues.scores[answers[i]], 0));
+      console.log(user.id);
       await introQuestionApi.submitIntroQuestionsAnswers({
-        "leanerId": user.id,
+        "learnerId": user.id,
         "score": questions.reduce((accumulator, currentQues, i) => accumulator + currentQues.scores[answers[i]], 0)
       });
       router.push(paths.dashboard.learningPaths.index);

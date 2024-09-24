@@ -91,9 +91,9 @@ const Page = () => {
             </Breadcrumbs>
           </Stack>
           <Typography variant='h5' mb={5}>Bạn chưa có lộ trình học. Trả lời những câu hỏi sau đây để tiến hành tạo lộ trình học</Typography>
-          <QuizSteps 
+          {questions.length > 0 && <QuizSteps 
             questions={questions}
-          />
+          />}
         </Container>
       </Box>
     </>
