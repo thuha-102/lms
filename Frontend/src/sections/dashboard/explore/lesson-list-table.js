@@ -204,12 +204,14 @@ function Row(props) {
 
   const createFileLog = async (lessonId, user) => {
     try {
-      const response = await learning_logApi.createLog(user.id, {
-        // rating: 3,
-        // time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        // attempts: 1,
-        lessonId: lessonId,
-      });
+      const response = await learning_logApi.createLog(user.id, lessonId, null
+        // {
+        //   rating: 3,
+        //   time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
+        //   attempts: 1,
+        //   lessonId: lessonId,
+        // }
+    );
 
     } catch (err) {
       console.error(err);
@@ -253,7 +255,7 @@ function Row(props) {
           router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
           break;
         }
-      createFileLog(lesson.id, user)
+      if (lesson.type !== "QUIZ") createFileLog(lesson.id, user)
       // getFile(lesson.fileId, lesson.type)
     }
   }

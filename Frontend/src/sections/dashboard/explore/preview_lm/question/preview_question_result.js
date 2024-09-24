@@ -8,6 +8,7 @@ import {useState, useEffect} from 'react';
 import { useRouter } from 'next/navigation'
 
 export const JobPreview = ({lessonId, lmId, user, answers}) => {
+  console.log(lessonId, lmId)
   const [valueRating, setValueRating] = useState(3);
   const [hoverRating, setHoverRating] = useState(3);
   const [updateRatingId, setUpdateRatingId] = useState();
@@ -15,15 +16,18 @@ export const JobPreview = ({lessonId, lmId, user, answers}) => {
   const router = useRouter()
 
   
-  const createQuizLog = async (lessonId, user, answers) => {
+  const createQuizLog = async (lmId, user, answers) => {
     try {
-      const response = await learning_logApi.createLog(user.id, {
-        // rating: valueRating,
-        learnerAnswer: answers,  
-        // time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        // attempts: 1,
-        lessonId: lessonId,
-      });
+      // const response = await learning_logApi.createLog(user.id, lessonId,  {
+      //   rating: valueRating,
+      //   quizId: lmId,
+      //   learnerAnswer: answers,  
+      //   time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
+      //   attempts: 1,
+      //   lessonId: lessonId,
+      // });
+
+      const response = await learning_logApi.createQuizLog(user.id, {quizId: lmId, answers: answers})
       setScore([response.data.score, response.data.maxScore])
       setUpdateRatingId(response.data.id)
       console.log(score);

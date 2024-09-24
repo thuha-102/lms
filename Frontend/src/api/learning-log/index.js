@@ -5,9 +5,13 @@ import axios from 'axios';
 const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/users`;
 
 class Learning_logApi {
-  createLog(userId, request) {
-    return axios.post(`${apiUrl}/${userId}/lesson/${request.lessonId}`, request);
+  createLog(userId, lessonId, request) {
+    return axios.post(`${apiUrl}/${userId}/lesson/${lessonId}`, request);
     //return Promise.resolve(deepCopy(forums));
+  }
+
+  createQuizLog(userId, request){
+    return axios.post(`${apiUrl}/${userId}/quiz`, request);
   }
 
   getLog(userId) {

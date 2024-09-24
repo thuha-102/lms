@@ -236,7 +236,6 @@ const LessonList = () => {
                 direction="row"
                 spacing={3}
               > 
-                {console.log(user?.accountType)}
                 {user?.accountType !== 'LEARNER'  && 
                 <>
                 <Button

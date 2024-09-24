@@ -66,45 +66,45 @@ export class UserService {
     });
   }
 
-  async studiedQuiz(learnerId: number, quizAnswers: QuizAnswers, tx) {
-    const question = await tx.quiz.findMany({
-      orderBy: { index: 'asc' },
-      where: { id: quizAnswers.quizId },
-      select: { correctAnswer: true },
-    });
-    if (question.length !== quizAnswers.answers.length)
-      throw new ConflictException('Answers length is difference from quizes length');
-
-    const historyQuizId = (await tx.historyStudiedQuiz.create({
-      data: { Learner: connectRelation(learnerId), LearningMaterail: connectRelation(quizAnswers.quizId) },
-      select: { id: true },
-    })).id;
-
-    let trueAnswer = 0;
-    for (let i = 0; i < question.length; i++) {
-      if (question[i].correctAnswer === quizAnswers.answers[i]) trueAnswer++;
-
-      const data: Prisma.ResultOfStudyingQuizCreateInput = {
-        HistoryStudiedQuiz: connectRelation(historyQuizId),
-        Quiz: { connect: { id_index: { id: quizAnswers.quizId, index: i } } },
-        answer: quizAnswers.answers[i],
-      };
-      await tx.resultOfStudyingQuiz.create({ data });
-    }
-
-    await tx.historyStudiedQuiz.update({
-      where: { id: historyQuizId },
-      data: { score: trueAnswer, totalQuestion: question.length },
-    });
-    return trueAnswer;
+  async studiedQuiz(learnerId: number, quizAnswers: QuizAnswers) {
+    return await this.prismaService.$transaction(async (tx) => {
+      const question = await tx.quiz.findMany({
+        orderBy: { index: 'asc' },
+        where: { id: quizAnswers.quizId },
+        select: { correctAnswer: true },
+      });
+      if (question.length !== quizAnswers.answers.length)
+        throw new ConflictException('Answers length is difference from quizes length');
+  
+      const historyQuizId = (await tx.historyStudiedQuiz.create({
+        data: { Learner: connectRelation(learnerId), LearningMaterail: connectRelation(quizAnswers.quizId) },
+        select: { id: true },
+      })).id;
+  
+      let trueAnswer = 0;
+      for (let i = 0; i < question.length; i++) {
+        if (question[i].correctAnswer === quizAnswers.answers[i]) trueAnswer++;
+  
+        const data: Prisma.ResultOfStudyingQuizCreateInput = {
+          HistoryStudiedQuiz: connectRelation(historyQuizId),
+          Quiz: { connect: { id_index: { id: quizAnswers.quizId, index: i } } },
+          answer: quizAnswers.answers[i],
+        };
+        await tx.resultOfStudyingQuiz.create({ data });
+      }
+  
+      await tx.historyStudiedQuiz.update({
+        where: { id: historyQuizId },
+        data: { score: trueAnswer, totalQuestion: question.length },
+      });
+      return { score: trueAnswer, maxScore: quizAnswers.answers.length}
+    })
   }
 
-  async studiedLesson(learnerId: number, lessonId: number, quizAnswers: QuizAnswers) {
+  async studiedLesson(learnerId: number, lessonId: number) {
     return await this.prismaService.$transaction(async (tx) => {
       try {
-        let trueAnswer;
-        if (quizAnswers) 
-          trueAnswer = this.studiedQuiz(learnerId, quizAnswers, tx);
+        
 
         const lesson = await tx.lesson.findFirst({ where: { id: lessonId }, select: { topicId: true } });
         const course = await tx.course.findFirst({
@@ -155,8 +155,6 @@ export class UserService {
             });
           }
         }
-
-        if (quizAnswers) return { trueAnswer: await trueAnswer, totalQuestion: quizAnswers.answers.length };
       } catch (e) {
         return e;
       }

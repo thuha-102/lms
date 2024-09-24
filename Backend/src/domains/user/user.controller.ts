@@ -71,8 +71,12 @@ export class UserController {
   async studiedLesson(
     @Param('id', ParseIntPipe) id: number,
     @Param('lessonId', ParseIntPipe) lessonId: number,
-    @Body() body?: QuizAnswers,
   ) {
-    return await this.userService.studiedLesson(id, lessonId, body);
+    return await this.userService.studiedLesson(id, lessonId);
+  }
+
+  @Post(':id/quiz')
+  async studiedQuiz(@Param('id', ParseIntPipe) id: number, @Body() body: QuizAnswers){
+    return await this.userService.studiedQuiz(id, body);
   }
 }
