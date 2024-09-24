@@ -32,7 +32,7 @@ export class CourseService {
         );
         for (let j = 0; j < body.lessons[i].length; j++) {
           const lesson = body.lessons[i][j];
-          await this.lessonService.create({ title: lesson.title, fileId: lesson.fileId, topicId: id }, tx, j);
+          await this.lessonService.create({ order: j, title: lesson.title, fileId: lesson.fileId, topicId: id }, tx, j);
         }
         numberLessons += body.lessons[i].length;
       }

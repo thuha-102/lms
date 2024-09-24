@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { connectRelation } from 'src/shared/prisma.helper';
 
 export class LessonCreateREQ {
@@ -8,6 +8,9 @@ export class LessonCreateREQ {
 
   @IsNumber()
   topicId: number;
+
+  @IsOptional()
+  order: number;
 
   @IsNumber()
   fileId: number;

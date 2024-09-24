@@ -17,6 +17,12 @@ export class LessonController {
     return await this.lessonService.detail(id);
   }
 
+  @Patch('order')
+  @HttpCode(204)
+  async updateOrder(@Body() body: { lessonIds: number[] }) {
+    await this.lessonService.updateOrder(body.lessonIds);
+  }
+
   @Patch(':id')
   @HttpCode(204)
   async update(@Param('id', ParseIntPipe) id: number, @Body() body: LessonUpdateREQ) {

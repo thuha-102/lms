@@ -26,13 +26,14 @@ model Learner {
   User User @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   TypeLearner   TypeLearner? @relation(fields: [typeLearnerId], references: [id])
-  typeLearnerId Int?        @map("type_learner_id")
+  typeLearnerId Int?         @map("type_learner_id")
 
   LatestCourseInSequenceCourses Course? @relation(fields: [latestCourseInSequenceId], references: [id])
   latestCourseInSequenceId      Int?    @map("latest_course_in_sequence_id")
 
   RegisterCourses      RegisterCourse[]
   HistoryStudiedCourse HistoryStudiedCourse[]
+  HistoryStudiedQuiz   HistoryStudiedQuiz[]
 
   @@map("learners")
 }
@@ -113,8 +114,9 @@ model LearningMaterial {
   mimetype  String?
   type      LearningMaterialType
 
-  Lesson Lesson[]
-  Quiz   Quiz[]
+  Lesson             Lesson[]
+  Quiz               Quiz[]
+  HistoryStudiedQuiz HistoryStudiedQuiz[]
 
   @@map("learning_materials")
 }
@@ -123,10 +125,11 @@ model Quiz {
   id               Int
   LearningMaterial LearningMaterial @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  index         Int      @default(0)
-  question      String
-  answers       String[]
-  correctAnswer Int      @map("correct_answer")
+  index                Int                    @default(0)
+  question             String
+  answers              String[]
+  correctAnswer        Int                    @map("correct_answer")
+  ResultOfStudyingQuiz ResultOfStudyingQuiz[]
 
   @@unique([id, index])
   @@map("quizes")
@@ -161,6 +164,37 @@ model HistoryStudiedCourse {
 
   @@unique([lessonId, learnerId])
   @@map("history_studied_course")
+}
+
+model HistoryStudiedQuiz {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now()) @map("created_at")
+  score         Int      @default(0)
+  totalQuestion Int      @default(0)
+
+  Learner   Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  learnerId Int     @map("learner_id")
+
+  LearningMaterail   LearningMaterial @relation(fields: [learningMaterialId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  learningMaterialId Int              @map("learning_material_id")
+
+  ResultOfStudyingQuiz ResultOfStudyingQuiz[]
+
+  @@map("history_studied_quiz")
+}
+
+model ResultOfStudyingQuiz {
+  HistoryStudiedQuiz   HistoryStudiedQuiz @relation(fields: [historyStudiedQuizId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  historyStudiedQuizId Int
+
+  Quiz      Quiz @relation(fields: [quizId, quizIndex], references: [id, index])
+  quizId    Int
+  quizIndex Int
+
+  answer Int
+
+  @@unique([historyStudiedQuizId, quizId, quizIndex])
+  @@map("result_of_studying_quiz")
 }
 
 model SequenceCourse {

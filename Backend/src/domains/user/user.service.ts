@@ -6,6 +6,7 @@ import { connectRelation } from 'src/shared/prisma.helper';
 import { Prisma } from '@prisma/client';
 import { LearnerListREPS } from './reponse/learner-list.reponse';
 import { UserInfoDTO } from './dto/user-infomation.dto';
+import { QuizAnswers } from 'src/services/file/dto/file.dto';
 
 @Injectable()
 export class UserService {
@@ -55,9 +56,56 @@ export class UserService {
     });
   }
 
-  async studiedLesson(learnerId: number, lessonId: number) {
+  async historyQuiz(learnerId: number, quizId: number) {
+    return await this.prismaService.$transaction(async (tx) => {
+      return await this.prismaService.historyStudiedQuiz.findMany({
+        orderBy: { createdAt: 'desc' },
+        where: { learningMaterialId: quizId },
+        select: { createdAt: true, score: true, totalQuestion: true },
+      });
+    });
+  }
+
+  async studiedQuiz(learnerId: number, quizAnswers: QuizAnswers, tx) {
+    const question = await tx.quiz.findMany({
+      orderBy: { index: 'asc' },
+      where: { id: quizAnswers.quizId },
+      select: { correctAnswer: true },
+    });
+    if (question.length !== quizAnswers.answers.length)
+      throw new ConflictException('Answers length is difference from quizes length');
+
+    const historyQuizId = (await tx.historyStudiedQuiz.create({
+      data: { Learner: connectRelation(learnerId), LearningMaterail: connectRelation(quizAnswers.quizId) },
+      select: { id: true },
+    })).id;
+
+    let trueAnswer = 0;
+    for (let i = 0; i < question.length; i++) {
+      if (question[i].correctAnswer === quizAnswers.answers[i]) trueAnswer++;
+
+      const data: Prisma.ResultOfStudyingQuizCreateInput = {
+        HistoryStudiedQuiz: connectRelation(historyQuizId),
+        Quiz: { connect: { id_index: { id: quizAnswers.quizId, index: i } } },
+        answer: quizAnswers.answers[i],
+      };
+      await tx.resultOfStudyingQuiz.create({ data });
+    }
+
+    await tx.historyStudiedQuiz.update({
+      where: { id: historyQuizId },
+      data: { score: trueAnswer, totalQuestion: question.length },
+    });
+    return trueAnswer;
+  }
+
+  async studiedLesson(learnerId: number, lessonId: number, quizAnswers: QuizAnswers) {
     return await this.prismaService.$transaction(async (tx) => {
       try {
+        let trueAnswer;
+        if (quizAnswers) 
+          trueAnswer = this.studiedQuiz(learnerId, quizAnswers, tx);
+
         const lesson = await tx.lesson.findFirst({ where: { id: lessonId }, select: { topicId: true } });
         const course = await tx.course.findFirst({
           where: { Topic: { some: { id: lesson.topicId } } },
@@ -107,6 +155,8 @@ export class UserService {
             });
           }
         }
+
+        if (quizAnswers) return { trueAnswer: await trueAnswer, totalQuestion: quizAnswers.answers.length };
       } catch (e) {
         return e;
       }

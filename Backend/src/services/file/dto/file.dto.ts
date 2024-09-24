@@ -88,3 +88,8 @@ export class VideoDTO {
     };
   }
 }
+
+export class QuizAnswers {
+  quizId: number;
+  answers: number[];
+}
