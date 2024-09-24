@@ -18,6 +18,10 @@ class IntroQuestionApi {
   deleteIntroQuestion(id) {
     return axios.delete(`${apiUrl}/${id}`);
   }
+
+  submitIntroQuestionsAnswers(request) {
+    return {"typeLearnerId": 0}
+  }
 }
 
 export const introQuestionApi = new IntroQuestionApi();

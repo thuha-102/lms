@@ -1,18 +1,15 @@
-const LOs = [];
-
-for (let i = 1; i <= 50; i++) {
-  LOs.push({
-    id: i,
-    topic: `Topic ${i}`,
-    learningObject: `Learning Object ${i}`,
-    finished: i == 20 ? 50 : i < 20 ? 100 : 0,
-  });
+const learningSequenceCourseInfo = {
+  "data": {
+    "currentCourseOrder": 7,
+    "courses": Array.from({ length: 30 }, (_, i) => i + 1).map(e => ({
+      "id": e + 1,
+      "name": "Course " + String(e),
+      "description": "no description",
+      "lessonsCount": 3,
+      "time": 2.5,
+      "score": e == 8 ? 50 : e < 8 ? 100 : 0
+    }))
+  }
 }
 
-export const baseInfoLearningPath = {
-  "learningStyle": [-2,1,0,2],
-  "backgroundKnowledge": "INTERMEDIATE",
-  "qualification": "GRADUATE"
-}
-
-export {LOs};
+export {learningSequenceCourseInfo};

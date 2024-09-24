@@ -1,23 +1,17 @@
 import axios from 'axios';
+import { learningSequenceCourseInfo } from './data';
+import { deepCopy } from '../../utils/deep-copy';
 
-const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/learning-path`;
+const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/sequenceCourses`;
 
 class LearningPathApi {
-  getLearningPath(learnerId) {
-    return axios.get(`${apiUrl}/${learnerId}`);
-  }
-
-  createLearningPath(learnerId, request) {
-    return axios.post(`${apiUrl}/${learnerId}`, request);
-  }
-
-  getRecommendedLearningPaths(learnerId, request) {
-    return axios.post(`${apiUrl}/recommended/${learnerId}`, request);
-  }
-
-  getLearningGraph(learnerId) {
-    // console.log(learnerId)
-    return axios.get(`${apiUrl}/graph/${learnerId}`);  
+  getSequenceCouresByLearnerId(learnerId) {
+    return {
+      "data": {
+        "courses": []
+      }
+    }
+    //return Promise.resolve(deepCopy(learningSequenceCourseInfo));
   }
 }
 
