@@ -2,7 +2,6 @@ import Head from 'next/head';
 import { useCallback, useState, useEffect } from 'react';
 import {
   Box,
-  Button,
   Container,
   Stack,
   Typography,
@@ -16,7 +15,6 @@ import { Layout as DashboardLayout } from '../../../layouts/dashboard';
 import { introQuestionApi } from '../../../api/introQuestion';
 import { paths } from '../../../paths';
 import { useMounted } from '../../../hooks/use-mounted';
-import { useRouter } from 'next/router';
 import { useAuth } from '../../../hooks/use-auth';
 import { NextLink } from 'next/link';
 import { BreadcrumbsSeparator } from '../../../components/breadcrumbs-separator';
@@ -93,9 +91,9 @@ const Page = () => {
             </Breadcrumbs>
           </Stack>
           <Typography variant='h5' mb={5}>Bạn chưa có lộ trình học. Trả lời những câu hỏi sau đây để tiến hành tạo lộ trình học</Typography>
-          <QuizSteps 
+          {questions.length > 0 && <QuizSteps 
             questions={questions}
-          />
+          />}
         </Container>
       </Box>
     </>

@@ -15,13 +15,46 @@ export class SequenceCoursesService {
   async getMany(criteria, orderBy) {
     return await this.prismaService.sequenceCourse.findMany({
       where: criteria,
-      include: {
+      select: {
         Course: {
-          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true },
+          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true},
         },
       },
       orderBy: orderBy,
     });
+  }
+
+  async getLearnerStudiedSequenceCoursesInfo(learnerId: number) {
+    return await this.prismaService.learner.findFirst({
+      where: {
+        id: learnerId
+      },
+      select: {
+        typeLearnerId: true,
+        latestCourseInSequenceId: true
+      }
+    })
+  }
+
+  async getLearnerStudiedCoursesHistory(learnerId: number, courseIds: number[]) {
+    return await this.prismaService.registerCourse.findMany({
+      where: {
+        AND: {
+          learnerId: learnerId,
+          courseId: {
+            in: courseIds
+          }
+        }
+      },
+      select: {
+        Course: {
+          select: {
+            id: true,
+          }
+        },
+        percentOfStudying: true,
+      }
+    })
   }
 
   async deleteMany(criteria) {

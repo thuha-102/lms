@@ -33,9 +33,9 @@ export class IntroQuestionService {
     });
   }
 
-  async getOne(id) {
+  async getOne(criteria) {
     return await this.prismaService.introQuestion.findFirst({
-      where: { id: id },
+      where: criteria,
     });
   }
 
@@ -63,5 +63,34 @@ export class IntroQuestionService {
       where: criteria,
       data: data,
     });
+  }
+
+  async getTypeLearner(score: number) {
+    const result = await this.prismaService.typeLearner.findMany({
+      where : {
+        startScore: {
+          lte: score 
+        }
+      },
+      orderBy: {
+        startScore: "desc"
+      },
+      select: {
+        id: true
+      }
+    })
+    return result[0];
+  }
+
+  async registerSequenceCourse(learnerId: number, typeLearnerId: number, latestCourseInSequenceId: number) {
+    return await this.prismaService.learner.update({
+      where: {
+        id: learnerId
+      },
+      data: {
+        typeLearnerId: typeLearnerId,
+        latestCourseInSequenceId: latestCourseInSequenceId
+      }
+    })
   }
 }
