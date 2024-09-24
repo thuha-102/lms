@@ -20,7 +20,6 @@ import { HttpExceptionFilter } from './shared/http-exception.filter';
     PrismaModule,
     AuthModule,
     UserModule,
-    SequenceCoursesModule,
     CourseModule,
     TopicModule,
     LessonModule,

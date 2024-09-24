@@ -55,17 +55,23 @@ export class SequenceCoursesController {
   @Get()
   async getMany(@Query() queryParams) {
     try {
-      const { typeLearnerId } = queryParams;
-      const sequenceCourses = await this.sequenceCoursesService.getMany({ typeLearnerId: typeLearnerId }, { order: 'asc' });
-      const typeLearner = await this.typeLearnerService.getOne({ id: typeLearnerId });
-      return JSON.stringify({
-        courses: sequenceCourses.map((course) => course.Course),
-        typeLearnerId: typeLearner.id,
-        typeLearnerStartScore: typeLearner.startScore,
-        typeLearnerName: typeLearner.name,
-        createdAt: DatetimeService.formatVNTime(typeLearner.createdAt),
-        updatedAt: DatetimeService.formatVNTime(typeLearner.updatedAt),
-      });
+      const { typeLearnerId, learnerId } = queryParams;
+      
+      if (typeLearnerId) {
+        const sequenceCourses = await this.sequenceCoursesService.getMany({ typeLearnerId: typeLearnerId }, { order: 'asc' });
+        const typeLearner = await this.typeLearnerService.getOne({ id: typeLearnerId });
+        return JSON.stringify({
+          courses: sequenceCourses.map((course) => course.Course),
+          typeLearnerId: typeLearner.id,
+          createdAt: DatetimeService.formatVNTime(typeLearner.createdAt),
+          updatedAt: DatetimeService.formatVNTime(typeLearner.updatedAt),
+        });
+      }
+
+      if (learnerId) {
+        
+      }
+      
     } catch (error) {
       console.log(error);
       throw error;
@@ -78,16 +84,15 @@ export class SequenceCoursesController {
     @Body() body: SequenceCoursesDto.SequenceCoursesUpdateRequestDto,
   ) {
     try {
-      await this.sequenceCoursesService.deleteMany({ typeLearnerId: typeLearnerId });
-
-      if (body.typeLearnerName || body.typeLearnerStartScore) {
-        await this.typeLearnerService.updateOne(typeLearnerId, {
-          name: body.typeLearnerName,
-          startScore: body.typeLearnerStartScore,
-        });
-      }
+      await this.typeLearnerService.updateOne(typeLearnerId, {
+        name: body.typeLearnerName,
+        startScore: body.typeLearnerStartScore,
+        updatedAt: new Date()
+      });
 
       if (body.courseIds) {
+        await this.sequenceCoursesService.deleteMany({ typeLearnerId: typeLearnerId });
+
         await this.sequenceCoursesService.createMany(
           body.courseIds.map((courseId, i) => ({
             typeLearnerId: typeLearnerId,

@@ -46,7 +46,7 @@ const useListCourses = (id) => {
 export const DashboardLearner = () => {
     const settings = useSettings();
     const { user } = useAuth()
-    const listCourses = useListCourses(user?.id)
+    const listCourses = [] //useListCourses(user?.id)
 
     return (
         <>

@@ -197,8 +197,8 @@ export const getSections = (t, accountType) => [
         )
       },
       {
-        title: t(tokens.nav.introQuestionManage),
-        path: paths.dashboard.introQuestionManage,
+        title: t(tokens.nav.intro_question_manage),
+        path: paths.dashboard.intro_question_manage,
         icon: (
           <SvgIcon fontSize="small">
             <QuizOutlinedIcon />

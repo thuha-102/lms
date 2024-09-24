@@ -75,6 +75,6 @@ export const tokens = {
     topic_manage: 'nav.topic_manage',
     learning_path_manage: 'nav.learning_path_manage',
     account_manage: 'nav.account_manage',
-    introQuestionManage: 'nav.introQuestionManage', 
+    intro_question_manage: 'nav.intro_question_manage', 
   }
 };

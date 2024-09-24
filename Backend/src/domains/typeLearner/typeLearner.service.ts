@@ -12,6 +12,10 @@ export class TypeLearnerService {
     });
   }
 
+  async getMany() {
+    return await this.prismaService.typeLearner.findMany();
+  }
+
   async getOne(criteria) {
     return await this.prismaService.typeLearner.findFirst({
       where: criteria,
