@@ -15,11 +15,22 @@ export class LessonService {
       const nextOrder = order ? order : 0;
 
       if (tx) lesson = await tx.lesson.create({ data: LessonCreateREQ.toCreateInput(body, nextOrder), select: { id: true } });
-      else
+      else {
         lesson = await this.prismaService.lesson.create({
-          data: LessonCreateREQ.toCreateInput(body, nextOrder),
-          select: { id: true },
+          data: LessonCreateREQ.toCreateInput(body, body.order),
+          select: { id: true, topicId: true },
         });
+
+        const topic = await this.prismaService.topic.update({
+          where: { id: lesson.topicId },
+          data: {
+            totalLessons: { increment: 1 },
+          },
+          select: { courseId: true },
+        });
+
+        await this.prismaService.course.update({ where: { id: topic.courseId }, data: { totalLessons: { increment: 1 } } });
+      }
       return { id: lesson.id };
     } catch (e) {
       throw new ConflictException(e);
@@ -30,7 +41,13 @@ export class LessonService {
     const lesson = await this.prismaService.lesson.findFirst({ where: { id }, select: LessonListREQ.selectLessonField() });
     if (!lesson) throw new NotFoundException(`Not found lesson ${id}`);
 
-    return lesson;
+    return LessonListREQ.fromEntity(lesson as any);
+  }
+
+  async updateOrder(lessonIds: number[]) {
+    for (let i = 0; i < lessonIds.length; i++) {
+      await this.prismaService.lesson.update({ where: { id: lessonIds[i] }, data: { order: i } });
+    }
   }
 
   async update(id: number, body: LessonUpdateREQ) {
@@ -41,6 +58,12 @@ export class LessonService {
   }
 
   async delete(id: number) {
-    await this.prismaService.lesson.delete({ where: { id } });
+    const { topicId } = await this.prismaService.lesson.delete({ where: { id }, select: { topicId: true } });
+    const { courseId } = await this.prismaService.topic.update({
+      where: { id: topicId },
+      data: { totalLessons: { decrement: 1 } },
+      select: { courseId: true },
+    });
+    await this.prismaService.course.update({ where: { id: courseId }, data: { totalLessons: { decrement: 1 } } });
   }
 }

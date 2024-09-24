@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { TopicCreateREQ } from './request/topics-create.request';
 import { connectRelation } from 'src/shared/prisma.helper';
@@ -37,7 +37,11 @@ export class TopicService {
         if (body.lessons) {
           for (let i = 0; i < body.lessons.length; i++) {
             const lesson = body.lessons[i];
-            await this.lessonService.create({ title: lesson.title, fileId: lesson.fileId, topicId: topic.id }, undefined, i);
+            await this.lessonService.create(
+              { title: lesson.title, order: i, fileId: lesson.fileId, topicId: topic.id },
+              undefined,
+              i,
+            );
           }
         }
       }
@@ -75,6 +79,7 @@ export class TopicService {
 
   async detail(id: number) {
     const topic = await this.prismaService.topic.findFirst({ where: { id }, select: TopicListREQ.selectTopicField() });
+    if (!topic) throw new NotFoundException('Topic not found');
     return topic;
   }
 }

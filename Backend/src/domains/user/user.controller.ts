@@ -17,16 +17,12 @@ import { UserService } from './user.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { UserUpdateREQ } from './request/user-update.request';
 import { query } from 'express';
+import { QuizAnswers } from 'src/services/file/dto/file.dto';
 
 // @UseGuards(AuthGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
-  @Get(':id')
-  async detail(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.detail(id);
-  }
 
   @Get(':id/courses/own')
   async ownCourse(
@@ -43,6 +39,16 @@ export class UserController {
   @Get(':id/courses/studied')
   async studiedCourse(@Param('id', ParseIntPipe) id: number, @Query() query?: { keyword: string }) {
     return this.userService.studiedCourse(id, query.keyword);
+  }
+
+  @Get(':id/history-quiz/:lmId')
+  async historyQuiz(@Param('id', ParseIntPipe) id: number, @Param('lmId', ParseIntPipe) lmId: number) {
+    return this.userService.historyQuiz(id, lmId);
+  }
+
+  @Get(':id')
+  async detail(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.detail(id);
   }
 
   @Get()
@@ -62,7 +68,11 @@ export class UserController {
   }
 
   @Post(':id/lesson/:lessonId')
-  async studiedLesson(@Param('id', ParseIntPipe) id: number, @Param('lessonId', ParseIntPipe) lessonId: number) {
-    return await this.userService.studiedLesson(id, lessonId);
+  async studiedLesson(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('lessonId', ParseIntPipe) lessonId: number,
+    @Body() body?: QuizAnswers,
+  ) {
+    return await this.userService.studiedLesson(id, lessonId, body);
   }
 }

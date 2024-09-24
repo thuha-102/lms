@@ -23,6 +23,11 @@ export class TopicController {
     return await this.topicService.delete(id);
   }
 
+  @Patch('order')
+  async updateOrder(@Body() body: { topicIds: number[] }) {
+    return await this.topicService.updateOrder(body.topicIds);
+  }
+
   @Patch(':id')
   @HttpCode(204)
   async update(@Param('id', ParseIntPipe) id: number, @Body() body: TopicUpdateREQ) {
