@@ -37,7 +37,7 @@ const useSequenceCourses = () => {
 
   const getSequenceCourses = useCallback(async () => {
     try {
-      const response = await learningPathApi.getSequenceCouresByLearnerId(user.id); 
+      const response = await learningPathApi.getSequenceCouresByLearnerId({learnerId: user.id }); 
       if (router.isReady && isMounted()) {
         if (response.data.courses.length == 0) {
           router.push(paths.dashboard.learningPaths.create);
