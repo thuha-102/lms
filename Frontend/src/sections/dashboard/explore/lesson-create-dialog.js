@@ -14,24 +14,24 @@ import { exploreApi } from '../../../api/explore';
 
 export const CreateLessonDialog = ({courseId, openCreateLessonDialog, setOpenCreateLessonDialog}) => {
 
-    // const handleCreateLesson = useCallback(async () => {
-    //       try {
-    //         // NOTE: Make API request
-    //         // console.log(formik.values);
-    //         await exploreApi.createLesson({
-    //           title: values.name,
-    //           idCourse: parseInt(courseId, 10),
-    //       })
-    //         toast.success('Bài học đã được tạo');
-    //         // router.push(`${paths.dashboard.explore}/${courseid}`);
-    //       } catch (err) {
-    //         console.error(err);
-    //         toast.error('Something went wrong!');
-    //         // helpers.setStatus({ success: false });
-    //         // helpers.setErrors({ submit: err.message });
-    //         // helpers.setSubmitting(false);
-    //       }
-    //   });
+    const handleCreateLesson = useCallback(async () => {
+          try {
+            // NOTE: Make API request
+            // console.log(formik.values);
+            await exploreApi.createLesson({
+              title: values.name,
+              idCourse: parseInt(courseId, 10),
+          })
+            toast.success('Bài học đã được tạo');
+            // router.push(`${paths.dashboard.explore}/${courseid}`);
+          } catch (err) {
+            console.error(err);
+            toast.error('Something went wrong!');
+            // helpers.setStatus({ success: false });
+            // helpers.setErrors({ submit: err.message });
+            // helpers.setSubmitting(false);
+          }
+      });
 
   const handleClickOpen = () => {
     setOpenCreateLessonDialog(true);
@@ -61,11 +61,11 @@ export const CreateLessonDialog = ({courseId, openCreateLessonDialog, setOpenCre
                 // NOTE: Make API request
                 // console.log(formik.values);
                 await exploreApi.createLesson({
-                  title: lesson_name,
-                  idCourse: parseInt(courseId, 10),
+                  name: lesson_name,
+                  courseId: parseInt(courseId, 10),
               })
                 toast.success('Bài học đã được tạo');
-                // router.push(`${paths.dashboard.explore}/${courseid}`);
+                router.push(`${paths.dashboard.explore}/${courseId}`);
               } catch (err) {
                 console.error(err);
                 toast.error('Something went wrong!');

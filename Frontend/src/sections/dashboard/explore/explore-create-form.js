@@ -31,7 +31,7 @@ const BackgroundKnowledgeType = [
   },
   {
     label: 'Trung cấp',
-    value: 'INTERMEDIATE'
+    value: 'INTERMEDIAN'
   },
   {
     label: 'Chuyên gia',
@@ -62,7 +62,7 @@ const categoryOptions = [
 ];
 
 const initialValues = {
-  idInstructor: 2,
+  // idInstructor: 2,
   level: '',
   // description: '',
   // images: [],
@@ -103,15 +103,19 @@ export const CourseCreateForm = (props) => {
         console.log(formik.values);
         const response = await exploreApi.createCourse({
           name: values.name,
-          idInstructor: parseInt(localStorage.getItem("id"), 10),
-          visibility: visibilityChecked,
-          level: values.level,
-          amountOfTime: values.amountOfTime ,
           description: values.description ,
+          // idInstructor: parseInt(localStorage.getItem("id"), 10),
+          // visibility: visibilityChecked,
+          level: values.level,
+          labels: [],
+          // amountOfTime: values.amountOfTime ,
+          topicNames: [],
+          lessons: [],
       })
         console.log(response.data.id)
         toast.success('Khoá học mới đã được tạo');
-        router.push(`${paths.dashboard.explore}/${response.data.id}`);
+        // router.push(`${paths.dashboard.explore}/${response.data.id}`);
+        router.push(`${paths.dashboard.learning_path_manage}/create`);
       } catch (err) {
         console.error(err);
         toast.error('Something went wrong!');

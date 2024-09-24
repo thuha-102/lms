@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import NextLink from 'next/link';
 import {
   Box,
   Button,
@@ -16,6 +17,7 @@ import {
   TextField,
   Typography,
   Unstable_Grid2 as Grid,
+  SvgIcon,
   IconButton
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -286,7 +288,7 @@ export const LearningPathCreateCourse = (props) => {
             )}
         </Droppable>
     </DragDropContext>
-    <Paper
+    {/* <Paper
     sx={{
         mb: 2,
         padding: 2,
@@ -304,7 +306,27 @@ export const LearningPathCreateCourse = (props) => {
     <Typography variant="body1" sx={{px: 2, ml: 2}}>
         Thêm khoá học mới 
     </Typography>
-    </Paper>
+    </Paper> */}
+      <Stack
+        justifyContent="flex-end"  // Canh ngang các phần tử về bên phải
+        direction="row"
+        spacing={3}
+      >
+        <Button
+          component={NextLink}
+          // Thay đổi đường dẫn để lưu vào db
+          href={`${paths.dashboard.learning_path_manage}/create-course`}
+          startIcon={(
+            <SvgIcon>
+              <QueueIcon />
+            </SvgIcon>
+          )}
+          variant="contained"
+        >
+          Thêm khoá học mới
+        </Button>
+      </Stack>
+
     <CreateCourseDialog
         courseId={courseId}
         openCreateCourseDialog={openCreateCourseDialog}

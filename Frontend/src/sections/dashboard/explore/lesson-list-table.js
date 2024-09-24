@@ -360,7 +360,7 @@ Row.propTypes = {
   }).isRequired,
 };
 
-export default function CollapsibleTable({accountType, rows }) {
+export default function CollapsibleTable({accountType, rows, courseTitle }) {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -373,10 +373,10 @@ export default function CollapsibleTable({accountType, rows }) {
         </TableHead>
         <TableBody>
           {rows && rows.length > 0 ? (rows.map((row) => (
-            <Row key={row.id} row={row} accountType={accountType} isInstructor={isInstructor} registered={registered}/>
+            <Row key={row.id} row={row} accountType={accountType} courseTitle={courseTitle}/>
           ))): (
             <TableRow>
-              <TableCell colSpan={4}>No data available</TableCell>
+              <TableCell colSpan={4}>Chưa có bài học nào cho khoá học này</TableCell>
             </TableRow>
           )}
         </TableBody>

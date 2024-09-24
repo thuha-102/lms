@@ -60,10 +60,30 @@ export const CourseCardDelete = (props) => {
         </Link>
         <Typography
           color="text.secondary"
-          sx={{ mt: 1 }}
+          sx={{
+            mt: 1,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            position: 'relative',
+            minHeight: '3em',  // Đảm bảo chiều cao đủ cho 2 dòng (nếu line-height là 1.5em)
+            lineHeight: '1.5em',
+            '& p': { // Loại bỏ margin của các thẻ <p>
+              margin: 0,
+            },
+            '&::after': {
+              content: '""',
+              display: 'block',
+              height: '100%',
+              visibility: 'hidden',
+            },
+          }}
           variant="body2"
-          dangerouslySetInnerHTML={{__html: course.description}}
-        />
+          dangerouslySetInnerHTML={{ __html: course.description || ' ' }}
+        >
+        </Typography>
         <Stack
           alignItems="center"
           direction="row"

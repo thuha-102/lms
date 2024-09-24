@@ -42,10 +42,10 @@ const CourseCreate = () => {
                 <Link
                   color="text.primary"
                   component={NextLink}
-                  href={paths.dashboard.topic_manage}
+                  href={paths.dashboard.academy}
                   variant="subtitle2"
                 >
-                  Quản lý chủ đề
+                  Khoá học của tôi
                 </Link>
                 <Typography
                   color="text.secondary"

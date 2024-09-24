@@ -13,7 +13,7 @@ class ExploreApi {
   }
 
   createLesson(request) {
-    return axios.post(`${apiUrl}/lessons`, request)
+    return axios.post(`${apiUrl}/topics`, request)
   }
 
   detailCourse(id) {
