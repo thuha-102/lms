@@ -30,4 +30,14 @@ class IntroQuestionUpdateRequestDto {
   scores?: number[];
 }
 
-export { IntroQuestionCreateRequestDto, IntroQuestionUpdateRequestDto };
+class IntroQuestionSubmitRequestDto {
+  @IsNotEmpty()
+  @IsNumber()
+  learnerId: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  score: number;
+}
+
+export { IntroQuestionCreateRequestDto, IntroQuestionUpdateRequestDto, IntroQuestionSubmitRequestDto };

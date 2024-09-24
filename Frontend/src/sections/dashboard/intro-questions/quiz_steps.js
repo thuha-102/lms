@@ -6,17 +6,25 @@ import { Button, Card, Radio, Stack, SvgIcon, Typography } from '@mui/material';
 import { introQuestionApi } from '../../../api/introQuestion';
 import { useRouter } from 'next/router';
 import { paths } from '../../../paths';
+import { useAuth } from '../../../hooks/use-auth';
 
 export const QuizSteps = (props) => {
   const { questions, ...other } = props;
   const router = useRouter();
+  const { user } = useAuth();
   const [questionIdx, setQuestionIdx] = useState(0);
   const [answers, setAnswers] = useState(questions.map(_ => null));
+
+  if (!user) {
+    return null;
+  }
 
   const handleSubmitQuiz = useCallback(async () => {
     try {
       console.log(questions.reduce((accumulator, currentQues, i) => accumulator + currentQues.scores[answers[i]], 0));
+      console.log(user.id);
       await introQuestionApi.submitIntroQuestionsAnswers({
+        "learnerId": user.id,
         "score": questions.reduce((accumulator, currentQues, i) => accumulator + currentQues.scores[answers[i]], 0)
       });
       router.push(paths.dashboard.learningPaths.index);

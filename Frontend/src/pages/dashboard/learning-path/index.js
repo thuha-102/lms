@@ -37,7 +37,7 @@ const useSequenceCourses = () => {
 
   const getSequenceCourses = useCallback(async () => {
     try {
-      const response = await learningPathApi.getSequenceCouresByLearnerId(user.id); 
+      const response = await learningPathApi.getSequenceCouresByLearnerId({learnerId: user.id }); 
       if (router.isReady && isMounted()) {
         if (response.data.courses.length == 0) {
           router.push(paths.dashboard.learningPaths.create);
@@ -122,7 +122,7 @@ const Page = () => {
               <Typography variant="h5" mb={4}>
                 Khóa học sắp tới
               </Typography>
-              {(sequenceCourses.currentCourseOrder == searchCourse.courses.length - 1) 
+              {(sequenceCourses.currentCourseOrder == sequenceCourses.courses.length - 1) 
               ? <Typography variant="body1">
                   Không có khóa học mới trong lộ trình
                 </Typography>
@@ -151,7 +151,7 @@ const Page = () => {
               <Typography variant="h5" mb={4}>
                 Khóa học hoàn thành gần đây
               </Typography>
-              {(sequenceCourses.currentCourseOrder == searchCourse.courses.length - 1) 
+              {(sequenceCourses.currentCourseOrder == 0) 
               ? <Typography variant="body1">
                   Chưa có khóa học hoàn thành trong lộ trình
                 </Typography>
