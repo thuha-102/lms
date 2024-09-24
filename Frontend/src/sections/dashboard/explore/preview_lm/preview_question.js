@@ -35,7 +35,7 @@ const StepIcon = (props) => {
   };
   
   export const PreviewQuestion = (props) => {
-    const { lmId, user } = props;
+    const { lessonId, lmId, user } = props;
     const isMounted = useMounted();
     const [activeStep, setActiveStep] = useState(0);
     const [complete, setComplete] = useState(false);
@@ -152,6 +152,7 @@ const StepIcon = (props) => {
   
     if (complete) {
       return <JobPreview 
+                lessonId={lessonId}
                 lmId={lmId}
                 user={user}
                 answers={answers}

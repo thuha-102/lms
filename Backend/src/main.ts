@@ -6,7 +6,7 @@ import { PrismaClientExceptionFilter } from './shared/prisma-client-exception.fi
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
   // app.useGlobalFilters(new HttpExceptionFilter());

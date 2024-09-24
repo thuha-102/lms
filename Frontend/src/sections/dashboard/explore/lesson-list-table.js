@@ -160,7 +160,7 @@ function Row(props) {
   const menuRef = useRef(null);
   const { user } = useAuth();
   const [openMenu, setOpenMenu] = useState(false);
-  const { row, accountType } = props;
+  const { row, accountType, registered } = props;
   const [open, setOpen] = React.useState(false);
   const [listLMAccordingToLesson, setListLMAccordingToLesson] = useState({
     "id": -1, 
@@ -178,7 +178,7 @@ function Row(props) {
   const [openDialog, setOpenDialog] = useState(false)
   const getLesson = useCallback(async (id) => {
     try {
-      const response = await exploreApi.getTopic(id);
+      // const response = await exploreApi.getTopic(id);
 
       if (isMounted()) {
         setListLMAccordingToLesson(response.data);
@@ -202,22 +202,23 @@ function Row(props) {
   // }, [])
 
 
-  const createFileLog = async (lm, user) => {
+  const createFileLog = async (lessonId, user) => {
     try {
-      const response = await learning_logApi.createLog(user.id, {
-        rating: 3,
-        time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        attempts: 1,
-        learningMaterialId: lm.id,
-      });
-      console.log(response);
+      const response = await learning_logApi.createLog(user.id, lessonId, null
+        // {
+        //   rating: 3,
+        //   time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
+        //   attempts: 1,
+        //   lessonId: lessonId,
+        // }
+    );
 
     } catch (err) {
       console.error(err);
     }
   }
 
-  const getFile = useCallback(async (id, type) => {
+  const getFile = useCallback(async (fileId, type) => {
     try {
       // const response = await fileApi.getFileFromGGDrive(id);
 
@@ -225,9 +226,9 @@ function Row(props) {
         // console.log(response.data)
         // setFileGet(response.data.url);
         if (type === 'VIDEO')
-          window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/files/video/${id}`, '_blank');
+          window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/files/video/${fileId}`, '_blank');
         else
-          window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/files/${id}`, '_blank');
+          window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/files/${fileId}`, '_blank');
         // console.log(fileGet)
 
       }
@@ -236,28 +237,26 @@ function Row(props) {
     }
   }, [open])
 
-  const handlePageChange = (lm, registered) => {  
+  const handlePageChange = (lesson, registered) => {  
     // Kiểm tra trước xem khoá học này đã được user register chưa, nếu được register rồi thì mới gửi api createFileLog và getFile
     if(registered) {
       // Gửi api createFileLog và getFile
-      switch(lm.type) {
+      switch(lesson.type) {
         case "VIDEO":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
           break;
         case "PDF":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
           break;
         case "QUIZ":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
-          break;
-        case "CODE":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
           break;
         default:
-          // code block
-          createFileLog(lm, user)
-          getFile(lm.fileId, lm.type)
-      }
+          router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
+          break;
+        }
+      if (lesson.type !== "QUIZ") createFileLog(lesson.id, user)
+      // getFile(lesson.fileId, lesson.type)
     }
   }
 
@@ -323,7 +322,7 @@ function Row(props) {
                       mx: 'auto',
                       p: 1,
                       }}
-                      onClick={() => handlePageChange(_lm, accountType === 'ADMIN')}
+                      onClick={() => handlePageChange(_lm, registered)}
                   >
                       <Stack spacing={2} direction="row" alignItems="center">
                           <FileIcon extension={_lm.type} />
@@ -335,7 +334,6 @@ function Row(props) {
                 </div>
                 ))}
             </Box>
-            {console.log(listLMAccordingToLesson["lessons"])}
           </Collapse>
         </TableCell>
       </TableRow>
@@ -355,12 +353,12 @@ function Row(props) {
 
 Row.propTypes = {
   row: PropTypes.shape({
-    title: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     id: PropTypes.number.isRequired,
   }).isRequired,
 };
 
-export default function CollapsibleTable({accountType, rows, courseTitle }) {
+export default function CollapsibleTable({accountType, rows, registered}) {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -372,13 +370,9 @@ export default function CollapsibleTable({accountType, rows, courseTitle }) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows && rows.length > 0 ? (rows.map((row) => (
-            <Row key={row.id} row={row} accountType={accountType} courseTitle={courseTitle}/>
-          ))): (
-            <TableRow>
-              <TableCell colSpan={4}>Chưa có bài học nào cho khoá học này</TableCell>
-            </TableRow>
-          )}
+          {rows.map((row) => (
+            <Row key={row.id} row={row} accountType={accountType} registered={registered}/>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

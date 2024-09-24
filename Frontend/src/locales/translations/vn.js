@@ -72,5 +72,5 @@ export const vn = {
   [tokens.nav.learning_path_manage]: 'Quản lý lộ trình học',
   [tokens.nav.account_manage]: 'Quản lý tài khoản',
   [tokens.nav.account_manage]: 'Quản lý tài khoản',
-  [tokens.nav.introQuestionManage]: 'Quản lý câu hỏi phân loại',
+  [tokens.nav.intro_question_manage]: 'Quản lý câu hỏi phân loại',
 };

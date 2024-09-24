@@ -28,7 +28,7 @@ const useListCourses = (id) => {
 
   const getListCourses = useCallback(async () => {
     try {
-        const response = await userApi.getUserCourses(id, 3)
+        const response = await userApi.getUserCourses(id)
         if (isMounted()) {
           setListCourses(response.data);
         }
@@ -46,7 +46,7 @@ const useListCourses = (id) => {
 export const DashboardLearner = () => {
     const settings = useSettings();
     const { user } = useAuth()
-    const listCourses = useListCourses(user?.id)
+    const listCourses = [] //useListCourses(user?.id)
 
     return (
         <>
@@ -100,15 +100,15 @@ export const DashboardLearner = () => {
                             </Stack>
                         </Grid>
                         <Stack direction={'row'}>
-                            {listCourses.map((history) => (
+                            {listCourses.map((history, index) => (
                                 <Grid
-                                    key={history.course.id}
+                                    key={index}
                                     xs={4}
                                     md={12}    
                                     marginRight={5}
                                     width={'450px'}
                                 >
-                                    <CourseCard course={history.course} />
+                                    <CourseCard course={history} />
                                 </Grid>
                             ))}
                             

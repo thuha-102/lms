@@ -9,114 +9,68 @@ import {
   SvgIcon,
   Typography,
   Unstable_Grid2 as Grid,
-  LinearProgress
+  LinearProgress,
+  Breadcrumbs,
+  Link
 } from '@mui/material';
-import ArrowLeftIcon from '@untitled-ui/icons-react/build/esm/ArrowLeft';
-import ArrowRightIcon from '@untitled-ui/icons-react/build/esm/ArrowRight';
+import { BreadcrumbsSeparator } from '../../../components/breadcrumbs-separator';
+import NextLink from 'next/link';
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import { usePageView } from '../../../hooks/use-page-view';
 import { useSettings } from '../../../hooks/use-settings';
 import { Layout as DashboardLayout } from '../../../layouts/dashboard';
-import { LearningPathDoneLOs } from '../../../sections/dashboard/learning-path/learning-path-done-LOs';
-import { LearningPathProcessLOs } from '../../../sections/dashboard/learning-path/learning-path-process-LOs';
-import { LearningPathLockedLOs } from '../../../sections/dashboard/learning-path/learning-path-locked-LOs';
+import { CourseDone } from '../../../sections/dashboard/learning-path/course-done';
+import { CourseProcess } from '../../../sections/dashboard/learning-path/course-process';
+import { CourseLock } from '../../../sections/dashboard/learning-path/course-lock';
 import { useMounted } from '../../../hooks/use-mounted';
 import { learningPathApi } from '../../../api/learning-path';
 import { useRouter } from 'next/router';
 import { paths } from '../../../paths';
 import { useAuth } from '../../../hooks/use-auth';
 
-import * as consts from '../../../constants';
-import { ChooseGoalLearningPathDialog } from '../../../sections/dashboard/learning-path/choose-goal-learning-path-dialog';
-import { BaseInfoLearningPathDialog } from '../../../sections/dashboard/learning-path/base-info-learning-path-dialog';
-import { LearningPathGraph } from '../../../sections/dashboard/learning-path/learning-path-graph';
-
-import TopicGraph from './new-course-graph'
-
-const useLOs = (update) => {
+const useSequenceCourses = () => {
   const isMounted = useMounted();
-  const [LOs, setLOs] = useState([]);
+  const [sequenceCourses, setSequenceCourses] = useState(null);
   const { user } = useAuth();
   const router = useRouter();
 
-  const getLearningPath = useCallback(async () => {
+  const getSequenceCourses = useCallback(async () => {
     try {
-      // const response = await learningPathApi.getLearningPath(user.id);
-      const response = await learningPathApi.getLearningGraph(user.id)
-      if (isMounted()) {
-        if (response.data.length == 0) {
+      const response = await learningPathApi.getSequenceCouresByLearnerId({learnerId: user.id }); 
+      if (router.isReady && isMounted()) {
+        if (response.data.courses.length == 0) {
           router.push(paths.dashboard.learningPaths.create);
         } else {
-          setLOs(response.data);
+          setSequenceCourses(response.data);
         }
       }
     } catch (err) {
       console.error(err);
     }
-  }, [isMounted]);
+  }, [isMounted, router.isReady]);
 
   useEffect(() => {
-    getLearningPath();
-  },[update]);
+    getSequenceCourses();
+  }, [router.isReady]);
 
-  return LOs;
+  return sequenceCourses;
 };
 
 const Page = () => {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
-  const [update, setUpdate] = useState(false);
-
-  const LOs = useLOs(update);
+  const sequenceCourses = useSequenceCourses();
+  const [seeAllComingCourse, setSeeAllComingCourse] = useState(false);
+  const [seeAllDoneCourse, setSeeAllDoneCourse] = useState(false);
   const settings = useSettings();
-  const [openSelectGoalDialog, setOpenSelectGoalDialog] = useState(false);
-  const [openBaseInfoDialog, setOpenBaseInfoDialog] = useState(false);
-  const [selectedGoals, setSelectedGoals] = useState([]);
-  const [baseInfoAnswer, setBaseInfoAnswer] = useState([]);
-  const [page, setPage] = useState(0);
-
-  useEffect(() => {
-    const onProcessingLOPage = LOs ? Math.floor((LOs.map(LO => LO.score == 0).indexOf(true) - 1) / consts.LOS_PER_PAGE) : 0;
-    setPage(onProcessingLOPage >= 0 ? onProcessingLOPage : 0);
-  },[LOs]);
-
-  const handleCreateLearningPath = useCallback( async (chosenLearningPath) => {
-    await learningPathApi.createLearningPath(user.id, {
-      "LOs": chosenLearningPath
-    })
-      .then(async () => {
-        // router.push(paths.dashboard.learningPaths.index);
-        setUpdate(!update)
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error('Error posting data:', error);
-      })
-  })
-
-  const handleConfirmButton = useCallback(async () => {
-    setOpenBaseInfoDialog(false);
-    setLoading(true);
-
-    await learningPathApi.getRecommendedLearningPaths(user.id, {
-      "goal": selectedGoals[0],
-      "learningStyleQA": [...baseInfoAnswer.slice(2)],
-      "backgroundKnowledge": baseInfoAnswer.length == 0 ? null : baseInfoAnswer[1],
-      "qualification": baseInfoAnswer.length == 0 ? null : baseInfoAnswer[0]
-    })
-      .then((response) => {
-        console.log(response);
-
-        handleCreateLearningPath(response.data[0]);
-        setLoading(false);
-        setRecommendedLearningPaths(response.data);
-      })
-      .catch(error => {
-        setLoading(false);
-        console.error('Error posting data:', error);
-      })
-  }, [selectedGoals, baseInfoAnswer])
 
   usePageView();
+
+  if (!sequenceCourses || !user) {
+    return null;
+  }
+
+  console.log(sequenceCourses)
 
   return (
     <>
@@ -135,136 +89,96 @@ const Page = () => {
         }}
       >
         <Container maxWidth={settings.stretch ? false : 'xl'}>
-          <Grid
-            container
-            disableEqualOverflow
-            spacing={{
-              xs: 3,
-              lg: 4
-            }}
-          >
-            <Grid xs={12}>
-              <Stack
-                direction="row"
-                justifyContent="space-between"
-                spacing={4}
+          <Stack spacing={1}>
+            <Typography variant="h3">
+              Lộ trình học của bạn
+            </Typography>
+            <Breadcrumbs separator={<BreadcrumbsSeparator />}>
+              <Link
+                color="text.primary"
+                component={NextLink}
+                href={paths.dashboard.index}
+                variant="subtitle2"
               >
-                <div>
-                  <Typography variant="h4">
-                    Lộ trình học của bạn
-                  </Typography>
-                </div>
-                <div>
-                  <Stack
-                    direction="row"
-                    spacing={4}
-                    // sx={{ overflowX: 'auto' }}
-                  >
-                    <Button
-                      startIcon={(
-                        <SvgIcon>
-                          <Shuffle01Icon />
-                        </SvgIcon>
-                      )}
-                      variant="contained"
-                      onClick={() => setOpenSelectGoalDialog(true)}
-                    >
-                      Thay đổi lộ trình
-                    </Button>
-                  </Stack>
-                </div>
-              </Stack>
-            </Grid>
-            {/* {LOs
-            .slice(page*consts.LOS_PER_PAGE, page*consts.LOS_PER_PAGE + consts.LOS_PER_PAGE)
-            .map((LO, index) => {
-              const LearningPathLOs = LO.score >= LO.percentOfPass ? LearningPathDoneLOs : (page*consts.LOS_PER_PAGE + index == 0 || LOs[page*consts.LOS_PER_PAGE + index - 1].score >= LO.percentOfPass) ? LearningPathProcessLOs : LearningPathLockedLOs;
-              return (
-                <Grid
-                  xs={12}
-                  md={4}
-                  key={LO.id}
-                >
-                  <LearningPathLOs id={LO.id} topic={LO.Topic.title} learningObject={LO.name} finished={LO.score} />
-                </Grid>
-              )
-            })} */}
-            {/* <Box sx={{ overflowX: 'auto', maxWidth: '100%' }}> */}
-            <Grid xs={12}>
-              <TopicGraph LOs={LOs} page={page} />
-            </Grid>
-            {/* </Box> */}
-            {/* <Grid xs={12}>
-              <Box mt={4}
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
+                Dashboard
+              </Link>
+              <Typography
+                color="text.secondary"
+                variant="subtitle2"
               >
-                <Button
-                  disabled={page == 0}
-                  onClick={() => {
-                    setPage(page - 1);
-                    window.scrollTo(0, 0);
-                  }}
-                  startIcon={(
-                    <SvgIcon>
-                      <ArrowLeftIcon />
-                    </SvgIcon>
-                  )}
-                >
-                </Button>
-                <Typography variant="body1">
-                  {page + 1} / {Math.ceil(LOs.length / consts.LOS_PER_PAGE)}
+                Lộ trình học của bạn
+              </Typography>
+            </Breadcrumbs>
+          </Stack>
+            
+          <Stack mt={10} spacing={10}>
+            <Stack>
+              <Typography variant="h5" mb={4}>
+                Khóa học đang trong tiến trình
+              </Typography>
+              <CourseProcess {...sequenceCourses.courses[sequenceCourses.currentCourseOrder]}/>
+            </Stack>
+            <Stack>
+              <Typography variant="h5" mb={4}>
+                Khóa học sắp tới
+              </Typography>
+              {(sequenceCourses.currentCourseOrder == sequenceCourses.courses.length - 1) 
+              ? <Typography variant="body1">
+                  Không có khóa học mới trong lộ trình
                 </Typography>
-                <Button
-                  disabled={page == Math.floor(LOs.length / consts.LOS_PER_PAGE)}
-                  onClick={() => {
-                    setPage(page + 1);
-                    window.scrollTo(0, 0);
-                  }}
-                  endIcon={(
-                    <SvgIcon>
-                      <ArrowRightIcon />
-                    </SvgIcon>
-                  )}
-                >
-                </Button>
-              </Box>
-            </Grid> */}
-          </Grid>
+              : <Grid container spacing={5}>
+                {sequenceCourses.courses.slice(sequenceCourses.currentCourseOrder+1, seeAllComingCourse?sequenceCourses.courses.length:sequenceCourses.currentCourseOrder+6).map((c, i) => 
+                  <Grid item xs={4} key={i}>
+                    <CourseLock {...c}/>
+                  </Grid>
+                )}
+                <Grid item xs={4}>
+                  <Stack justifyContent="flex-end" alignItems="flex-start" height="100%">
+                    {seeAllComingCourse 
+                      ? <Button startIcon={<ArrowBackOutlinedIcon />} color="inherit" onClick={() => setSeeAllComingCourse(false)}>
+                        Thu gọn
+                      </Button>
+                      :<Button endIcon={<ArrowForwardOutlinedIcon />} color="inherit" onClick={() => setSeeAllComingCourse(true)}>
+                        Xem tất cả 
+                      </Button>
+                    }
+                  </Stack>
+                </Grid>
+              </Grid>
+            }
+            </Stack>
+            <Stack>
+              <Typography variant="h5" mb={4}>
+                Khóa học hoàn thành gần đây
+              </Typography>
+              {(sequenceCourses.currentCourseOrder == 0) 
+              ? <Typography variant="body1">
+                  Chưa có khóa học hoàn thành trong lộ trình
+                </Typography>
+              : <Grid container spacing={5}>
+                {sequenceCourses.courses.slice(seeAllDoneCourse?0:sequenceCourses.currentCourseOrder-5, sequenceCourses.currentCourseOrder).reverse().map((c, i) => 
+                  <Grid item xs={4} key={i}>
+                    <CourseDone {...c}/>
+                  </Grid>
+                )}
+                <Grid item xs={4}>
+                  <Stack justifyContent="flex-end" alignItems="flex-start" height="100%">
+                    {seeAllDoneCourse 
+                      ? <Button startIcon={<ArrowBackOutlinedIcon />} color="inherit" onClick={() => setSeeAllDoneCourse(false)}>
+                        Thu gọn
+                      </Button>
+                      :<Button endIcon={<ArrowForwardOutlinedIcon />} color="inherit" onClick={() => setSeeAllDoneCourse(true)}>
+                        Xem tất cả 
+                      </Button>
+                    }
+                  </Stack>
+                </Grid>
+              </Grid>
+              }
+            </Stack>
+          </Stack>
         </Container>
       </Box>
-      {openSelectGoalDialog && <ChooseGoalLearningPathDialog 
-        onClose={() => {
-          setSelectedGoals([]);
-          setOpenSelectGoalDialog(false);
-        }}
-        onContinue={() => {
-          setOpenSelectGoalDialog(false);
-          setOpenBaseInfoDialog(true);
-        }}
-        open={openSelectGoalDialog}
-        setSelectedGoals={setSelectedGoals}
-        selectedGoals={selectedGoals}
-      />}
-      {openBaseInfoDialog && <BaseInfoLearningPathDialog 
-        onClose={() => {
-          setSelectedGoals([]);
-          setBaseInfoAnswer([]);
-          setOpenBaseInfoDialog(false);
-        }}
-        onContinue={() => {
-          handleConfirmButton();
-        }}
-        onBack={() => {
-          setOpenSelectGoalDialog(true);
-          setOpenBaseInfoDialog(false);
-          setBaseInfoAnswer([]);
-        }}
-        open={openBaseInfoDialog}
-        setBaseInfoAnswer={setBaseInfoAnswer}
-        baseInfoAnswer={baseInfoAnswer}
-      />}
     </>
   );
 }

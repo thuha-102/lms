@@ -108,7 +108,7 @@ export class FileController {
 
   @Get(':id/information')
   async getInformation(@Param('id', ParseIntPipe) id: number) {
-    return await this.fileService.getInformation(id)
+    return await this.fileService.getInformation(id);
   }
 
   @Get('video/:id')

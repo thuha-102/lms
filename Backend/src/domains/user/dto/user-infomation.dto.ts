@@ -5,11 +5,14 @@ import { leanObject } from 'src/shared/prisma.helper';
 export class UserInfoDTO {
   id: number;
   username: string;
+  accountType: string;
+  registerCourseIds: number[];
 
   static selectUser(): Prisma.UserSelect {
     return {
       id: true,
       username: true,
+      accountType: true,
     };
   }
 
@@ -17,6 +20,8 @@ export class UserInfoDTO {
     return leanObject({
       id: e.id,
       username: e.username,
+      accountType: e.accountType,
+      registerCourseIds: registerCourseIds || [],
     });
   }
 }

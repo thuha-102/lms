@@ -12,8 +12,8 @@ class UserApi {
     return axios.get(username ? `${apiUrl}?username=${username}` : apiUrl);
   }
 
-  getUserCourses(id, take) {
-    const url = take ? `${apiUrl}/${id}/courses/studied?take=${take}` : `${apiUrl}/${id}/courses/studied`
+  getUserCourses(id, keyword) {
+    const url = keyword ? `${apiUrl}/${id}/courses/studied?keyword=${keyword}` : `${apiUrl}/${id}/courses/studied`
     return axios.get(url);
   }
 

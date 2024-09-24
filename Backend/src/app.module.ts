@@ -14,14 +14,12 @@ import { join } from 'path';
 import { TopicModule } from './domains/topics/topics.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/http-exception.filter';
-import { SequenceCourseModule } from './domains/sequenceCourse/sequenceCourse.module';
 
 @Module({
   imports: [
     PrismaModule,
     AuthModule,
     UserModule,
-    SequenceCourseModule,
     CourseModule,
     TopicModule,
     LessonModule,

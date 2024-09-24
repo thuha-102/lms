@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { LevelType, Prisma } from '@prisma/client';
 import { TopicDTO } from 'src/domains/topics/dto/topics.dto';
 
 export class CourseDTO {
@@ -7,6 +7,7 @@ export class CourseDTO {
   updatedAt: Date;
   name: string;
   description: string;
+  level: LevelType;
   price: string;
   amountOfTime: number;
   avatarId: number;
@@ -21,6 +22,7 @@ export class CourseDTO {
       description: true,
       price: true,
       avatarId: true,
+      level: true,
       amountOfTime: true,
       Topic: {
         select: {
@@ -36,10 +38,11 @@ export class CourseDTO {
       id: entity.id,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
+      level: entity.level,
       name: entity.name,
       description: entity.description,
       price: entity.price,
-      avatarId:entity.avatarId,
+      avatarId: entity.avatarId,
       amountOfTime: entity.amountOfTime,
       topics: topic,
     };
@@ -52,6 +55,7 @@ export class CourseListDTO {
   createdAt: Date;
   updatedAt: Date;
   description: string;
+  level: LevelType;
   avatarId: number;
   price: string;
   amountOfTime: number;
@@ -62,6 +66,7 @@ export class CourseListDTO {
       createdAt: true,
       updatedAt: true,
       name: true,
+      level: true,
       description: true,
       price: true,
       avatarId: true,
@@ -69,17 +74,17 @@ export class CourseListDTO {
     };
   }
 
-
   static fromEntity(entity: Prisma.CourseGetPayload<unknown>): CourseListDTO {
     return {
       id: entity.id,
       name: entity.name,
       createdAt: entity.createdAt,
+      level: entity.level,
       updatedAt: entity.updatedAt,
       description: entity.description,
       avatarId: entity.avatarId,
       price: entity.price,
-      amountOfTime: entity.amountOfTime
+      amountOfTime: entity.amountOfTime,
     };
   }
 }

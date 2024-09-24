@@ -21,7 +21,6 @@ import {
 } from '@mui/material';
 import { introQuestionApi } from '../../../api/introQuestion';
 import { BreadcrumbsSeparator } from '../../../components/breadcrumbs-separator';
-import { useMounted } from '../../../hooks/use-mounted';
 import { usePageView } from '../../../hooks/use-page-view';
 import { Layout as DashboardLayout } from '../../../layouts/dashboard';
 import { paths } from '../../../paths';
@@ -46,7 +45,7 @@ const Page = () => {
     };
   }, [searchStr]);
 
-  const HandleDeleteQues = useCallback(async (id) => {
+  const handleDeleteQues = useCallback(async (id) => {
     try {
       const response = await introQuestionApi.deleteIntroQuestion(id);
       setQuestions(questions.filter(q => q.id !== response.data.id));
@@ -55,7 +54,7 @@ const Page = () => {
     }
   }, [questions])
 
-  const HandleEditQues = useCallback(async (i) => {
+  const handleEditQues = useCallback(async (i) => {
     try {
       const {id, ...rest} = editQuestions[i];
       const response = id ? await introQuestionApi.putIntroQuestion(id, rest) : await introQuestionApi.postIntroQuestion({order: i + 1, ...rest});
@@ -69,7 +68,7 @@ const Page = () => {
     }
   }, [editQuestions])
 
-  const HandleAddQues = useCallback(async (i) => {
+  const handleAddQues = useCallback(async (i) => {
     const newQues = {
       "question": "",
       "answers": [],
@@ -84,7 +83,7 @@ const Page = () => {
     setQuestions([...questions.slice(0, i + 1), newQues, ...questions.slice(i + 1)]);
   }, [editQuestions, questions]);
 
-  const HandleCancelEditQues = useCallback(async (i) => {
+  const handleCancelEditQues = useCallback(async (i) => {
     if (editQuestions[i].id) {
       const { [i]: _, ...newEditQuestions } = editQuestions; 
       setEditQuestions(newEditQuestions);
@@ -98,7 +97,7 @@ const Page = () => {
     }
   }, [editQuestions, questions]);
 
-  const HandleChangeOrderQues = useCallback(async (i, newOrder) => {
+  const handleChangeOrderQues = useCallback(async (i, newOrder) => {
     if (i + 1 == newOrder) {
       return;
     }
@@ -179,7 +178,7 @@ const Page = () => {
             >
               <Button
                 sx={{ maxWidth: 40, minWidth: 40, minHeight: 40, maxHeight: 40, borderRadius: "100%", fontSize: 25}}
-                onClick={() => HandleAddQues(-1)}
+                onClick={() => handleAddQues(-1)}
               >
                 +
               </Button>
@@ -268,10 +267,10 @@ const Page = () => {
                           </Button>
                         </Stack>
                         <Stack flexDirection="row" pt={1} justifyContent="flex-end">
-                          <Button variant="contained" onClick={() => HandleEditQues(i)}>
+                          <Button variant="contained" onClick={() => handleEditQues(i)}>
                             Lưu
                           </Button>
-                          <Button variant="contained" sx={{ marginLeft: 1}} onClick={() => HandleCancelEditQues(i)}>
+                          <Button variant="contained" sx={{ marginLeft: 1}} onClick={() => handleCancelEditQues(i)}>
                             Hủy
                           </Button>
                         </Stack>
@@ -283,7 +282,7 @@ const Page = () => {
                       <Stack flexDirection="row" alignItems="center">
                         <Select
                           value={i + 1}
-                          onChange={(e) => HandleChangeOrderQues(i, Number(e.target.value))}
+                          onChange={(e) => handleChangeOrderQues(i, Number(e.target.value))}
                           autoWidth
                           label="Thứ tự"
                           sx={{ marginRight: 2 }}
@@ -293,7 +292,7 @@ const Page = () => {
                         <Button style={{ borderRadius: '100%', maxWidth: 40, minWidth: 40, minHeight: 40, maxHeight: 40, marginRight: 10 }} variant='outlined' onClick={() => {setEditQuestions({...editQuestions, [i]: q})}}>
                           <CreateOutlinedIcon fontSize='small'/>
                         </Button>
-                        <Button style={{ borderRadius: '100%', maxWidth: 40, minWidth: 40, minHeight: 40, maxHeight: 40 }} variant='outlined' onClick={() => HandleDeleteQues(q.id)}>
+                        <Button style={{ borderRadius: '100%', maxWidth: 40, minWidth: 40, minHeight: 40, maxHeight: 40 }} variant='outlined' onClick={() => handleDeleteQues(q.id)}>
                           <DeleteOutlineOutlinedIcon fontSize='small'/>
                         </Button>
                       </Stack>
@@ -316,7 +315,7 @@ const Page = () => {
                   >
                     <Button
                       sx={{ maxWidth: 40, minWidth: 40, minHeight: 40, maxHeight: 40, borderRadius: "100%", fontSize: 25}}
-                      onClick={() => HandleAddQues(i)}
+                      onClick={() => handleAddQues(i)}
                     >
                       +
                     </Button>

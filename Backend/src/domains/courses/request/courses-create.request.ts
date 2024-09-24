@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { LevelType, Prisma } from '@prisma/client';
 import { IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { connectManyRelation, connectRelation } from 'src/shared/prisma.helper';
 
@@ -32,11 +32,16 @@ export class CourseCreateREQ {
   @IsNumber()
   avatarId: number;
 
+  @IsOptional()
+  @IsEnum(LevelType)
+  level: LevelType;
+
   static toCreateInput(body: CourseCreateREQ): Prisma.CourseCreateInput {
     return {
       name: body.name,
       labels: body.labels,
       description: body.description,
+      level: body.level,
       avatarId: body.avatarId,
     };
   }

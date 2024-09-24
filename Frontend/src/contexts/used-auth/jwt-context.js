@@ -136,6 +136,7 @@ export const AuthProvider = (props) => {
   const signUp = useCallback(async (request) => {
     await authApi.signUp(request);
     const { accessToken, id, accountType } = (await authApi.signIn(request)).data;
+    const registerCourseIds = []
     // const user = await authApi.me(id)
 
     localStorage.setItem(STORAGE_KEY, accessToken);

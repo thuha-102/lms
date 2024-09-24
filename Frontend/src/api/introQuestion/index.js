@@ -18,6 +18,10 @@ class IntroQuestionApi {
   deleteIntroQuestion(id) {
     return axios.delete(`${apiUrl}/${id}`);
   }
+
+  submitIntroQuestionsAnswers(request) {
+    return axios.post(`${apiUrl}/submit`, request)
+  }
 }
 
 export const introQuestionApi = new IntroQuestionApi();
