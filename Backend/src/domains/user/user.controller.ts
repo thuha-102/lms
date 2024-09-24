@@ -22,12 +22,12 @@ import { query } from 'express';
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
-
+  
   @Get(':id')
   async detail(@Param('id', ParseIntPipe) id: number) {
     return this.userService.detail(id);
   }
-
+  
   @Get(':id/courses/own')
   async ownCourse(
     @Param('id', ParseIntPipe) id: number,
@@ -39,10 +39,15 @@ export class UserController {
       visibility ? (visibility === 'VISIBLE' ? true : visibility === 'NON_VISIBLE' ? false : undefined) : undefined,
     );
   }
-
+  
   @Get(':id/courses/studied')
   async studiedCourse(@Param('id', ParseIntPipe) id: number, @Query() query?: { keyword: string }) {
-    return this.userService.studiedCourse(query.keyword);
+    return this.userService.studiedCourse(id, query.keyword);
+  }
+  
+  @Get()
+  async getAll(@Query('username') username?: string){
+    return await this.userService.getAll(username);
   }
 
   @Patch(':id')

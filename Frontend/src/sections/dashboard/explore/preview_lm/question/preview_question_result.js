@@ -7,7 +7,7 @@ import { paths } from '../../../../../paths';
 import {useState, useEffect} from 'react';
 import { useRouter } from 'next/navigation'
 
-export const JobPreview = ({lmId, user, answers}) => {
+export const JobPreview = ({lessonId, lmId, user, answers}) => {
   const [valueRating, setValueRating] = useState(3);
   const [hoverRating, setHoverRating] = useState(3);
   const [updateRatingId, setUpdateRatingId] = useState();
@@ -15,14 +15,14 @@ export const JobPreview = ({lmId, user, answers}) => {
   const router = useRouter()
 
   
-  const createQuizLog = async (lmId, user, answers) => {
+  const createQuizLog = async (lessonId, user, answers) => {
     try {
       const response = await learning_logApi.createLog(user.id, {
-        rating: valueRating,
+        // rating: valueRating,
         learnerAnswer: answers,  
-        time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        attempts: 1,
-        learningMaterialId: lmId,
+        // time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
+        // attempts: 1,
+        lessonId: lessonId,
       });
       setScore([response.data.score, response.data.maxScore])
       setUpdateRatingId(response.data.id)

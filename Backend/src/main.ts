@@ -6,10 +6,10 @@ import { PrismaClientExceptionFilter } from './shared/prisma-client-exception.fi
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalFilters(new HttpExceptionFilter());
-
+  
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
+  // app.useGlobalFilters(new HttpExceptionFilter());
 
   app.use(bodyParser.json({ limit: '10mb' }));
   app.enableCors();

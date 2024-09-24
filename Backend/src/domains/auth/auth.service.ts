@@ -26,9 +26,10 @@ export class AuthService {
     const isMatch = body.password == user.password;
 
     if (!isMatch) throw new UnauthorizedException('Username or password incorrect');
+    const registerCourseIds = (await this.prismaService.registerCourse.findMany({where: {learnerId: user.id}, select: {courseId: true}})).map(register => register.courseId)
 
-    const jwtToken = await this.jwtService.signAsync({ user: AuthDTO.fromEntity(user as any) });
-    return AuthLoginRESP.fromEntity(user as any, jwtToken);
+    const jwtToken = await this.jwtService.signAsync({ user: AuthDTO.fromEntity(user as any, registerCourseIds) });
+    return AuthLoginRESP.fromEntity(user as any, registerCourseIds, jwtToken);
   }
 
   async signup(body: AuthREQ) {
@@ -39,7 +40,7 @@ export class AuthService {
     const user = await this.prismaService.user.create({ data: body });
     await this.prismaService.learner.create({ data: { User: connectRelation(user.id) } });
 
-    const jwtToken = await this.jwtService.signAsync({ user: AuthDTO.fromEntity(user as any) });
-    return AuthLoginRESP.fromEntity(user as any, jwtToken);
+    const jwtToken = await this.jwtService.signAsync({ user: AuthDTO.fromEntity(user as any, []) });
+    return AuthLoginRESP.fromEntity(user as any, [], jwtToken);
   }
 }

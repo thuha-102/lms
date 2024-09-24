@@ -4,7 +4,7 @@ import { LessonDTO } from 'src/domains/lessons/dto/lessons.dto';
 export class TopicDTO {
   id: number;
   name: string;
-  lesson: LessonDTO[];
+  lessons: LessonDTO[];
 
   static selectTopicField(): Prisma.TopicSelect {
     return {
@@ -13,11 +13,11 @@ export class TopicDTO {
     };
   }
 
-  static fromEntity(e: Prisma.TopicGetPayload<unknown>, lesson?: LessonDTO[]): TopicDTO {
+  static fromEntity(e: Prisma.TopicGetPayload<unknown>, lessons?: LessonDTO[]): TopicDTO {
     return {
       id: e.id,
       name: e.name,
-      lesson: lesson,
+      lessons: lessons,
     };
   }
 }

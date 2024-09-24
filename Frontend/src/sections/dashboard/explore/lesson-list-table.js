@@ -160,25 +160,25 @@ function Row(props) {
   const menuRef = useRef(null);
   const { user } = useAuth();
   const [openMenu, setOpenMenu] = useState(false);
-  const { row, accountType, isInstructor, registered } = props;
+  const { row, accountType, registered } = props;
   const [open, setOpen] = React.useState(false);
   const [listLMAccordingToLesson, setListLMAccordingToLesson] = useState({
-    "title": "",
-    "learningMaterial": [
+    "id": -1, 
+    "name": "",
+    "lessons": [
         {
             "id": 9,
-            "name": "Document21"
+            "type": "PDF",
+            "title": "Document21",
+            "fileId": 1
         }
     ],
-    "amountOfTime": 0,
-    "visibility": true,
-    "courseId": 1
 });
   const [fileGet, setFileGet] = useState("")
   const [openDialog, setOpenDialog] = useState(false)
   const getLesson = useCallback(async (id) => {
     try {
-      const response = await exploreApi.getLesson(id);
+      // const response = await exploreApi.getTopic(id);
 
       if (isMounted()) {
         setListLMAccordingToLesson(response.data);
@@ -202,29 +202,31 @@ function Row(props) {
   // }, [])
 
 
-  const createFileLog = async (lm, user) => {
+  const createFileLog = async (lessonId, user) => {
     try {
       const response = await learning_logApi.createLog(user.id, {
-        rating: 3,
-        time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        attempts: 1,
-        learningMaterialId: lm.id,
+        // rating: 3,
+        // time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
+        // attempts: 1,
+        lessonId: lessonId,
       });
-      console.log(response);
 
     } catch (err) {
       console.error(err);
     }
   }
 
-  const getFile = useCallback(async (id) => {
+  const getFile = useCallback(async (fileId, type) => {
     try {
       // const response = await fileApi.getFileFromGGDrive(id);
 
       if (isMounted()) {
         // console.log(response.data)
         // setFileGet(response.data.url);
-        window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/learning-materials/${id}`, '_blank');
+        if (type === 'VIDEO')
+          window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/files/video/${fileId}`, '_blank');
+        else
+          window.open(`${process.env.NEXT_PUBLIC_SERVER_API}/files/${fileId}`, '_blank');
         // console.log(fileGet)
 
       }
@@ -233,28 +235,26 @@ function Row(props) {
     }
   }, [open])
 
-  const handlePageChange = (lm, registered) => {  
+  const handlePageChange = (lesson, registered) => {  
     // Kiểm tra trước xem khoá học này đã được user register chưa, nếu được register rồi thì mới gửi api createFileLog và getFile
     if(registered) {
       // Gửi api createFileLog và getFile
-      switch(lm.type) {
+      switch(lesson.type) {
         case "VIDEO":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.id}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
           break;
         case "PDF":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.id}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
           break;
         case "QUIZ":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.id}`);
-          break;
-        case "CODE":
-          router.push(`${paths.dashboard.explore}/preview_lm/${lm.id}`);
+          router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
           break;
         default:
-          // code block
-          createFileLog(lm, user)
-          getFile(lm.id)
-      }
+          router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
+          break;
+        }
+      createFileLog(lesson.id, user)
+      // getFile(lesson.fileId, lesson.type)
     }
   }
 
@@ -292,10 +292,10 @@ function Row(props) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.title}
+          {row.name}
         </TableCell>
         {
-          accountType !== "LEARNER" && isInstructor &&
+          accountType !== "LEARNER"  &&
           <TableCell align="right">
               <IconButton
                   onClick={handleMenuOpen}
@@ -312,7 +312,7 @@ function Row(props) {
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
-                {listLMAccordingToLesson.learningMaterial.map((_lm) => (
+                {row.lessons.map((_lm) => (
                 <div key={_lm.id}>
                   <Item
                       sx={{
@@ -324,7 +324,7 @@ function Row(props) {
                   >
                       <Stack spacing={2} direction="row" alignItems="center">
                           <FileIcon extension={_lm.type} />
-                          <Typography noWrap>{_lm.name}</Typography>
+                          <Typography noWrap>{_lm.title}</Typography>
                       </Stack>
                   </Item>
                   {/* {console.log(_lm.id)}
@@ -332,11 +332,10 @@ function Row(props) {
                 </div>
                 ))}
             </Box>
-            {console.log(listLMAccordingToLesson["learningMaterial"])}
           </Collapse>
         </TableCell>
       </TableRow>
-      {accountType !== "LEARNER" && isInstructor && <ItemMenu
+      {accountType !== "LEARNER" && <ItemMenu
         anchorEl={menuRef.current}
         onClose={handleMenuClose}
         onDelete={handleDeleteLesson}
@@ -352,12 +351,12 @@ function Row(props) {
 
 Row.propTypes = {
   row: PropTypes.shape({
-    title: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
     id: PropTypes.number.isRequired,
   }).isRequired,
 };
 
-export default function CollapsibleTable({accountType, rows, isInstructor, registered}) {
+export default function CollapsibleTable({accountType, rows, registered}) {
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table">
@@ -370,7 +369,7 @@ export default function CollapsibleTable({accountType, rows, isInstructor, regis
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <Row key={row.id} row={row} accountType={accountType} isInstructor={isInstructor} registered={registered}/>
+            <Row key={row.id} row={row} accountType={accountType} registered={registered}/>
           ))}
         </TableBody>
       </Table>

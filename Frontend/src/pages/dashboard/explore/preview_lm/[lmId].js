@@ -185,10 +185,8 @@ import { Layout as DashboardLayout } from '../../../../layouts/dashboard';
 import { paths } from '../../../../paths';
 import { exploreApi } from '../../../../api/explore';
 
-import PreviewFile from '../../../../sections/dashboard/explore/preview_lm/preview_file'
 import PreviewVideo from '../../../../sections/dashboard/explore/preview_lm/preview_video'
 import PreviewOfficeFile from '../../../../sections/dashboard/explore/preview_lm/preview_office'
-import PreviewCode from '../../../../sections/dashboard/explore/preview_lm/preview_code'
 import { PreviewQuestion } from '../../../../sections/dashboard/explore/preview_lm/preview_question';
 import { LmRating } from '../../../../sections/dashboard/explore/preview_lm/lm_rating'
 import { learning_logApi } from '../../../../api/learning-log';
@@ -294,9 +292,10 @@ const useLMs = (search) => {
 
 
 
-const PreviewLM = () => {
+const PreviewLM = (props) => {
   const previewlmformUrl = window.location.href.split('/');
   const lmId = (previewlmformUrl[previewlmformUrl.length - 1]);
+  const {lessonId} = props
   const [currentTime, setCurrentTime] = useState(0); //current time for video
   const [valueRating, setValueRating] = useState(3);
   const [hoverRating, setHoverRating] = useState(3);
@@ -326,13 +325,13 @@ const PreviewLM = () => {
     }
   }, [lm])
 
-  const createFileLog = async (lmId, user) => {
+  const createFileLog = async (lessonId, user) => {
     try {
       const response = await learning_logApi.createLog(user.id, {
-        rating: valueRating,
-        time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        attempts: 1,
-        learningMaterialId: lmId,
+        // rating: valueRating,
+        // time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
+        // attempts: 1,
+        lessonId: lessonId,
       });
       console.log(response);
 
@@ -409,14 +408,14 @@ const PreviewLM = () => {
       >
         <Container maxWidth="xl">
           <Stack spacing={4}>
-            <Stack
+            {/* <Stack
               direction="row"
               justifyContent="space-between"
               spacing={4}
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  {/* {courseTitle} */}
+                  {courseTitle}
                   {lm.name}
                 </Typography>
                 <Breadcrumbs separator={<BreadcrumbsSeparator />}>
@@ -438,30 +437,24 @@ const PreviewLM = () => {
                   </Link>
                 </Breadcrumbs>
               </Stack>
-            </Stack>
-            <Card>
+            </Stack> */}
+            <Card style={{borderRadius: 0}}>
               {
-                lm.type === "VIDEO" ? <PreviewVideo lmId = {parseInt(lmId, 10)} 
+                lm.type === "VIDEO" ? <PreviewVideo lessonId={parseInt(lmId, 10)} lmId = {parseInt(lmId, 10)} 
                                                     // currentTime={currentTime} 
                                                     // setCurrentTime={setCurrentTime}
                                                     valueRating={valueRating} 
                                                     /> : <></>
               }{
-                lm.type === "PDF" || lm.type === "WORD" || lm.type === 'PPT'? <PreviewOfficeFile lmId = {parseInt(lmId, 10)} /> : <></>
+                lm.type === "PDF" || lm.type === "WORD" || lm.type === 'PPT'? <PreviewOfficeFile lessonId={parseInt(lmId, 10)} lmId = {parseInt(lmId, 10)} /> : <></>
               }
             </Card>
             {/* {console.log(lm)} */}
               {
                 lm.type === "QUIZ" ? <PreviewQuestion 
+                                        lessonId={parseInt(lmId, 10)}
                                         lmId = {parseInt(lmId, 10)} 
                                         user={user}/> : <></>
-              }
-              {
-                lm.type === "CODE" ? <PreviewCode lmId = {parseInt(lmId, 10)}
-                                                  value={valueRating} 
-                                                  setValue={setValueRating} 
-                                                  hover={hoverRating} 
-                                                  setHover={setHoverRating} /> : <></>
               }
             <Card>
               {lm.type === "VIDEO" || lm.type === "PDF" 
