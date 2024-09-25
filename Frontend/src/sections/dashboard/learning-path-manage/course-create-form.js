@@ -22,7 +22,7 @@ import { QuillEditor } from '../../../components/quill-editor';
 import { paths } from '../../../paths';
 import { exploreApi } from '../../../api/explore';
 import { useMounted } from '../../../hooks/use-mounted';
-import CourseUploadTips from '../learning-path-manage/course-upload-tip';
+import CourseUploadTips from './course-upload-tip';
 
 const BackgroundKnowledgeType = [
   {
@@ -62,18 +62,11 @@ const categoryOptions = [
 ];
 
 const initialValues = {
-  // idInstructor: 2,
   level: '',
-  // description: '',
-  // images: [],
   name: '',
   amountOfTime : 0,
   visibility: false,
   description: '',
-  // difficulty: 0,
-  // newPrice: 0,
-  // oldPrice: 0,
-  // submit: null
 };
 
 const validationSchema = Yup.object({
@@ -94,13 +87,24 @@ export const CourseCreateForm = (props) => {
   const handleVisibilityChange = () => {
     setVisibilityChecked(!visibilityChecked);
   };
+  const [courseIds, setCourseIds] = useState(() => {
+    // Khởi tạo state từ localStorage nếu có
+    const listCourseIds = localStorage.getItem("sequenceCourseIds");
+    console.log(listCourseIds)
+    return listCourseIds ? JSON.parse(listCourseIds) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
+  }, [courseIds]);
+
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: async (values, helpers) => {
       try {
         // NOTE: Make API request
-        console.log(formik.values);
+        // console.log(formik.values);
         const response = await exploreApi.createCourse({
           name: values.name,
           description: values.description ,
@@ -112,8 +116,18 @@ export const CourseCreateForm = (props) => {
           topicNames: [],
           lessons: [],
       })
-        console.log(response.data.id)
         toast.success('Khoá học mới đã được tạo');
+        // Lấy `id` từ response
+        const newCourseId = response.data.id;
+        console.log('New Course ID:', newCourseId);
+
+        // Cập nhật `courseIds` và lưu vào localStorage
+        const updatedCourseIds = [...courseIds, newCourseId];
+        setCourseIds(updatedCourseIds);
+        console.log(JSON.stringify(updatedCourseIds))
+        console.log(localStorage.setItem("sequenceCourseIds", JSON.stringify(updatedCourseIds)));
+        console.log('Updated courseIds:', updatedCourseIds);
+
         // router.push(`${paths.dashboard.explore}/${response.data.id}`);
         router.push(`${paths.dashboard.learning_path_manage}/create`);
       } catch (err) {

@@ -32,6 +32,7 @@ import { useMounted } from '../../../hooks/use-mounted';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import QueueIcon from '@mui/icons-material/Queue';
 import { CreateCourseDialog } from './course-create-dialog';
+import { BrowserRouter } from 'react-router-dom';
 
 // import CourseUploadTips from './course-upload-tip';
 // import CourseBuilder from './course-builder';
@@ -94,34 +95,18 @@ const categoryOptions = [
 ];
 
 const initialValues = {
-  // id: '',
-  // category: '',
-  // description: '',
-  // images: [],
   name: ''
-  // duration : 0,
-  // difficulty: 0,
-  // newPrice: 0,
-  // oldPrice: 0,
-  // submit: null
 };
 
 const validationSchema = Yup.object({
-  // id: Yup.number().min(0),
-  // category: Yup.string().max(255),
-  // description: Yup.string().max(5000),
-  // images: Yup.array(),
   name: Yup.string().max(255).required(),
   subject: Yup.string().max(255).required(),
   preCourseId: Yup.number().min(0),
   postCourseId: Yup.number().min(0)
-  // duration : Yup.number().min(0).required(),
-  // difficulty: Yup.number().min(0).required(),
-  // newPrice: Yup.number().min(0).required(),
-  // oldPrice: Yup.number().min(0),
 });
 
-export const LearningPathCreateCourse = (props) => {
+export const LearningPathCreateCourse = ({courseIds}) => {
+  localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
   const courseUrl = window.location.href.split('/');
   const courseId = (courseUrl[courseUrl.length - 1]);
   const isMounted = useMounted();
@@ -158,7 +143,7 @@ export const LearningPathCreateCourse = (props) => {
         // NOTE: Make API request
         // console.log(formik.values);
         await learning_path_manageApi.createCourse({
-          title: values.name,
+          name: values.name,
           subject: values.subject,
           preCourseIds: [values.preCourseId],
           postCourseIds: [values.postCourseId],
@@ -251,7 +236,7 @@ export const LearningPathCreateCourse = (props) => {
 
   return (
     <>
-    <DragDropContext onDragEnd={handleDragEnd}>
+      <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="topics">
             {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>

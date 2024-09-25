@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import * as Yup from 'yup';
@@ -25,7 +26,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { FileDropzoneVn } from '../../../components/file-dropzone-vn';
 import { QuillEditor } from '../../../components/quill-editor';
 import { paths } from '../../../paths';
-import { topic_manageApi } from '../../../api/topic-manage';
+import { learningPathApi } from '../../../api/learning-path';
 import { useMounted } from '../../../hooks/use-mounted';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import QueueIcon from '@mui/icons-material/Queue';
@@ -46,7 +47,7 @@ const initialTopics = [
 const subjectOptions = [
   {
     label: 'Cơ bản',
-    value: 'BASIC'
+    value: 'BEGINNER'
   },
   {
     label: 'Trung cấp',
@@ -99,8 +100,9 @@ const initialValues = {
   // category: '',
   // description: '',
   // images: [],
-  group_name: ''
-  // score : 0,
+  group_name: '',
+  score : 0,
+  courseIds: [],
   // difficulty: 0,
   // newPrice: 0,
   // oldPrice: 0,
@@ -114,9 +116,9 @@ const validationSchema = Yup.object({
   // images: Yup.array(),
   group_name: Yup.string().max(255).required(),
   subject: Yup.string().max(255).required(),
-  preCourseId: Yup.number().min(0),
-  postCourseId: Yup.number().min(0)
-  // score : Yup.number().min(0).required(),
+  // preCourseId: Yup.number().min(0),
+  // postCourseId: Yup.number().min(0),
+  score : Yup.number().min(0).required(),
   // difficulty: Yup.number().min(0).required(),
   // newPrice: Yup.number().min(0).required(),
   // oldPrice: Yup.number().min(0),
@@ -129,6 +131,7 @@ export const LearningPathCreateForm = (props) => {
   const [topics, setTopics] = useState(initialTopics);
   const [courseOptions, setCourseOptions] = useState([]);
   const [openGroupCreateDialog, setOpenGroupCreateDialog] = useState(false);
+  const [courseIds, setCourseIds] = useState([])
 
 
   const handleDragEnd = (result) => {
@@ -150,14 +153,16 @@ export const LearningPathCreateForm = (props) => {
     initialValues,
     validationSchema,
     onSubmit: async (values, helpers) => {
+      console.log(values)
       try {
         // NOTE: Make API request
         // console.log(formik.values);
-        await learning_path_manageApi.createCourse({
-          title: values.group_name,
-          subject: values.subject,
-          preCourseIds: [values.preCourseId],
-          postCourseIds: [values.postCourseId],
+
+        await learningPathApi.createSequenceCoures({
+          courseIds: [],
+          typeLearnerName: values.group_name,
+          typeLearnerStartScore: values.score,
+          // subject: values.subject,
       })
         toast.success('Chủ đề học tập đã được tạo');
         router.push(paths.dashboard.learning_path_manage);
@@ -306,116 +311,6 @@ export const LearningPathCreateForm = (props) => {
                     type="number"
                     value={formik.values.score}
                   />
-                  {/* <TextField
-                    error={!!(formik.touched.preCourseId && formik.errors.preCourseId)}
-                    fullWidth
-                    label="Chủ đề liền trước"
-                    name="preCourseId"
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    value={formik.values.preCourseId}
-                    select
-                  >
-                    {courseOptions.map((option) => (
-                      <MenuItem
-                        key={option.id}
-                        value={option.id}
-                        selected
-                      >
-                        {option.title}
-                      </MenuItem>
-                    ))}                    
-                  </TextField>
-                  <TextField
-                    error={!!(formik.touched.postCourseId && formik.errors.postCourseId)}
-                    fullWidth
-                    label="Chủ đề học sau"
-                    name="postCourseId"
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    value={formik.values.postCourseId}
-                    select
-                  >
-                    {courseOptions
-                    .filter((option, index) => index >= formik.values.preCourseId)
-                    .map((option) => (
-                      <MenuItem key={option.id} value={option.id} selected>
-                        {option.title}
-                      </MenuItem>
-                    ))}
-                  </TextField> */}
-                  {/* <TextField
-                    error={!!(formik.touched.category && formik.errors.category)}
-                    fullWidth
-                    label="Phân loại"
-                    name="category"
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    select
-                    value={formik.values.category}
-                  >
-                    {categoryOptions.map((option) => (
-                      <MenuItem
-                        key={option.value}
-                        value={option.value}
-                      >
-                        {option.label}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                  <TextField
-                    error={!!(formik.touched.duration && formik.errors.duration)}
-                    fullWidth
-                    label="Thời lượng"
-                    name="duration"
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    type="number"
-                    value={formik.values.duration}
-                  />
-                  <TextField
-                    error={!!(formik.touched.difficulty && formik.errors.difficulty)}
-                    fullWidth
-                    label="Độ khó (Trên thang 1-10)"
-                    name="difficulty"
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    type="number"
-                    value={formik.values.difficulty}
-                  />
-                  <TextField
-                    error={!!(formik.touched.belong_to_course && formik.errors.belong_to_course)}
-                    fullWidth
-                    label="Chủ đề liên quan"
-                    name="belong_to_course"
-                    onBlur={formik.handleBlur}
-                    onChange={formik.handleChange}
-                    value={formik.values.belong_to_course}
-                  />
-                  <div>
-                    <Typography
-                      color="text.secondary"
-                      sx={{ mb: 2 }}
-                      variant="subtitle2"
-                    >
-                      Mô tả
-                    </Typography>
-                    <QuillEditor
-                      onChange={(value) => {
-                        formik.setFieldValue('description', value);
-                      }}
-                      placeholder="Write something"
-                      sx={{ height: 400 }}
-                      value={formik.values.description}
-                    />
-                    {!!(formik.touched.description && formik.errors.description) && (
-                      <Box sx={{ mt: 2 }}>
-                        <FormHelperText error>
-                          {formik.errors.description}
-                        </FormHelperText>
-                      </Box>
-                    )}
-                  </div> */}
                 </Stack>
               </Grid>
             </Grid>
@@ -439,7 +334,9 @@ export const LearningPathCreateForm = (props) => {
                 xs={12}
                 md={8}
               >
-                <LearningPathCreateCourse></LearningPathCreateCourse>
+                <LearningPathCreateCourse 
+                  courseIds={courseIds}
+                />
               </Grid>
             </Grid>
           </CardContent>
@@ -576,7 +473,7 @@ export const LearningPathCreateForm = (props) => {
           </CardContent>
         </Card> */}
         <Box>
-          <CreateCourse />
+          {/* <CreateCourse /> */}
         </Box>
         <Stack
           alignItems="center"

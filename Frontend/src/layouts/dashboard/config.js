@@ -169,15 +169,15 @@ export const getSections = (t, accountType) => [
           </SvgIcon>
         )
       },
-      {
-        title: t(tokens.nav.topic_manage),
-        path: paths.dashboard.topic_manage,
-        icon: (
-          <SvgIcon fontSize="small">
-            <AccountTreeOutlinedIcon />
-          </SvgIcon>
-        )
-      },
+      // {
+      //   title: t(tokens.nav.topic_manage),
+      //   path: paths.dashboard.topic_manage,
+      //   icon: (
+      //     <SvgIcon fontSize="small">
+      //       <AccountTreeOutlinedIcon />
+      //     </SvgIcon>
+      //   )
+      // },
       {
         title: t(tokens.nav.account_manage),
         path: paths.dashboard.account_manage.index,

@@ -5,7 +5,7 @@ import { useCallback, useState } from 'react';
 
 const levelOptions = [
   "NONE",
-  "BASIC",
+  "BEGINNER",
   "INTERMEDIATE",
   "EXPERT"
 ];

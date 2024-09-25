@@ -10,7 +10,7 @@ import { paths } from '../../../paths';
 import { topic_manageApi } from '../../../api/topic-manage';
 import { LearningPathCreateForm } from '../../../sections/dashboard/learning-path-manage/learning-path-manage-create-form';
 import { TopicGraph } from '../../../sections/dashboard/topic-manage/topic-graph';
-import { CourseCreateForm } from '../../../sections/dashboard/explore/explore-create-form';
+import { CourseCreateForm } from '../../../sections/dashboard/learning-path-manage/course-create-form';
 
 
 const useSearch = () => {
