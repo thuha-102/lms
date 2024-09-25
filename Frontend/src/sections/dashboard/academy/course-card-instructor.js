@@ -77,7 +77,7 @@ export const CourseCardDelete = (props) => {
             color="text.secondary"
             variant="caption"
           >
-            {course.amountOfTime > 60 ? `${Math.floor(course.amountOfTime/60)}h` + ( Math.floor(course.amountOfTime%60) === 0 ? "" : `${Math.floor(course.amountOfTime%60)}p`) : `${Math.floor(course.amountOfTime)}p`}
+            {course.amountOfTime > 60 ? `${Math.floor(course.amountOfTime/60)} tiếng` + ( Math.floor(course.amountOfTime%60) === 0 ? "" : `${Math.floor(course.amountOfTime%60)} phút`) : `${Math.floor(course.amountOfTime)}phút`}
           </Typography>
         </Stack>
       </CardContent>

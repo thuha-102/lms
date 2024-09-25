@@ -36,6 +36,10 @@ export class CourseCreateREQ {
   @IsEnum(LevelType)
   level: LevelType;
 
+  @IsOptional()
+  @IsNumber()
+  passPercent: number;
+
   static toCreateInput(body: CourseCreateREQ): Prisma.CourseCreateInput {
     return {
       name: body.name,
@@ -43,6 +47,7 @@ export class CourseCreateREQ {
       description: body.description,
       level: body.level,
       avatarId: body.avatarId,
+      passPercent: body.passPercent
     };
   }
 }
