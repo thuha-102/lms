@@ -104,12 +104,10 @@ export class UserService {
   async studiedLesson(learnerId: number, lessonId: number) {
     return await this.prismaService.$transaction(async (tx) => {
       try {
-        
-
         const lesson = await tx.lesson.findFirst({ where: { id: lessonId }, select: { topicId: true } });
         const course = await tx.course.findFirst({
           where: { Topic: { some: { id: lesson.topicId } } },
-          select: { id: true, totalLessons: true },
+          select: { id: true, totalLessons: true, passPercent: true },
         });
         const registerCourse = await tx.registerCourse.findFirst({
           where: { learnerId: learnerId, courseId: course.id },
@@ -117,7 +115,8 @@ export class UserService {
         });
         if (!registerCourse) throw new NotFoundException("Learner didn't regiter this course");
         const historyStudied = await tx.historyStudiedCourse.findFirst({ where: { lessonId, learnerId } });
-        if (!historyStudied) await tx.historyStudiedCourse.create({ data: { learnerId, lessonId } });
+        let newHis;
+        if (!historyStudied) newHis = await tx.historyStudiedCourse.create({ data: { learnerId, lessonId }, select: {id: true} });
 
         const updatePercent = historyStudied
           ? registerCourse.percentOfStudying
@@ -131,15 +130,14 @@ export class UserService {
           where: { id: learnerId },
           select: { typeLearnerId: true },
         });
-
         // register next course in sequence course if pass previous course
         const sequenceCourse = await tx.sequenceCourse.findMany({
           orderBy: { order: 'asc' },
           where: { typeLearnerId: learner.typeLearnerId ? learner.typeLearnerId : -1 },
           select: { courseId: true, order: true },
         });
-
-        if (sequenceCourse.length !== 0 && updatePercent - 1.0 >= 0) {
+        
+        if (sequenceCourse.length !== 0 && updatePercent - course.passPercent >= 0 ) {
           let nextCourseId = -1;
           for (let i = 1; i < sequenceCourse.length; i++) {
             if (sequenceCourse[i - 1].courseId === course.id) {
@@ -147,8 +145,11 @@ export class UserService {
               break;
             }
           }
+          
           if (nextCourseId !== -1) {
-            await tx.registerCourse.create({ data: { learnerId: learnerId, courseId: nextCourseId } });
+            const exsitRegister = await tx.registerCourse.findFirst({where: {learnerId: learnerId, courseId: nextCourseId}});
+            if (!exsitRegister) await tx.registerCourse.create({ data: { learnerId: learnerId, courseId: nextCourseId } });
+
             await tx.learner.update({
               where: { id: learnerId },
               data: { LatestCourseInSequenceCourses: connectRelation(nextCourseId) },

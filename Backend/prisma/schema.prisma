@@ -65,6 +65,7 @@ model Course {
   amountOfTime Int        @default(180) // caculate in minutes
   visibility   Boolean    @default(true)
   level        LevelType?
+  passPercent  Float      @default(0.8) @map("pass_percent")
 
   SequenceCourse SequenceCourse[]
   Learner        Learner[]

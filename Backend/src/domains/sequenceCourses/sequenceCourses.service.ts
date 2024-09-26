@@ -17,10 +17,32 @@ export class SequenceCoursesService {
       where: criteria,
       select: {
         Course: {
-          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true },
+          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true},
         },
       },
       orderBy: orderBy,
+    });
+  }
+
+  async getAll() {
+    return await this.prismaService.sequenceCourse.findMany({
+      select: {
+        typeLearnerId: true,
+        TypeLearner: {
+          select: {
+            createdAt: true,
+            updatedAt: true,
+            name: true,
+          }
+        },
+        Course: {
+          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true},
+        },
+      },
+      orderBy: {
+        typeLearnerId: 'asc',
+        order: 'asc'
+      },
     });
   }
 

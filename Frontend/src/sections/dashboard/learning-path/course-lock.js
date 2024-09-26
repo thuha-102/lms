@@ -40,7 +40,7 @@ export const CourseLock = (props) => {
             }}
             variant="subtitle2"
           >
-            {lessonsCount} bài giảng • {time} tiếng
+            {lessonsCount} bài giảng • {time > 60 ? `${Math.floor(time/60)} tiếng` + ( Math.floor(time%60) === 0 ? "" : `${Math.floor(time%60)} phút`) : `${Math.floor(time)}phút`}
           </Typography>
           <LockOutlinedIcon />
         </Stack> 
