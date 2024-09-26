@@ -96,6 +96,29 @@ export class SequenceCoursesController {
           courses: courses
         });
       }
+
+      const sequenceCourses = await this.sequenceCoursesService.getAll();
+      let result = [{
+        typeLearnerId: sequenceCourses[0].typeLearnerId,
+        typeLearnerName: sequenceCourses[0].TypeLearner.name,
+        createdAt: sequenceCourses[0].TypeLearner.createdAt,
+        updatedAt: sequenceCourses[0].TypeLearner.updatedAt,
+        courses: []
+      }];
+      sequenceCourses.forEach(c => {
+        if (c.typeLearnerId == result[result.length - 1].typeLearnerId) {
+          result[result.length - 1].courses = [...result[result.length - 1].courses, c.Course];
+        } else {
+          result = [...result, {
+            typeLearnerId: c.typeLearnerId,
+            typeLearnerName: c.TypeLearner.name,
+            createdAt: c.TypeLearner.createdAt,
+            updatedAt: c.TypeLearner.updatedAt,
+            courses: [c.Course]
+          }]
+        }
+      })
+      return JSON.stringify(result);
     } catch (error) {
       console.log(error);
       throw error;
