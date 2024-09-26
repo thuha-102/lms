@@ -60,7 +60,7 @@ const categoryOptions = [
   }
 ];
 
-export const TopicManageListTable = (props) => {
+export const LearningPathManageListTable = (props) => {
   const {
     onPageChange,
     onRowsPerPageChange,
@@ -133,10 +133,10 @@ export const TopicManageListTable = (props) => {
                 ID
               </TableCell>
               <TableCell width="50%" align='center'>
-                TÊN CHỦ ĐỀ 
+                NHÓM NGƯỜI HỌC 
               </TableCell>
               <TableCell width="20%" align='center'>
-                CHỦ ĐỀ TRƯỚC
+                ĐIỂM KHẢO SÁT
               </TableCell>
               <TableCell width="20%" align='center'>
                 CHỦ ĐỀ SAU
@@ -434,7 +434,7 @@ export const TopicManageListTable = (props) => {
   );
 };
 
-TopicManageListTable.propTypes = {
+LearningPathManageListTable.propTypes = {
   Topics: PropTypes.array.isRequired,
   TopicsCount: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,

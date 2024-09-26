@@ -13,7 +13,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { exploreApi } from '../../../api/explore';
 
-export const CreateCourseDialog = ({courseId, openCreateCourseDialog, setOpenCreateCourseDialog, handleAddTopic}) => {
+export const CreateCourseDialog = ({courseId, openCreateCourseDialog, setOpenCreateCourseDialog, handleAddCourseId}) => {
   // useEffect(() => {
   //   console.log("openCreateCourseDialog changed:", openCreateCourseDialog);
   // }, [openCreateCourseDialog]);
@@ -79,7 +79,7 @@ export const CreateCourseDialog = ({courseId, openCreateCourseDialog, setOpenCre
                 // helpers.setSubmitting(false);
               }
             handleClose();
-            handleAddTopic(course_name);
+            handleAddCourseId(course_name);
           },
         }}
       >

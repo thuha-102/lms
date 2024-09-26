@@ -11,6 +11,7 @@ import {
   CardContent,
   FormControlLabel,
   FormHelperText,
+  Link,
   MenuItem,
   Stack,
   Switch,
@@ -20,6 +21,9 @@ import {
   SvgIcon,
   IconButton
 } from '@mui/material';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
+import ArrowForwardIosRoundedIcon from '@mui/icons-material/ArrowForwardIosRounded';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Container, Paper, Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
@@ -105,34 +109,52 @@ const validationSchema = Yup.object({
   postCourseId: Yup.number().min(0)
 });
 
-export const LearningPathCreateCourse = ({courseIds}) => {
-  localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
+export const LearningPathCreateCourse = () => {
+  // localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
   const courseUrl = window.location.href.split('/');
   const courseId = (courseUrl[courseUrl.length - 1]);
   const isMounted = useMounted();
   const router = useRouter();
   const [files, setFiles] = useState([]);
-  const [topics, setTopics] = useState(initialTopics);
+  // const [topics, setTopics] = useState(initialTopics);
   const [courseOptions, setCourseOptions] = useState([]);
   const [openCreateCourseDialog, setOpenCreateCourseDialog] = useState(false);
+  const [courseIds, setCourseIds] = useState(() => {
+    // Khởi tạo state từ localStorage nếu có
+    const listCourseIds = localStorage.getItem("sequenceCourseIds");
+    console.log(listCourseIds)
+    return listCourseIds ? JSON.parse(listCourseIds) : [];
+  });
 
-  const handleDragEnd = (result) => {
-    if (!result.destination) return;
+  // const handleDragEnd = (result) => {
+  //   if (!result.destination) return;
 
-    const newTopics = Array.from(topics);
-    const [movedLesson] = newTopics.splice(result.source.index, 1);
-    newTopics.splice(result.destination.index, 0, movedLesson);
+  //   const newCourseIds = Array.from(courseIds);
+  //   const [movedLesson] = newCourseIds.splice(result.source.index, 1);
+  //   newCourseIds.splice(result.destination.index, 0, movedLesson);
 
-    setTopics(newTopics);
-  };
+  //   setCourseIds(newCourseIds);
+  // };
+
+    const handleDragEnd = (result) => {
+      if (!result.destination) return;
+
+      const newCourseIds = Array.from(courseIds);
+      const [movedCourse] = newCourseIds.splice(result.source.index, 1);
+      newCourseIds.splice(result.destination.index, 0, movedCourse);
+
+      setCourseIds(newCourseIds);
+      console.log(courseIds)
+    };
 
     const handleClose = () => {
         setOpenCreateCourseDialog(false);
     };
 
-    const handleAddTopic = (name) => {
-        const newTopic = { id: `${topics.length + 1}`, title: `${name}` };
-        setTopics([...topics, newTopic]);
+    const handleAddCourseId = (name) => {
+        const newCourseId = { id: `${courseIds.length + 1}`, name: `${name}` };
+        setCourseIds([...courseIds, newCourseId]);
+        // setMaincourseIds(courseIds);
     };
 
   const formik = useFormik({
@@ -173,8 +195,10 @@ export const LearningPathCreateCourse = ({courseIds}) => {
   }, [])
 
   useEffect(() => {
-    getCourses();
-  },[]);
+    // getCourses();
+    localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
+  },[courseIds]);
+
 
   const handleFilesDrop = useCallback((newFiles) => {
     setFiles((prevFiles) => {
@@ -195,11 +219,11 @@ export const LearningPathCreateCourse = ({courseIds}) => {
 
   // Hàm xử lý khi click vào Edit
   const handleEdit = async (topicId) => {
-    const topicToEdit = topics.find(topic => topic.id === topicId);
+    const topicToEdit = courseIds.find(topic => topic.id === topicId);
     if (topicToEdit) {
       // Thực hiện hành động chỉnh sửa, ví dụ mở một form để chỉnh sửa
       console.log("Editing topic:", topicToEdit);
-    //   setEditingTopic(topicToEdit); // Lưu topic cần chỉnh sửa vào state
+    //   setEditingCourseId(topicToEdit); // Lưu topic cần chỉnh sửa vào state
     try {
         // NOTE: Make API request
         // console.log(formik.values);
@@ -222,14 +246,15 @@ export const LearningPathCreateCourse = ({courseIds}) => {
     }
   };
 
+
   // Hàm xử lý khi click vào Delete
   const handleDelete = (topicId) => {
     // Xác nhận trước khi xóa
     const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa mục này không?");
     if (confirmDelete) {
-      // Xóa topic bằng cách lọc ra khỏi mảng topics
-      const updatedTopics = topics.filter(topic => topic.id !== topicId);
-      setTopics(updatedTopics);
+      // Xóa topic bằng cách lọc ra khỏi mảng courseIds
+      const updatedCourseIds = courseIds.filter(topic => topic.id !== topicId);
+      setCourseIds(updatedCourseIds);
       console.log("Deleted topic with id:", topicId);
     }
   };
@@ -237,11 +262,11 @@ export const LearningPathCreateCourse = ({courseIds}) => {
   return (
     <>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="topics">
+        <Droppable droppableId="course">
             {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-                {topics.map((topic, index) => (
-                <Draggable key={topic.id} draggableId={topic.id} index={index}>
+                {courseIds.map((courseId, index) => (
+                <Draggable key={courseId.id} draggableId={String(courseId.id)} index={index}>
                     {(provided) => (
                     <Paper
                         ref={provided.innerRef}
@@ -249,18 +274,32 @@ export const LearningPathCreateCourse = ({courseIds}) => {
                         {...provided.dragHandleProps}
                         sx={{ mb: 2, padding: 2, display: 'flex', alignItems: 'center' }}
                     >
-                        <Typography variant="body1" sx={{ flexGrow: 1 }}>
-                        {topic.title}
-                        </Typography>
                         <IconButton 
                             aria-label="edit"   
-                            onClick={() => handleEdit(topic.id)}    
+                            href={`${paths.dashboard.explore}/${courseId.id}`} 
+                        >
+                            <NavigateNextRoundedIcon />
+                        </IconButton>
+                        <Typography variant="body1" sx={{ flexGrow: 1 }}>
+                        {courseId.name}
+                        </Typography>
+                        {/* <Link
+                          color="text.primary"
+                          component={NextLink}
+                          href={paths.dashboard.topic_manage}
+                          variant="subtitle2"
+                        >
+                          <PlaylistAddIcon />
+                        </Link> */}
+                        <IconButton 
+                            aria-label="edit"   
+                            onClick={() => handleEdit(courseId.id)}    
                         >
                             <EditIcon />
                         </IconButton>
                         <IconButton 
                             aria-label="delete"
-                            onClick={() => handleDelete(topic.id)} // Gọi hàm khi click
+                            onClick={() => handleDelete(courseId.id)} // Gọi hàm khi click
                         >
                             <DeleteIcon />
                         </IconButton>
@@ -285,7 +324,7 @@ export const LearningPathCreateCourse = ({courseIds}) => {
     }}
     // onClick={handleAddTopic}
     // onClick={() => setOpenCreateCourseDialog(true) }
-    onClick={() => router.push(`${paths.dashboard.learning_path_manage}/create-course`)}
+    onClick={() => router.push(${paths.dashboard.learning_path_manage}/create-course)}
     >
     <QueueIcon/>
     <Typography variant="body1" sx={{px: 2, ml: 2}}>
@@ -317,7 +356,7 @@ export const LearningPathCreateCourse = ({courseIds}) => {
         openCreateCourseDialog={openCreateCourseDialog}
         setOpenCreateCourseDialog={setOpenCreateCourseDialog}
         handleClose={handleClose}
-        handleAddTopic={handleAddTopic}
+        handleAddCourseId={handleAddCourseId}
     />
     </>
   );

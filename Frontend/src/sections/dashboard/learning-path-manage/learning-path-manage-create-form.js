@@ -131,7 +131,12 @@ export const LearningPathCreateForm = (props) => {
   const [topics, setTopics] = useState(initialTopics);
   const [courseOptions, setCourseOptions] = useState([]);
   const [openGroupCreateDialog, setOpenGroupCreateDialog] = useState(false);
-  const [courseIds, setCourseIds] = useState([])
+  const [courseIds, setCourseIds] = useState(() => {
+    // Khởi tạo state từ localStorage nếu có
+    const listCourseIds = localStorage.getItem("sequenceCourseIds");
+    console.log(listCourseIds)
+    return listCourseIds ? JSON.parse(listCourseIds) : [];
+  });
 
 
   const handleDragEnd = (result) => {
@@ -153,13 +158,15 @@ export const LearningPathCreateForm = (props) => {
     initialValues,
     validationSchema,
     onSubmit: async (values, helpers) => {
-      console.log(values)
       try {
         // NOTE: Make API request
         // console.log(formik.values);
+        const localStorageData = localStorage.getItem("sequenceCourseIds");
+        const courseIdsFromLocalStorage = localStorageData ? JSON.parse(localStorageData) : [];
+        console.log(courseIdsFromLocalStorage)
 
         await learningPathApi.createSequenceCoures({
-          courseIds: [],
+          courseIds: courseIdsFromLocalStorage.map(courseId => courseId.id),
           typeLearnerName: values.group_name,
           typeLearnerStartScore: values.score,
           // subject: values.subject,
@@ -173,6 +180,7 @@ export const LearningPathCreateForm = (props) => {
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
       }
+      localStorage.setItem("sequenceCourseIds", [])
     }
   });
 
@@ -334,9 +342,7 @@ export const LearningPathCreateForm = (props) => {
                 xs={12}
                 md={8}
               >
-                <LearningPathCreateCourse 
-                  courseIds={courseIds}
-                />
+                <LearningPathCreateCourse />
               </Grid>
             </Grid>
           </CardContent>
@@ -472,9 +478,9 @@ export const LearningPathCreateForm = (props) => {
             </Grid>
           </CardContent>
         </Card> */}
-        <Box>
-          {/* <CreateCourse /> */}
-        </Box>
+        {/* <Box>
+          <CreateCourse />
+        </Box> */}
         <Stack
           alignItems="center"
           direction="row"

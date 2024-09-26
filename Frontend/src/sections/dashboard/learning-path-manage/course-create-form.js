@@ -94,9 +94,9 @@ export const CourseCreateForm = (props) => {
     return listCourseIds ? JSON.parse(listCourseIds) : [];
   });
 
-  useEffect(() => {
-    localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
-  }, [courseIds]);
+  // useEffect(() => {
+  //   localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
+  // }, [courseIds]);
 
   const formik = useFormik({
     initialValues,
@@ -118,7 +118,8 @@ export const CourseCreateForm = (props) => {
       })
         toast.success('Khoá học mới đã được tạo');
         // Lấy `id` từ response
-        const newCourseId = response.data.id;
+        const newCourseId = {id: response.data.id,
+                             name: values.name};
         console.log('New Course ID:', newCourseId);
 
         // Cập nhật `courseIds` và lưu vào localStorage

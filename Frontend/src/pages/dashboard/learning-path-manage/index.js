@@ -18,8 +18,8 @@ import { useMounted } from '../../../hooks/use-mounted';
 import { usePageView } from '../../../hooks/use-page-view';
 import { Layout as DashboardLayout } from '../../../layouts/dashboard';
 import { paths } from '../../../paths';
-import { TopicManageListSearch } from '../../../sections/dashboard/topic-manage/topic-manage-list-search';
-import { TopicManageListTable } from '../../../sections/dashboard/topic-manage/topic-manage-list-table';
+import { LearningPathManageListSearch } from '../../../sections/dashboard/learning-path-manage/learning-path-manage-list-search';
+import { LearningPathManageListTable } from '../../../sections/dashboard/learning-path-manage/learning-path-manage-list-table';
 import { topic_manageApi } from '../../../api/topic-manage';
 import { TopicGraph } from '../../../sections/dashboard/topic-manage/topic-graph';
 
@@ -175,8 +175,8 @@ const CourseList = () => {
             </Stack>
             <TopicGraph topics={Topics}/>
             <Card>
-              <TopicManageListSearch onFiltersChange={handleFiltersChange} onSearchChange={handleSearchChange}/>
-              <TopicManageListTable
+              <LearningPathManageListSearch onFiltersChange={handleFiltersChange} onSearchChange={handleSearchChange}/>
+              <LearningPathManageListTable
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
                 page={search.page}

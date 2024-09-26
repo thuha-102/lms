@@ -32,7 +32,7 @@ const subjectOptions = [
   },
 ];
 
-export const TopicManageListSearch = (props) => {
+export const LearningPathManageListSearch = (props) => {
   const { onFiltersChange, onSearchChange, ...other } = props;
   const queryRef = useRef(null);
   const [query, setQuery] = useState('');
@@ -314,6 +314,6 @@ export const TopicManageListSearch = (props) => {
   );
 };
 
-TopicManageListSearch.propTypes = {
+LearningPathManageListSearch.propTypes = {
   onFiltersChange: PropTypes.func
 };
