@@ -1,10 +1,12 @@
 import { Fragment, useCallback, useState } from 'react';
+import { useRouter } from 'next/router';
 import numeral from 'numeral';
 import PropTypes from 'prop-types';
 import { toast } from 'react-hot-toast';
 import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
+import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import Image01Icon from '@untitled-ui/icons-react/build/esm/Image01';
 import {
   Box,
@@ -32,6 +34,7 @@ import {
 import { Scrollbar } from '../../../components/scrollbar';
 import { SeverityPill } from '../../../components/severity-pill';
 import { topic_manageApi } from '../../../api/topic-manage';
+import { paths } from '../../../paths';
 
 const categoryOptions = [
   {
@@ -65,17 +68,18 @@ export const LearningPathManageListTable = (props) => {
     onPageChange,
     onRowsPerPageChange,
     page,
-    Topics,
-    TopicsCount,
+    TypeLearner,
+    TypeLearnerCount,
     rowsPerPage,
     ...other
   } = props;
-  const [currentTopic, setCurrentTopic] = useState(null);
-  const [currentTitle, setCurrentTitle] = useState(null);
+  const router = useRouter();
+  const [currentTypeLearner, setCurrentTypeLearner] = useState(null);
+  const [currentTypeLearnerName, setCurrentTypeLearnerName] = useState(null);
   const [state, setState] = useState(false);
 
-  const handleLessonToggle = useCallback((productId) => {
-    setCurrentTopic((prevProductId) => {
+  const handleTypeLearnerToggle = useCallback((productId) => {
+    setCurrentTypeLearner((prevProductId) => {
       if (prevProductId === productId) {
         return null;
       }
@@ -85,14 +89,14 @@ export const LearningPathManageListTable = (props) => {
   }, []);
 
   const handleLessonClose = useCallback(() => {
-    setCurrentTopic(null);
+    setCurrentTypeLearner(null);
   }, []);
 
-  const handleLessonUpdate = useCallback(async (Topic) => {
-    // setCurrentTopic(null);
+  const handleLessonUpdate = useCallback(async (TypeLearner) => {
+    // setCurrentTypeLearner(null);
     try {
-      const response = await topic_manageApi.updateTopic(Topic.id, {
-        title: currentTitle,
+      const response = await topic_manageApi.updateTypeLearner(TypeLearner.typeLearnerId, {
+        typeLearnerName: currentTypeLearnerName,
         addPreIds: [],
         addPostIds: [],
         deletePreIds: [],
@@ -105,9 +109,9 @@ export const LearningPathManageListTable = (props) => {
     toast.success('Chủ đề học đã được cập nhật');
   }, []);
 
-  const handleLessonDelete = useCallback(async (id) => {
+  const handleLessonDelete = useCallback(async (typeLearnerId) => {
     try {
-      const response = await topic_manageApi.deleteTopic(id);
+      const response = await topic_manageApi.deleteTypeLearner(typeLearnerId);
       console.log(response)
     } catch (err) {
       console.error(err);
@@ -120,7 +124,7 @@ export const LearningPathManageListTable = (props) => {
   }
 
   const handleLessonTitle = useCallback((event) => {
-    setCurrentTitle(event.target.value);
+    setCurrentTypeLearnerName(event.target.value);
   },[]);
 
   return (
@@ -129,6 +133,8 @@ export const LearningPathManageListTable = (props) => {
         <Table sx={{ minWidth: 1200 }}>
           <TableHead>
             <TableRow>
+              <TableCell width="5%" align='center'>
+              </TableCell>
               <TableCell width="5%" align='center'>
                 ID
               </TableCell>
@@ -139,39 +145,56 @@ export const LearningPathManageListTable = (props) => {
                 ĐIỂM KHẢO SÁT
               </TableCell>
               <TableCell width="20%" align='center'>
-                CHỦ ĐỀ SAU
+                NGÀY TẠO - CHỈNH SỬA
               </TableCell>
               <TableCell align="right">
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {Topics.slice(page*rowsPerPage, page*rowsPerPage + rowsPerPage)
-            .map((Topic) => {
-              const isCurrent = Topic.id === currentTopic;
-              // const price = numeral(Topic.price).format(`${Topic.currency}0,0.00`);
-              // const quantityColor = Topic.quantity >= 10 ? 'success' : 'error';
-              const statusColor = Topic.status === 'published' ? 'success' : 'info';
-              const hasManyVariants = Topic.variants > 1;
+            {TypeLearner.slice(page*rowsPerPage, page*rowsPerPage + rowsPerPage)
+            .map((TypeLearner) => {
+              const isCurrent = TypeLearner.typeLearnerId === currentTypeLearner;
+              // const price = numeral(TypeLearner.price).format(`${TypeLearner.currency}0,0.00`);
+              // const quantityColor = TypeLearner.quantity >= 10 ? 'success' : 'error';
+              const statusColor = TypeLearner.status === 'published' ? 'success' : 'info';
+              const hasManyVariants = TypeLearner.variants > 1;
               // const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
               return (
-                <Fragment key={Topic.id}>
+                <Fragment key={TypeLearner.typeLearnerId}>
                   <TableRow
                     hover
-                    key={Topic.id}
+                    key={TypeLearner.typeLearnerId}
                   >
                     <TableCell width="5%" align='center'>
-                      {Topic.id}
+                      <IconButton 
+                        aria-label="edit"   
+                        onClick={() => {
+                          // Chuyển đổi mảng các đối tượng thành chuỗi JSON trước khi lưu vào localStorage
+                          localStorage.setItem('updateSequenceCourseIds', JSON.stringify(TypeLearner.courses.map((course) => ({
+                            id: course.id,
+                            name: course.name
+                          }))));
+                          
+                          // Điều hướng đến trang khác
+                          router.push(`${paths.dashboard.learning_path_manage}/updated/${TypeLearner.typeLearnerId}`);
+                        }} 
+                      >
+                        <NavigateNextRoundedIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell width="5%" align='center'>
+                      {TypeLearner.typeLearnerId}
                     </TableCell>
                     <TableCell>
                       <Typography
-                        color="textSecondary"
+                        color="textFrist"
                         variant="body2"
                         textAlign={"center"}
                       >
-                        {/* {Topic.updatedAt ? new Date(Topic.updatedAt).toLocaleDateString('en-GB') : 'N/A'} */}
-                        {Topic.title}
+                        {/* {TypeLearner.updatedAt ? new Date(TypeLearner.updatedAt).toLocaleDateString('en-GB') : 'N/A'} */}
+                        {TypeLearner.typeLearnerName}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -180,7 +203,7 @@ export const LearningPathManageListTable = (props) => {
                         variant="body2"
                         textAlign={"center"}
                       >
-                        {Topic.preTopicIds.join(', ')}
+                        {"Chưa có"}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -189,12 +212,18 @@ export const LearningPathManageListTable = (props) => {
                         variant="body2"
                         textAlign={"center"}
                       >
-                        {Topic.postTopicIds.join(', ')}
+                        {TypeLearner.createdAt.split("T")[0]}
+                      </Typography>
+                      <Typography
+                        color="textSecondary"
+                        variant="body2"
+                        textAlign={"center"}
+                      >
+                        {TypeLearner.updatedAt.split("T")[0]}
                       </Typography>
                     </TableCell>
-
                     <TableCell align="right">
-                      <IconButton onClick={() => handleLessonToggle(Topic.id)}   >
+                      <IconButton onClick={() => handleTypeLearnerToggle(TypeLearner.typeLearnerId)}   >
                         <SvgIcon>
                           <DotsHorizontalIcon />
                         </SvgIcon>
@@ -243,7 +272,7 @@ export const LearningPathManageListTable = (props) => {
                                   xs={12}
                                 >
                                   <TextField
-                                    defaultValue={Topic.id}
+                                    defaultValue={TypeLearner.typeLearnerId}
                                     fullWidth
                                     disabled
                                     label="ID"
@@ -256,15 +285,15 @@ export const LearningPathManageListTable = (props) => {
                                   xs={12}
                                 >
                                   <TextField
-                                    defaultValue={Topic.title}
+                                    defaultValue={TypeLearner.typeLearnerName}
                                     fullWidth
-                                    label="Title"
-                                    name="title"
-                                    value={currentTitle}
+                                    label="Tên nhóm người học"
+                                    name="typeLearnerName"
+                                    value={currentTypeLearnerName}
                                     onChange={handleLessonTitle}
                                   />
                                   
-                                  {console.log(currentTitle)}
+                                  {console.log(currentTypeLearnerName)}
                                 </Grid>
                                 {/* <Grid
                                   item
@@ -272,7 +301,7 @@ export const LearningPathManageListTable = (props) => {
                                   xs={12}
                                 >
                                   <TextField
-                                    defaultValue={Topic.category}
+                                    defaultValue={TypeLearner.category}
                                     fullWidth
                                     label="Category"
                                     select
@@ -293,7 +322,7 @@ export const LearningPathManageListTable = (props) => {
                                   xs={12}
                                 >
                                   <TextField
-                                    defaultValue={Topic.id}
+                                    defaultValue={TypeLearner.typeLearnerId}
                                     disabled
                                     fullWidth
                                     label="Barcode"
@@ -308,70 +337,19 @@ export const LearningPathManageListTable = (props) => {
                               xs={12}
                             >
                               <Typography variant="h6">
-                                Các chủ đề liên quan
+                                Các khoá học thuộc lộ trình
                               </Typography>
                               <Divider sx={{ my: 2 }} />
-                              <Grid
-                                container
-                                spacing={3}
-                              >
-                                <Grid
-                                  item
-                                  md={6}
-                                  xs={12}
+                              {TypeLearner.courses.map((course) => {
+                                return (
+                                <Typography 
+                                  color="textSecondary"
+                                  variant="body2"
+                                  textAlign={"left"}
                                 >
-                                  <TextField
-                                    // defaultValue={Topic.preTopicIds}
-                                    fullWidth
-                                    label="Chủ đề trước"
-                                    name="Pre topics"
-                                    disabled
-                                    InputProps={{
-                                      startAdornment: (
-                                        <InputAdornment position="start">
-                                          {Topic.preTopicIds}
-                                        </InputAdornment>
-                                      )
-                                    }}
-                                    type="number"
-                                  />
-                                </Grid>
-                                <Grid
-                                  item
-                                  md={6}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    // defaultValue={Topic.postTopicIds}
-                                    fullWidth
-                                    label="Chủ đề sau"
-                                    name="Post topics"
-                                    disabled
-                                    InputProps={{
-                                      startAdornment: (
-                                        <InputAdornment position="start">
-                                          {Topic.postTopicIds}
-                                        </InputAdornment>
-                                      )
-                                    }}
-                                    type="number"
-                                  />
-                                </Grid>
-                                {/* <Grid
-                                  item
-                                  md={6}
-                                  xs={12}
-                                  sx={{
-                                    alignItems: 'center',
-                                    display: 'flex'
-                                  }}
-                                >
-                                  <Switch />
-                                  <Typography variant="subtitle2">
-                                    Keep selling when stock is empty
-                                  </Typography>
-                                </Grid> */}
-                              </Grid>
+                                  {course.name}
+                                </Typography>);
+                              })}
                             </Grid>
                           </Grid>
                         </CardContent>
@@ -388,7 +366,7 @@ export const LearningPathManageListTable = (props) => {
                             spacing={2}
                           >
                             <Button
-                              onClick={() => handleLessonUpdate(Topic)}
+                              onClick={() => handleLessonUpdate(TypeLearner)}
                               type="submit"
                               variant="contained"
                             >
@@ -403,7 +381,7 @@ export const LearningPathManageListTable = (props) => {
                           </Stack>
                           <div>
                             <Button
-                              onClick={() => handleLessonDelete(Topic.id)}
+                              onClick={() => handleLessonDelete(TypeLearner.typeLearnerId)}
                               // type="submit"
                               variant="contained"
                               color="error"
@@ -423,7 +401,7 @@ export const LearningPathManageListTable = (props) => {
       </Scrollbar>
       <TablePagination
         component="div"
-        count={TopicsCount}
+        count={TypeLearnerCount}
         onPageChange={onPageChange}
         onRowsPerPageChange={onRowsPerPageChange}
         page={page}
@@ -435,8 +413,8 @@ export const LearningPathManageListTable = (props) => {
 };
 
 LearningPathManageListTable.propTypes = {
-  Topics: PropTypes.array.isRequired,
-  TopicsCount: PropTypes.number.isRequired,
+  TypeLearner: PropTypes.array.isRequired,
+  TypeLearnerCount: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
   onRowsPerPageChange: PropTypes.func,
   page: PropTypes.number.isRequired,

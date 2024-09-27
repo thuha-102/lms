@@ -31,7 +31,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { FileDropzoneVn } from '../../../components/file-dropzone-vn';
 import { QuillEditor } from '../../../components/quill-editor';
 import { paths } from '../../../paths';
-import { topic_manageApi } from '../../../api/topic-manage';
+import { learningPathApi } from '../../../api/learning-path';
 import { useMounted } from '../../../hooks/use-mounted';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import QueueIcon from '@mui/icons-material/Queue';
@@ -109,10 +109,10 @@ const validationSchema = Yup.object({
   postCourseId: Yup.number().min(0)
 });
 
-export const LearningPathCreateCourse = ({typeLearnerId}) => {
-  // localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
-  // const courseUrl = window.location.href.split('/');
-  // const courseId = (courseUrl[courseUrl.length - 1]);
+export const LearningPathUpdateCourse = ({typeLearnerId}) => {
+  // localStorage.setItem("updateSequenceCourseIds", JSON.stringify(courseIds));
+  const courseUrl = window.location.href.split('/');
+  const courseId = (courseUrl[courseUrl.length - 1]);
   const isMounted = useMounted();
   const router = useRouter();
   const [files, setFiles] = useState([]);
@@ -121,11 +121,10 @@ export const LearningPathCreateCourse = ({typeLearnerId}) => {
   const [openCreateCourseDialog, setOpenCreateCourseDialog] = useState(false);
   const [courseIds, setCourseIds] = useState(() => {
     // Khởi tạo state từ localStorage nếu có
-    const listCourseIds = localStorage.getItem("sequenceCourseIds");
+    const listCourseIds = localStorage.getItem("updateSequenceCourseIds");
     console.log(listCourseIds)
     return listCourseIds ? JSON.parse(listCourseIds) : [];
   });
-  const [loading, setLoading] = useState(true); 
 
   // const handleDragEnd = (result) => {
   //   if (!result.destination) return;
@@ -189,19 +188,17 @@ export const LearningPathCreateCourse = ({typeLearnerId}) => {
   
   //     if (isMounted()) {
   //       const fetchedCourseIds = response.data.courses;
+  //       console.log(fetchedCourseIds);
   
   //       // Lưu ngay vào state
   //       setCourseIds(fetchedCourseIds);
-  
+  //       console.log(courseIds)
   //       // Lưu vào localStorage
-  //       localStorage.setItem("sequenceCourseIds", JSON.stringify(fetchedCourseIds.map(courseId => {
+  //       localStorage.setItem("updateSequenceCourseIds", JSON.stringify(fetchedCourseIds.map(courseId => {
   //         return { id: courseId.id, name: courseId.name };
   //       })));
-
-  //       setLoading(false);
   //     }
   //   } catch (err) {
-  //     setLoading(false);
   //     console.error(err);
   //   }
   // }, [isMounted, typeLearnerId]); // Đảm bảo các dependencies này luôn được cập nhật
@@ -209,11 +206,6 @@ export const LearningPathCreateCourse = ({typeLearnerId}) => {
   // useEffect(() => {
   //   getTypeLearner();
   // },[]);
-
-  useEffect(() => {
-    // getCourses();
-    localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
-  },[courseIds]);
 
 
   const handleFilesDrop = useCallback((newFiles) => {
@@ -275,8 +267,8 @@ export const LearningPathCreateCourse = ({typeLearnerId}) => {
     }
   };
 
-  if (!courseIds) {
-    return <Typography>Loading courses...</Typography>;
+  if(!courseIds) {
+    return <Typography>Loading...</Typography>
   }
 
   return (
@@ -298,7 +290,7 @@ export const LearningPathCreateCourse = ({typeLearnerId}) => {
                             aria-label="edit"   
                             href={`${paths.dashboard.explore}/${courseId.id}`} 
                         >
-                            <NavigateNextRoundedIcon />
+                          <NavigateNextRoundedIcon />
                         </IconButton>
                         <Typography variant="body1" sx={{ flexGrow: 1 }}>
                         {courseId.name}

@@ -129,8 +129,8 @@ export const CourseCreateForm = (props) => {
         console.log(localStorage.setItem("sequenceCourseIds", JSON.stringify(updatedCourseIds)));
         console.log('Updated courseIds:', updatedCourseIds);
 
-        // router.push(`${paths.dashboard.explore}/${response.data.id}`);
-        router.push(`${paths.dashboard.learning_path_manage}/create`);
+        // router.push(`${paths.dashboard.learning_path_manage}/create`);
+        router.back()
       } catch (err) {
         console.error(err);
         toast.error('Something went wrong!');

@@ -20,7 +20,7 @@ import { Layout as DashboardLayout } from '../../../layouts/dashboard';
 import { paths } from '../../../paths';
 import { LearningPathManageListSearch } from '../../../sections/dashboard/learning-path-manage/learning-path-manage-list-search';
 import { LearningPathManageListTable } from '../../../sections/dashboard/learning-path-manage/learning-path-manage-list-table';
-import { topic_manageApi } from '../../../api/topic-manage';
+import { learningPathApi } from '../../../api/learning-path';
 import { TopicGraph } from '../../../sections/dashboard/topic-manage/topic-graph';
 
 const useSearch = () => {
@@ -39,24 +39,24 @@ const useSearch = () => {
   };
 };
 
-const useTopics = (search) => {
+const useTypeLearner = (search) => {
   const isMounted = useMounted();
   const [state, setState] = useState({
-    Topics: [],
-    TopicsCount: 0
+    TypeLearner: [],
+    TypeLearnerCount: 0
   });
 
-  const getTopics = useCallback(async () => {
+  const getTypeLearner = useCallback(async () => {
     try {
-      const response = await topic_manageApi.getListTopic();
+      const response = await learningPathApi.getSequenceCoures();
       let topics = search.filters.subject.length !== 0 ? response.data.filter(topic => search.filters.subject.includes(topic.subject)) : response.data;
       if (search.title)
         topics = topics.filter(topic => topic.title.indexOf(search.title) !== -1)
       
       if (isMounted()) {
         setState({
-          Topics: topics,
-          TopicsCount: topics.length
+          TypeLearner: topics,
+          TypeLearnerCount: topics.length
         });
       }
     } catch (err) {
@@ -65,7 +65,7 @@ const useTopics = (search) => {
   }, [search, isMounted]);
 
   useEffect(() => {
-      getTopics();
+      getTypeLearner();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [search]);
@@ -75,7 +75,7 @@ const useTopics = (search) => {
 
 const CourseList = () => {
   const { search, updateSearch } = useSearch();
-  const { Topics, TopicsCount } = useTopics(search);
+  const { TypeLearner, TypeLearnerCount } = useTypeLearner(search);
 
   usePageView();
 
@@ -173,15 +173,15 @@ const CourseList = () => {
                 </Button>
               </Stack>
             </Stack>
-            <TopicGraph topics={Topics}/>
+            {/* <TopicGraph topics={TypeLearner}/> */}
             <Card>
               <LearningPathManageListSearch onFiltersChange={handleFiltersChange} onSearchChange={handleSearchChange}/>
               <LearningPathManageListTable
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
                 page={search.page}
-                Topics={Topics}
-                TopicsCount={TopicsCount}
+                TypeLearner={TypeLearner}
+                TypeLearnerCount={TypeLearnerCount}
                 rowsPerPage={search.rowsPerPage}
               />
             </Card>

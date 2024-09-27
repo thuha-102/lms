@@ -7,6 +7,12 @@ class LearningPathApi {
     return axios.get(apiUrl, { params: queryParams })
     //return Promise.resolve(deepCopy(learningSequenceCourseInfo));
   }
+
+  getSequenceCoures() {
+    return axios.get(apiUrl)
+    //return Promise.resolve(deepCopy(learningSequenceCourseInfo));
+  }
+
   createSequenceCoures(request) {
     return axios.post(apiUrl, request)
     //return Promise.resolve(deepCopy(learningSequenceCourseInfo));
