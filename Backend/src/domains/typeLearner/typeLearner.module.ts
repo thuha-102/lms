@@ -8,4 +8,4 @@ import { PrismaModule } from 'src/services/prisma/prisma.module';
   providers: [TypeLearnerService],
   controllers: [TypeLearnerController],
 })
-export class SequenceCoursesModule {}
+export class TypeLearnerModule {}

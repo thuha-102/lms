@@ -63,6 +63,7 @@ export class SequenceCoursesController {
         return JSON.stringify({
           courses: sequenceCourses.map((course) => course.Course),
           typeLearnerId: typeLearner.id,
+          typeLearnerName: typeLearner.name,
           createdAt: DatetimeService.formatVNTime(typeLearner.createdAt),
           updatedAt: DatetimeService.formatVNTime(typeLearner.updatedAt),
         });

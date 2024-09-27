@@ -39,10 +39,10 @@ export class SequenceCoursesService {
           select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true},
         },
       },
-      orderBy: {
-        typeLearnerId: 'asc',
-        order: 'asc'
-      },
+      orderBy: [
+        {typeLearnerId: 'asc'},
+        {order: 'asc'}
+      ],
     });
   }
 
