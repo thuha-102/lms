@@ -42,13 +42,13 @@ const Page = () => {
 
   const getCourses = useCallback(async (filter) => {
     try {
-      const response = await exploreApi.getListCourse();
+      const response = await exploreApi.getListCourse(filter ? filter.keyword : null);
       console.log(filter)
-      let course = response.data
-      if (filter){
-        if (filter.name) course = course.filter(c => c.name.toLowerCase().includes(filter.name))
-        if (filter.level && filter.level != "NONE") course = course.filter(c => c.level === filter.level)
-      }
+      const course = response.data
+      // if (filter){
+      //   if (filter.name) course = course.filter(c => c.name.toLowerCase().includes(filter.name))
+      //   if (filter.level && filter.level != "NONE") course = course.filter(c => c.level === filter.level)
+      // }
 
       if (isMounted()) {
         setListCourses(course);

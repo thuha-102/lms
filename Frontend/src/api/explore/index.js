@@ -25,7 +25,8 @@ class ExploreApi {
     return axios.get(`${apiUrl}/topics/${id}`);
   }
 
-  getListCourse(){
+  getListCourse(keyword){
+    if (keyword) return axios.get(`${apiUrl}/courses?keyword=${keyword}`)
     return axios.get(`${apiUrl}/courses`);
   }
 
