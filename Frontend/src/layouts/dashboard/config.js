@@ -19,7 +19,7 @@ import { paths } from '../../paths';
 export const getSections = (t, accountType) => [
   {
     items: [
-      {
+      ...accountType === "ADMIN" ? [{
         title: t(tokens.nav.overview),
         path: paths.dashboard.index,
         icon: (
@@ -27,7 +27,7 @@ export const getSections = (t, accountType) => [
             <HomeSmileIcon />
           </SvgIcon>
         )
-      },
+      }] : [],
       ...accountType === "LEARNER" ? [{
         title: t(tokens.nav.learningPath),
         path: paths.dashboard.learningPaths.index,
@@ -57,68 +57,68 @@ export const getSections = (t, accountType) => [
       },
     ]
   },
-  {
-    subheader: t(tokens.nav.models),
-    items: [
-      {
-        title: t(tokens.nav.model),
-        path: paths.dashboard.model,
-        icon: (
-          <SvgIcon fontSize="small">
-            <ModelTrainingOutlinedIcon />
-          </SvgIcon>
-        ),
-        items: [
-          {
-            title: t(tokens.nav.modelList),
-            path: paths.dashboard.model.index
-          },
-          {
-            title: t(tokens.nav.modelCreate),
-            path: paths.dashboard.model.create
-          }
-        ]
-      },
-      {
-        title: t(tokens.nav.notebook),
-        path: paths.dashboard.code,
-        icon: (
-          <SvgIcon fontSize="small">
-            <CodeOutlinedIcon />
-          </SvgIcon>
-        ),
-        items: [
-          {
-            title: t(tokens.nav.notebookList),
-            path: paths.dashboard.notebook.index
-          },
-          {
-            title: t(tokens.nav.notebookCreate),
-            path: paths.dashboard.notebook.create
-          }
-        ]
-      },
-      {
-        title: t(tokens.nav.dataset),
-        path: paths.dashboard.dataset,
-        icon: (
-          <SvgIcon fontSize="small">
-            <TableChartOutlinedIcon />
-          </SvgIcon>
-        ),
-        items: [
-          {
-            title: t(tokens.nav.datasetList),
-            path: paths.dashboard.dataset.index
-          },
-          {
-            title: t(tokens.nav.datasetCreate),
-            path: paths.dashboard.dataset.create
-          }
-        ]
-      },
-    ]
-  },
+  // {
+  //   subheader: t(tokens.nav.models),
+  //   items: [
+  //     {
+  //       title: t(tokens.nav.model),
+  //       path: paths.dashboard.model,
+  //       icon: (
+  //         <SvgIcon fontSize="small">
+  //           <ModelTrainingOutlinedIcon />
+  //         </SvgIcon>
+  //       ),
+  //       items: [
+  //         {
+  //           title: t(tokens.nav.modelList),
+  //           path: paths.dashboard.model.index
+  //         },
+  //         {
+  //           title: t(tokens.nav.modelCreate),
+  //           path: paths.dashboard.model.create
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       title: t(tokens.nav.notebook),
+  //       path: paths.dashboard.code,
+  //       icon: (
+  //         <SvgIcon fontSize="small">
+  //           <CodeOutlinedIcon />
+  //         </SvgIcon>
+  //       ),
+  //       items: [
+  //         {
+  //           title: t(tokens.nav.notebookList),
+  //           path: paths.dashboard.notebook.index
+  //         },
+  //         {
+  //           title: t(tokens.nav.notebookCreate),
+  //           path: paths.dashboard.notebook.create
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       title: t(tokens.nav.dataset),
+  //       path: paths.dashboard.dataset,
+  //       icon: (
+  //         <SvgIcon fontSize="small">
+  //           <TableChartOutlinedIcon />
+  //         </SvgIcon>
+  //       ),
+  //       items: [
+  //         {
+  //           title: t(tokens.nav.datasetList),
+  //           path: paths.dashboard.dataset.index
+  //         },
+  //         {
+  //           title: t(tokens.nav.datasetCreate),
+  //           path: paths.dashboard.dataset.create
+  //         }
+  //       ]
+  //     },
+  //   ]
+  // },
   {
     subheader: t(tokens.nav.communications),
     items: [

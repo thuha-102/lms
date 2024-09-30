@@ -116,7 +116,11 @@ const Page = () => {
               <Typography variant="h5" mb={4}>
                 Khóa học đang trong tiến trình
               </Typography>
-              <CourseProcess {...sequenceCourses.courses[sequenceCourses.currentCourseOrder]}/>
+              <Grid container spacing={5} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Grid item xs={8}>
+                  <CourseProcess {...sequenceCourses.courses[sequenceCourses.currentCourseOrder]} />
+                </Grid>
+              </Grid>
             </Stack>
             <Stack>
               <Typography variant="h5" mb={4}>

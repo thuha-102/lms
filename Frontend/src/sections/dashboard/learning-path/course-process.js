@@ -25,7 +25,7 @@ export const CourseProcess = (props) => {
         component={NextLink}
         href={`${paths.dashboard.explore}/${id}`}
         image={coverId?`${process.env.NEXT_PUBLIC_SERVER_API}/files/${coverId}`:initialCover}
-        sx={{ height: 200 }}
+        sx={{ height: 300 }}
       />
       <CardContent>
         <Link
@@ -39,7 +39,7 @@ export const CourseProcess = (props) => {
         <Typography
           color="text.secondary"
           sx={{
-            mt: 2,
+            mt: 1,
           }}
           variant="body1"
         >
@@ -48,16 +48,34 @@ export const CourseProcess = (props) => {
         <Typography
           color="text.secondary"
           sx={{
-            mt: 2,
+            mt: 1,
+            display: '-webkit-box',
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            position: 'relative',
+            // minHeight: '3em',  // Đảm bảo chiều cao đủ cho 2 dòng (nếu line-height là 1.5em)
+            // lineHeight: '1.5em',
+            '& p': { // Loại bỏ margin của các thẻ <p>
+              margin: 0,
+            },
+            '&::after': {
+              content: '""',
+              display: 'block',
+              height: '100%',
+              visibility: 'hidden',
+            },
           }}
           variant="subtitle2"
+          dangerouslySetInnerHTML={{ __html: description || ' ' }}
         >
-          {description}
+          {/* {description} */}
         </Typography>
-        <Stack sx={{backgroundColor: "action.disabledBackground", borderRadius: 10}} width="100%" height={10} mt={3}>
-          <Stack width={`${score}%`} height={10} sx={{backgroundColor: "primary.main", borderRadius: 10}}></Stack>
+        <Stack sx={{backgroundColor: "action.disabledBackground", borderRadius: 10}} width="100%" height={8} mt={2}>
+          <Stack width={`${score}%`} height={8} sx={{backgroundColor: "primary.main", borderRadius: 10}}></Stack>
         </Stack>
-        <Button variant="contained" href={`${paths.dashboard.explore}/${id}`} sx={{width: "100%", mt: 5}}>
+        <Button variant="contained" href={`${paths.dashboard.explore}/${id}`} sx={{width: "100%", mt: 2}}>
           Tiếp tục tiến trình
         </Button>
       </CardContent>
