@@ -16,7 +16,8 @@ class ExploreApi {
     return axios.post(`${apiUrl}/topics`, request)
   }
 
-  detailCourse(id) {
+  detailCourse(id, userId) {
+    if (userId) return axios.get(`${apiUrl}/courses/${id}?userId=${userId}`);
     return axios.get(`${apiUrl}/courses/${id}`);
   }
 

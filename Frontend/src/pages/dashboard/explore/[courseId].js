@@ -31,6 +31,7 @@ import { exploreApi } from '../../../api/explore';
 import { useAuth } from '../../../hooks/use-auth';
 import { userApi } from '../../../api/user';
 import { CreateLessonDialog } from '../../../sections/dashboard/explore/lesson-create-dialog';
+import { authApi } from '../../../api/used-auth';
 
 const useSearch = () => {
   const [search, setSearch] = useState({
@@ -136,6 +137,7 @@ const LessonList = () => {
   // const { LMs, LMsCount } = useLMs(search);
   const courseUrl = window.location.href.split('/');
   const courseId = (courseUrl[courseUrl.length - 1]);
+  const [registered, setRegistered] = useState(false)
   const [topicList, setTopicList] = useState([]);
   const [courseTitle, setCourseTitle] = useState("");
   const [courseDescription, setCourseDescription] = useState("");
@@ -143,22 +145,20 @@ const LessonList = () => {
   const [level, setLevel] = useState("");
   const [rating, setRating] = useState("");
   const [updatedAt, setUpdated] = useState("");
-  const [registered, setRegistered] = useState(null);
   const [avatarId, setAvatarId] = useState(null);
   const [openCreateLessonDialog, setOpenCreateLessonDialog] = useState(false)
 
   useEffect(() => {(async () => {
     try {
-      const response = await exploreApi.detailCourse(courseId);
-      console.log(response.data)
-
+      const response = await exploreApi.detailCourse(courseId, user.id);
+      console.log(user.id, response.data)
       setAvatarId(response.data.avatarId)
       setTopicList(response.data.topics)
       setCourseTitle(response.data.name)
       setCourseDescription(response.data.description)
       setLevel(response.data.level)
       setUpdated(response.data.updatedAt.slice(8, 10) + '-' + response.data.updatedAt.slice(5, 7) + '-' + response.data.updatedAt.slice(0, 4))
-      if (!registered) setRegistered(user.registerCourseIds?.includes(Number(courseId)));
+      setRegistered(response.data.registered)
     } catch (err) {
       console.error(err);
     }
@@ -188,9 +188,9 @@ const LessonList = () => {
   }, [updateSearch]);
 
   const handleRegisterCourse = useCallback(async () => {
-    await userApi.registerCourse(user.id, courseId); 
+    await userApi.registerCourse(user.id, courseId);
     setRegistered(true);
-  }, [courseId])
+  }, [])
 
   return (
     <>
