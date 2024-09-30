@@ -12,8 +12,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { exploreApi } from '../../../api/explore';
 
-export const CreateLessonDialog = ({courseId, openCreateLessonDialog, setOpenCreateLessonDialog}) => {
-
+export const CreateLessonDialog = ({courseId, order, openCreateLessonDialog, setOpenCreateLessonDialog}) => {
     const handleCreateLesson = useCallback(async () => {
           try {
             // NOTE: Make API request
@@ -21,6 +20,7 @@ export const CreateLessonDialog = ({courseId, openCreateLessonDialog, setOpenCre
             await exploreApi.createLesson({
               title: values.name,
               idCourse: parseInt(courseId, 10),
+              order: order
           })
             toast.success('Bài học đã được tạo');
             // router.push(`${paths.dashboard.explore}/${courseid}`);
@@ -63,6 +63,7 @@ export const CreateLessonDialog = ({courseId, openCreateLessonDialog, setOpenCre
                 await exploreApi.createLesson({
                   name: lesson_name,
                   courseId: parseInt(courseId, 10),
+                  order: order
               })
                 toast.success('Bài học đã được tạo');
                 router.push(`${paths.dashboard.explore}/${courseId}`);

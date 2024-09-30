@@ -48,8 +48,8 @@ export class TopicService {
 
       return { id: topic.id };
     } catch (e) {
-      // throw new ConflictException(e.meta.cause);
-      return e;
+      console.log(e)
+      throw new ConflictException(e);
     }
   }
 

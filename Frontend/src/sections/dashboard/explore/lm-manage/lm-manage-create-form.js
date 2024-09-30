@@ -105,6 +105,7 @@ export const LMCreateForm = (props) => {
   const [topicOptions, setTopicOptions] = useState([]);
   const [idLMList, setIdLMList] = useState([]);
   const [disabled, setDisabled] = useState(false);
+  const [order, setOrder] = useState(null)
   const [listLMAccordingToLesson, setListLMAccordingToLesson] = useState({
     "title": "",
     "learningMaterial": [
@@ -119,16 +120,16 @@ export const LMCreateForm = (props) => {
 });
   const getLesson = useCallback(async (id) => {
     try {
-      const response = await exploreApi.getLesson(id);
+      const response = await exploreApi.getTopic(id);
 
       if (isMounted()) {
-        console.log(response.data)
         setListLMAccordingToLesson(response.data);
+        setOrder(response.data.learningMaterial ? response.data.learningMaterial.length : 1)
       }
     } catch (err) {
       console.error(err);
     }
-  }, [open])
+  }, [])
 
   const formik = useFormik({
     initialValues,
@@ -139,7 +140,7 @@ export const LMCreateForm = (props) => {
         // console.log(values.type)
         values.type === "QUIZ" 
         ? await lm_manageApi.createLM({
-          name: values.name,
+          title: values.name,
           difficulty: values.difficulty,
           type: values.type,
           score: values.score,
@@ -147,27 +148,28 @@ export const LMCreateForm = (props) => {
           percentOfPass: values.percentOfPass,
           time: values.time,
           topicId: values.topicId,
+          order: order,
           quiz: {
             duration: values.time,
             shuffle: true,
             fileId: idLMList[0],
           },
-          lessonId: parseInt(lessonId,10)
+          topicId: parseInt(lessonId,10)
         })
         : await lm_manageApi.createLM({
-          name: values.name,
+          title: values.name,
           difficulty: values.difficulty,
           type: values.type,
           score: values.score,
           rating: values.rating,
           time: values.time,
+          order: order,
           // topicIds: topicIds.map((topicIds) => topicIds.id)
           percentOfPass: values.percentOfPass,
           topicId: values.topicId,
           fileId: idLMList[0],
-          lessonId: parseInt(lessonId,10)
+          topicId: parseInt(lessonId,10)
       })
-        // await lm_manageApi.createLM(values);
         toast.success('Tài liệu học tập đã được tạo');
         router.push(`${paths.dashboard.explore}/${listLMAccordingToLesson.courseId}`);
       } catch (err) {
@@ -193,7 +195,8 @@ export const LMCreateForm = (props) => {
   }, [])
 
   useEffect(() => {
-    getTopics();
+    // getTopics();
+    console.log(lessonId)
     getLesson(lessonId);  
   },[]);
 

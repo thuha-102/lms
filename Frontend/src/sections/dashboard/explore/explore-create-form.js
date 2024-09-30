@@ -22,6 +22,7 @@ import { QuillEditor } from '../../../components/quill-editor';
 import { paths } from '../../../paths';
 import { exploreApi } from '../../../api/explore';
 import { useMounted } from '../../../hooks/use-mounted';
+import axios from 'axios';
 import CourseUploadTips from '../learning-path-manage/course-upload-tip';
 
 const BackgroundKnowledgeType = [
@@ -62,18 +63,11 @@ const categoryOptions = [
 ];
 
 const initialValues = {
-  // idInstructor: 2,
   level: '',
-  // description: '',
-  // images: [],
   name: '',
   amountOfTime : 0,
   visibility: false,
   description: '',
-  // difficulty: 0,
-  // newPrice: 0,
-  // oldPrice: 0,
-  // submit: null
 };
 
 const validationSchema = Yup.object({
@@ -88,22 +82,30 @@ const validationSchema = Yup.object({
 export const CourseCreateForm = (props) => {
   const isMounted = useMounted();
   const router = useRouter();
-  const [files, setFiles] = useState([]);
   const [topicOptions, setTopicOptions] = useState([]);
   const [visibilityChecked, setVisibilityChecked] = useState(false);
   const handleVisibilityChange = () => {
     setVisibilityChecked(!visibilityChecked);
   };
+  const [files, setFiles] = useState([]);
+  const [fileIds, setFileIds] = useState([]);
+  const [disabled, setDisabled] = useState(false);
+
+  // useEffect(() => {
+  //   localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
+  // }, [courseIds]);
+
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: async (values, helpers) => {
       try {
         // NOTE: Make API request
-        console.log(formik.values);
+        // console.log(formik.values);
         const response = await exploreApi.createCourse({
           name: values.name,
           description: values.description ,
+          avatarId: fileIds[0],
           // idInstructor: parseInt(localStorage.getItem("id"), 10),
           // visibility: visibilityChecked,
           level: values.level,
@@ -112,12 +114,9 @@ export const CourseCreateForm = (props) => {
           topicNames: [],
           lessons: [],
       })
-        console.log(response.data.id)
         toast.success('Khoá học mới đã được tạo');
-        // router.push(`${paths.dashboard.explore}/${response.data.id}`);
-        router.push(`${paths.dashboard.learning_path_manage}/create`);
+        router.push(`${paths.dashboard.explore}/${response.data.id}`);
       } catch (err) {
-        console.error(err);
         toast.error('Something went wrong!');
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
@@ -158,6 +157,34 @@ export const CourseCreateForm = (props) => {
     setFiles([]);
   }, []);
 
+  const handleFilesUpload = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    console.log(formData)
+    formData.append('file', files[0]);
+    console.log(formData)
+    try {
+        // NOTE: Make API request
+        // console.log(formik.values);
+        // console.log(files.map((_file) => _file.path))
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_API}/files/avatar`
+        , formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        // const response = await axios.get(`http://localhost:8080/files/9/information`);
+
+        setFileIds([response.data["id"]])
+        setDisabled(true);
+        toast.success('File đã đăng tải thành công');
+        // router.push(`${paths.dashboard.explore}/course`);
+      } catch (err) {
+        console.error(err);
+        toast.error('Something went wrong!');
+        console.error('Error uploading file:', err);
+      }
+  };
 
 
   return (
@@ -361,7 +388,7 @@ export const CourseCreateForm = (props) => {
                   onDrop={handleFilesDrop}
                   onRemove={handleFileRemove}
                   onRemoveAll={handleFilesRemoveAll}
-                  onUpload={handle}
+                  onUpload={handleFilesUpload}
                   />
               </Grid>
           </Grid>

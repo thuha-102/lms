@@ -6,7 +6,7 @@ const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/files`;
 
 class lm_manage_Api {
   createLM(request) {
-    return axios.post(apiUrl, request);
+    return axios.post(`${process.env.NEXT_PUBLIC_SERVER_API}/lessons`, request);
     //return Promise.resolve(deepCopy(forums));
   }
 

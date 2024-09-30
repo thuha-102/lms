@@ -150,6 +150,8 @@ const LessonList = () => {
   useEffect(() => {(async () => {
     try {
       const response = await exploreApi.detailCourse(courseId);
+      console.log(response.data)
+
       setAvatarId(response.data.avatarId)
       setTopicList(response.data.topics)
       setCourseTitle(response.data.name)
@@ -258,6 +260,7 @@ const LessonList = () => {
                 </Button>
                 <CreateLessonDialog
                   courseId = {courseId}
+                  order = {topicList.length != 0 ? topicList.length : 1}
                   openCreateLessonDialog={openCreateLessonDialog}
                   setOpenCreateLessonDialog={setOpenCreateLessonDialog}
                 />
@@ -286,7 +289,7 @@ const LessonList = () => {
             </Stack>
             <Grid>
               <Stack direction={"row"} spacing={3}>
-                <img src={avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
+                <img src={!avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
                 <Stack container spacing={3} direction={"column"}>
                   <Stack direction={"column"} spacing={5}>
                     <Stack direction={"row"} spacing={3}>  

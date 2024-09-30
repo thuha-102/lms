@@ -122,8 +122,7 @@ export const CourseCreateForm = (props) => {
       })
         toast.success('Khoá học mới đã được tạo');
         // Lấy `id` từ response
-        const newCourseId = {id: response.data.id,
-                             name: values.name};
+        const newCourseId = {id: response.data.id, name: values.name};
         console.log('New Course ID:', newCourseId);
 
         // Cập nhật `courseIds` và lưu vào localStorage
