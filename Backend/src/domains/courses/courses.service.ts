@@ -44,7 +44,7 @@ export class CourseService {
     });
   }
 
-  async detail(id: number) {
+  async detail(id: number, userId?: number) {
     const course = await this.prismaService.course.findFirst({ where: { id }, select: CourseDTO.selectFields() });
     if (!course) throw new NotFoundException('Course not found');
 
@@ -67,6 +67,14 @@ export class CourseService {
           lessons.map((lesson) => LessonDTO.fromEntity(lesson)),
         ),
       );
+    }
+    
+    if (userId){
+      const registered = await this.prismaService.registerCourse.findFirst({where: {learnerId: userId, courseId: id}});
+      return {
+        ...CourseDTO.fromEnTity(course as any, topcicDTOs),
+        registered: registered ? true : false
+      }
     }
 
     return CourseDTO.fromEnTity(course as any, topcicDTOs);

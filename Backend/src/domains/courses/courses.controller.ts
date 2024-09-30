@@ -14,8 +14,8 @@ export class CourseController {
   }
 
   @Get(':id')
-  async detail(@Param('id', ParseIntPipe) id: number) {
-    return await this.courseService.detail(id);
+  async detail(@Param('id', ParseIntPipe) id: number, @Query('userId') userId?: number) {
+    return await this.courseService.detail(id, Number(userId));
   }
 
   @Get(':id/user/:userId')

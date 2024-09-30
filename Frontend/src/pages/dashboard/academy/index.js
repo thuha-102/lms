@@ -135,7 +135,7 @@ const Page = () => {
                         direction="row"
                         spacing={4}
                       >
-                        {user.accountType !== 'LEARNER' && <Button
+                        {user?.accountType !== 'LEARNER' && <Button
                           component={NextLink}
                           href={`${paths.dashboard.explore}/create`}
                           startIcon={(
