@@ -55,7 +55,7 @@ model Course {
   id           Int        @id @default(autoincrement())
   createdAt    DateTime   @default(now()) @map("created_at")
   updatedAt    DateTime   @default(now()) @map("updated_at")
-  avatarId     Int        @default(1) @map("avatar_id")
+  avatarId     Int?       @map("avatar_id")
   name         String
   description  String
   price        String?
