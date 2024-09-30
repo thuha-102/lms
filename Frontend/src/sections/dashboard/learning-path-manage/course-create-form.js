@@ -23,6 +23,7 @@ import { paths } from '../../../paths';
 import { exploreApi } from '../../../api/explore';
 import { useMounted } from '../../../hooks/use-mounted';
 import CourseUploadTips from './course-upload-tip';
+import axios from 'axios';
 
 const BackgroundKnowledgeType = [
   {
@@ -81,7 +82,6 @@ const validationSchema = Yup.object({
 export const CourseCreateForm = (props) => {
   const isMounted = useMounted();
   const router = useRouter();
-  const [files, setFiles] = useState([]);
   const [topicOptions, setTopicOptions] = useState([]);
   const [visibilityChecked, setVisibilityChecked] = useState(false);
   const handleVisibilityChange = () => {
@@ -93,6 +93,9 @@ export const CourseCreateForm = (props) => {
     console.log(listCourseIds)
     return listCourseIds ? JSON.parse(listCourseIds) : [];
   });
+  const [files, setFiles] = useState([]);
+  const [fileIds, setFileIds] = useState([]);
+  const [disabled, setDisabled] = useState(false);
 
   // useEffect(() => {
   //   localStorage.setItem("sequenceCourseIds", JSON.stringify(courseIds));
@@ -108,6 +111,7 @@ export const CourseCreateForm = (props) => {
         const response = await exploreApi.createCourse({
           name: values.name,
           description: values.description ,
+          avatarId: fileIds[0],
           // idInstructor: parseInt(localStorage.getItem("id"), 10),
           // visibility: visibilityChecked,
           level: values.level,
@@ -161,6 +165,7 @@ export const CourseCreateForm = (props) => {
     setFiles((prevFiles) => {
       return [...prevFiles, ...newFiles];
     });
+    console.log(files)
   }, []);
 
   const handleFileRemove = useCallback((file) => {
@@ -173,6 +178,34 @@ export const CourseCreateForm = (props) => {
     setFiles([]);
   }, []);
 
+  const handleFilesUpload = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    console.log(formData)
+    formData.append('file', files[0]);
+    console.log(formData)
+    try {
+        // NOTE: Make API request
+        // console.log(formik.values);
+        // console.log(files.map((_file) => _file.path))
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_API}/files/avatar`
+        , formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        // const response = await axios.get(`http://localhost:8080/files/9/information`);
+
+        setFileIds([response.data["id"]])
+        setDisabled(true);
+        toast.success('File đã đăng tải thành công');
+        // router.push(`${paths.dashboard.explore}/course`);
+      } catch (err) {
+        console.error(err);
+        toast.error('Something went wrong!');
+        console.error('Error uploading file:', err);
+      }
+  };
 
 
   return (
@@ -376,6 +409,7 @@ export const CourseCreateForm = (props) => {
                   onDrop={handleFilesDrop}
                   onRemove={handleFileRemove}
                   onRemoveAll={handleFilesRemoveAll}
+                  onUpload={handleFilesUpload}
                   />
               </Grid>
           </Grid>

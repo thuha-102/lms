@@ -109,7 +109,7 @@ const Page = () => {
                   <>  
                     <Stack spacing={1}>
                       <Typography variant="h4">
-                        {user.accountType === "LEARNER" ? "Các khóa học đã đăng kí" : "Các khóa học đã tạo"}
+                        {user?.accountType === "LEARNER" ? "Các khóa học đã đăng kí" : "Các khóa học đã tạo"}
                       </Typography>
                       <Breadcrumbs separator={<BreadcrumbsSeparator />}>
                         <Link

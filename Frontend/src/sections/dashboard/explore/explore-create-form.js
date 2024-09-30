@@ -361,6 +361,7 @@ export const CourseCreateForm = (props) => {
                   onDrop={handleFilesDrop}
                   onRemove={handleFileRemove}
                   onRemoveAll={handleFilesRemoveAll}
+                  onUpload={handle}
                   />
               </Grid>
           </Grid>
