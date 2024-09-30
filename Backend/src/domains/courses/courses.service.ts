@@ -21,20 +21,22 @@ export class CourseService {
     return this.prismaService.$transaction(async (tx) => {
       const course = await tx.course.create({ data: CourseCreateREQ.toCreateInput(body), select: { id: true } });
 
-      let numberLessons = 0,
-        numberTopics = body.topicNames.length;
+      let numberLessons = 0, numberTopics = body.topicNames.length;
 
       for (let i = 0; i < body.topicNames.length; i++) {
         const { id } = await this.topicService.create(
-          { courseId: course.id, name: body.topicNames[i], totalLessons: body.lessons[i].length } as any,
+          { courseId: course.id, name: body.topicNames[i], totalLessons: i < body.lessons.length ? body.lessons[i].length : 0 } as any,
           tx,
           i,
         );
-        for (let j = 0; j < body.lessons[i].length; j++) {
-          const lesson = body.lessons[i][j];
-          await this.lessonService.create({ order: j, title: lesson.title, fileId: lesson.fileId, topicId: id }, tx, j);
+
+        if (i < body.lessons.length){
+          for (let j = 0; j < body.lessons[i].length; j++) {
+            const lesson = body.lessons[i][j];
+            await this.lessonService.create({ order: j, title: lesson.title, fileId: lesson.fileId, topicId: id }, tx, j);
+          }
+          numberLessons += body.lessons[i].length;
         }
-        numberLessons += body.lessons[i].length;
       }
 
       await tx.course.update({ where: { id: course.id }, data: { totalLessons: numberLessons, totalTopics: numberTopics } });
