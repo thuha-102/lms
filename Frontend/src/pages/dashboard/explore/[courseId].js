@@ -289,7 +289,7 @@ const LessonList = () => {
             </Stack>
             <Grid>
               <Stack direction={"row"} spacing={3}>
-                <img src={!avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
+                <img src={!avatarId ? "assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
                 <Stack container spacing={3} direction={"column"}>
                   <Stack direction={"column"} spacing={5}>
                     <Stack direction={"row"} spacing={3}>  

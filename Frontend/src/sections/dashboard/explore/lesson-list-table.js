@@ -239,7 +239,7 @@ function Row(props) {
 
   const handlePageChange = (lesson, registered) => {  
     // Kiểm tra trước xem khoá học này đã được user register chưa, nếu được register rồi thì mới gửi api createFileLog và getFile
-    if(registered) {
+    if(registered || user.accountType == "ADMIN") {
       // Gửi api createFileLog và getFile
       switch(lesson.type) {
         case "VIDEO":
