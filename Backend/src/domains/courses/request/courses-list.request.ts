@@ -9,15 +9,19 @@ export class CourseListREQ {
 
   static toCondition(query: CourseListREQ): Prisma.CourseFindManyArgs['where'] {
     return leanObject(
-      query.keyword && {
-        name: {
-          contains: query.keyword ? query.keyword : '',
-          mode: Prisma.QueryMode.insensitive,
+      query.keyword && { OR: [
+        {
+          name: {
+            contains: query.keyword ? query.keyword : '',
+            mode: Prisma.QueryMode.insensitive,
+          },
         },
-        labels: {
-          has: query.keyword ? query.keyword : '',
-        },
-      },
-    );
+        {
+          labels: {
+            has: query.keyword ? query.keyword : '',
+          },
+        }
+      ],
+    })
   }
 }
