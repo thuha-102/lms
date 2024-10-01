@@ -405,6 +405,7 @@ export const CourseCreateForm = (props) => {
                   accept={{ '*//*': [] }}
                   caption="(PDF, SVG, JPG, PNG, or gif maximum 900x400, ...)"
                   files={files}
+                  disabled={disabled}
                   onDrop={handleFilesDrop}
                   onRemove={handleFileRemove}
                   onRemoveAll={handleFilesRemoveAll}
