@@ -19,7 +19,7 @@ import { paths } from '../../paths';
 export const getSections = (t, accountType) => [
   {
     items: [
-      ...accountType === "ADMIN" ? [{
+      {
         title: t(tokens.nav.overview),
         path: paths.dashboard.index,
         icon: (
@@ -27,7 +27,7 @@ export const getSections = (t, accountType) => [
             <HomeSmileIcon />
           </SvgIcon>
         )
-      }] : [],
+      },
       ...accountType === "LEARNER" ? [{
         title: t(tokens.nav.learningPath),
         path: paths.dashboard.learningPaths.index,
