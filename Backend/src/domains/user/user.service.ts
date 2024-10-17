@@ -7,6 +7,7 @@ import { Prisma } from '@prisma/client';
 import { LearnerListREPS } from './reponse/learner-list.reponse';
 import { UserInfoDTO } from './dto/user-infomation.dto';
 import { QuizAnswers } from 'src/services/file/dto/file.dto';
+import { CartInforDTO } from './dto/cart-information.dto';
 
 @Injectable()
 export class UserService {
@@ -31,7 +32,9 @@ export class UserService {
       await this.prismaService.registerCourse.findMany({ where: { learnerId: user.id }, select: { courseId: true } })
     ).map((register) => register.courseId);
 
-    return UserInfoDTO.fromEntity(user as any, registerCourseIds);
+    const {_count} = await this.prismaService.cart.aggregate({where: {learnerId: id}, _count: true})
+
+    return UserInfoDTO.fromEntity(user as any, registerCourseIds, _count as any);
   }
 
   async update(id: number, body: UserUpdateREQ) {
@@ -47,9 +50,11 @@ export class UserService {
   async registerCourse(learnerId: number, courseId: number) {
     return await this.prismaService.$transaction(async (tx) => {
       try {
-        return await this.prismaService.registerCourse.create({
+        await tx.registerCourse.create({
           data: UserRegisterCourseCreateREQ.toCreateInput(learnerId, courseId),
         });
+
+        await tx.cart.deleteMany({where: {learnerId, courseId}});
       } catch (e) {
         return e;
       }
@@ -75,16 +80,18 @@ export class UserService {
       });
       if (question.length !== quizAnswers.answers.length)
         throw new ConflictException('Answers length is difference from quizes length');
-  
-      const historyQuizId = (await tx.historyStudiedQuiz.create({
-        data: { Learner: connectRelation(learnerId), LearningMaterail: connectRelation(quizAnswers.quizId) },
-        select: { id: true },
-      })).id;
-  
+
+      const historyQuizId = (
+        await tx.historyStudiedQuiz.create({
+          data: { Learner: connectRelation(learnerId), LearningMaterail: connectRelation(quizAnswers.quizId) },
+          select: { id: true },
+        })
+      ).id;
+
       let trueAnswer = 0;
       for (let i = 0; i < question.length; i++) {
         if (question[i].correctAnswer === quizAnswers.answers[i]) trueAnswer++;
-  
+
         const data: Prisma.ResultOfStudyingQuizCreateInput = {
           HistoryStudiedQuiz: connectRelation(historyQuizId),
           Quiz: { connect: { id_index: { id: quizAnswers.quizId, index: i } } },
@@ -92,13 +99,13 @@ export class UserService {
         };
         await tx.resultOfStudyingQuiz.create({ data });
       }
-  
+
       await tx.historyStudiedQuiz.update({
         where: { id: historyQuizId },
         data: { score: trueAnswer, totalQuestion: question.length },
       });
-      return { score: trueAnswer, maxScore: quizAnswers.answers.length}
-    })
+      return { score: trueAnswer, maxScore: quizAnswers.answers.length };
+    });
   }
 
   async studiedLesson(learnerId: number, lessonId: number) {
@@ -116,7 +123,8 @@ export class UserService {
         if (!registerCourse) throw new NotFoundException("Learner didn't regiter this course");
         const historyStudied = await tx.historyStudiedCourse.findFirst({ where: { lessonId, learnerId } });
         let newHis;
-        if (!historyStudied) newHis = await tx.historyStudiedCourse.create({ data: { learnerId, lessonId }, select: {id: true} });
+        if (!historyStudied)
+          newHis = await tx.historyStudiedCourse.create({ data: { learnerId, lessonId }, select: { id: true } });
 
         const updatePercent = historyStudied
           ? registerCourse.percentOfStudying
@@ -136,8 +144,8 @@ export class UserService {
           where: { typeLearnerId: learner.typeLearnerId ? learner.typeLearnerId : -1 },
           select: { courseId: true, order: true },
         });
-        
-        if (sequenceCourse.length !== 0 && updatePercent - course.passPercent >= 0 ) {
+
+        if (sequenceCourse.length !== 0 && updatePercent - course.passPercent >= 0) {
           let nextCourseId = -1;
           for (let i = 1; i < sequenceCourse.length; i++) {
             if (sequenceCourse[i - 1].courseId === course.id) {
@@ -145,9 +153,9 @@ export class UserService {
               break;
             }
           }
-          
+
           if (nextCourseId !== -1) {
-            const exsitRegister = await tx.registerCourse.findFirst({where: {learnerId: learnerId, courseId: nextCourseId}});
+            const exsitRegister = await tx.registerCourse.findFirst({ where: { learnerId: learnerId, courseId: nextCourseId } });
             if (!exsitRegister) await tx.registerCourse.create({ data: { learnerId: learnerId, courseId: nextCourseId } });
 
             await tx.learner.update({
@@ -202,5 +210,22 @@ export class UserService {
         avatarId: true,
       },
     });
+  }
+
+  async getCart(id: number) {
+    const cart = await this.prismaService.cart.findMany({
+      where: { learnerId: id },
+      select: { createdAt: true, Courses: { select: { id: true, name: true, price: true, salePercent: true } } },
+    });
+
+    return cart.map((_c) => CartInforDTO.fromEntity(_c as any));
+  }
+
+  async addCart(id: number, courseId: number) {
+    return await this.prismaService.cart.create({ data: { learnerId: id, courseId: courseId }, select: {id: true} });
+  }
+
+  async deleteCart(id: number, courseIds: number[]) {
+    return await this.prismaService.cart.deleteMany({ where: { learnerId: id, courseId: { in: courseIds } } });
   }
 }

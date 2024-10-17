@@ -12,6 +12,10 @@ class ExploreApi {
     return axios.post(`${apiUrl}/courses`, request)
   }
 
+  updateCourse(courseId, request) {
+    return axios.patch(`${apiUrl}/courses/${courseId}`, request);
+  }
+
   createLesson(request) {
     return axios.post(`${apiUrl}/topics`, request)
   }

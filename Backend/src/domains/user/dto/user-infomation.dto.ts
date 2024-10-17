@@ -7,6 +7,7 @@ export class UserInfoDTO {
   username: string;
   accountType: string;
   registerCourseIds: number[];
+  inCart: number;
 
   static selectUser(): Prisma.UserSelect {
     return {
@@ -16,12 +17,13 @@ export class UserInfoDTO {
     };
   }
 
-  static fromEntity(e: Prisma.UserGetPayload<unknown>, registerCourseIds?: number[]) {
+  static fromEntity(e: Prisma.UserGetPayload<unknown>, registerCourseIds?: number[], inCart?: number) {
     return leanObject({
       id: e.id,
       username: e.username,
       accountType: e.accountType,
       registerCourseIds: registerCourseIds || [],
+      inCart: inCart,
     });
   }
 }

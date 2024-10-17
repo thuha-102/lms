@@ -17,7 +17,15 @@ export class SequenceCoursesService {
       where: criteria,
       select: {
         Course: {
-          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true},
+          select: {
+            id: true,
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            description: true,
+            totalLessons: true,
+            amountOfTime: true,
+          },
         },
       },
       orderBy: orderBy,
@@ -33,29 +41,34 @@ export class SequenceCoursesService {
             createdAt: true,
             updatedAt: true,
             name: true,
-          }
+          },
         },
         Course: {
-          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true},
+          select: {
+            id: true,
+            name: true,
+            createdAt: true,
+            updatedAt: true,
+            description: true,
+            totalLessons: true,
+            amountOfTime: true,
+          },
         },
       },
-      orderBy: [
-        {typeLearnerId: 'asc'},
-        {order: 'asc'}
-      ],
+      orderBy: [{ typeLearnerId: 'asc' }, { order: 'asc' }],
     });
   }
 
   async getLearnerStudiedSequenceCoursesInfo(learnerId: number) {
     return await this.prismaService.learner.findFirst({
       where: {
-        id: learnerId
+        id: learnerId,
       },
       select: {
         typeLearnerId: true,
-        latestCourseInSequenceId: true
-      }
-    })
+        latestCourseInSequenceId: true,
+      },
+    });
   }
 
   async getLearnerStudiedCoursesHistory(learnerId: number, courseIds: number[]) {
@@ -64,19 +77,19 @@ export class SequenceCoursesService {
         AND: {
           learnerId: learnerId,
           courseId: {
-            in: courseIds
-          }
-        }
+            in: courseIds,
+          },
+        },
       },
       select: {
         Course: {
           select: {
             id: true,
-          }
+          },
         },
         percentOfStudying: true,
-      }
-    })
+      },
+    });
   }
 
   async deleteMany(criteria) {

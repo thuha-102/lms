@@ -21,16 +21,21 @@ export class CourseService {
     return this.prismaService.$transaction(async (tx) => {
       const course = await tx.course.create({ data: CourseCreateREQ.toCreateInput(body), select: { id: true } });
 
-      let numberLessons = 0, numberTopics = body.topicNames.length;
+      let numberLessons = 0,
+        numberTopics = body.topicNames.length;
 
       for (let i = 0; i < body.topicNames.length; i++) {
         const { id } = await this.topicService.create(
-          { courseId: course.id, name: body.topicNames[i], totalLessons: i < body.lessons.length ? body.lessons[i].length : 0 } as any,
+          {
+            courseId: course.id,
+            name: body.topicNames[i],
+            totalLessons: i < body.lessons.length ? body.lessons[i].length : 0,
+          } as any,
           tx,
           i,
         );
 
-        if (i < body.lessons.length){
+        if (i < body.lessons.length) {
           for (let j = 0; j < body.lessons[i].length; j++) {
             const lesson = body.lessons[i][j];
             await this.lessonService.create({ order: j, title: lesson.title, fileId: lesson.fileId, topicId: id }, tx, j);
@@ -68,13 +73,15 @@ export class CourseService {
         ),
       );
     }
-    
-    if (userId){
-      const registered = await this.prismaService.registerCourse.findFirst({where: {learnerId: userId, courseId: id}});
+
+    if (userId) {
+      const registered = await this.prismaService.registerCourse.findFirst({ where: { learnerId: userId, courseId: id } });
+      const inCart = await this.prismaService.cart.findFirst({where: {learnerId: userId, courseId: id}});
       return {
         ...CourseDTO.fromEnTity(course as any, topcicDTOs),
-        registered: registered ? true : false
-      }
+        registered: registered ? true : false,
+        inCart: inCart ? true : false
+      };
     }
 
     return CourseDTO.fromEnTity(course as any, topcicDTOs);

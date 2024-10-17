@@ -34,6 +34,7 @@ model Learner {
   RegisterCourses      RegisterCourse[]
   HistoryStudiedCourse HistoryStudiedCourse[]
   HistoryStudiedQuiz   HistoryStudiedQuiz[]
+  TemporaryCart        Cart[]
 
   @@map("learners")
 }
@@ -58,7 +59,8 @@ model Course {
   avatarId     Int?       @map("avatar_id")
   name         String
   description  String
-  price        String?
+  price        Int?
+  salePercent  Float?     @default(0) @map("sale_percent")
   labels       String[]
   totalLessons Int        @default(0) @map("total_lessons")
   totalTopics  Int        @default(0) @map("total_topics")
@@ -71,8 +73,23 @@ model Course {
   Learner        Learner[]
   Topic          Topic[]
   RegisterCourse RegisterCourse[]
+  Cart           Cart[]
 
   @@map("courses")
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  Courses   Course   @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  courseId  Int      @map("course_Id")
+  Learner   Learner  @relation(fields: [learnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  learnerId Int      @map("learner_id")
+
+  @@unique([learnerId, courseId])
+  @@map("carts")
 }
 
 model Topic {

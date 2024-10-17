@@ -7,9 +7,7 @@ import { DatetimeService } from 'src/services/datetime/datetime.service';
 //@UseGuards(AuthGuard)
 @Controller('typeLearner')
 export class TypeLearnerController {
-  constructor(
-    private readonly typeLearnerService: TypeLearnerService,
-  ) {}
+  constructor(private readonly typeLearnerService: TypeLearnerService) {}
 
   @Get()
   async getMany() {

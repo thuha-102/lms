@@ -160,9 +160,9 @@ export const CourseCardDelete = (props) => {
               <ArrowRightIcon />  
             </SvgIcon>
           )}
-          href={`${paths.dashboard.explore}/${course.id}`}
+          href={`${paths.dashboard.explore}/${course.id}/edit`}
         >
-          {props.isExplore ? "Khám phá" : "Tiếp tục"}
+          {props.isExplore ? "Khám phá" : "Chỉnh sửa"}
         </Button>
         </Stack>
       </Box>

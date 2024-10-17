@@ -30,6 +30,18 @@ class UserApi {
   registerCourse(userId, courseId) {
     return axios.post(`${apiUrl}/${userId}/register/${courseId}`);
   }
+
+  getCart(userId){
+    return axios.get(`${apiUrl}/${userId}/cart`);
+  }
+
+  addCart(userId, courseId){
+    return axios.post(`${apiUrl}/${userId}/cart`, {courseId: parseInt(courseId, 10)});
+  }
+
+  deleteCart(userId, courseIds){
+    return axios.post(`${apiUrl}/${userId}/cart/delete-batch`, {courseIds: courseIds});
+  }
 }
 
 export const userApi = new UserApi();

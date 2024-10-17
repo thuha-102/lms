@@ -72,6 +72,7 @@ export const CourseSearch = (props) => {
               select
               SelectProps={{ native: true }}
               onChange={(event) => setVisibility(event.target.value)}
+              // onKe={handleSearchButton}
             >
               {visibilityOptions.map((option) => (
                 <option

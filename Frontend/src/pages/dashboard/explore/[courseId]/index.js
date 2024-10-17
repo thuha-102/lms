@@ -1,14 +1,16 @@
-import { useCallback, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import {
   Alert,
   Box,
   Breadcrumbs,
   Button,
   Card,
+  CardContent,
   Container,
   Grid,
   Link,
@@ -17,21 +19,24 @@ import {
   SvgIcon,
   Typography
 } from '@mui/material';
-import { lm_manageApi } from '../../../api/lm-manage';
-import { BreadcrumbsSeparator } from '../../../components/breadcrumbs-separator';
-import { useMounted } from '../../../hooks/use-mounted';
-import { usePageView } from '../../../hooks/use-page-view';
-import { Layout as DashboardLayout } from '../../../layouts/dashboard';
-import { paths } from '../../../paths';
-import { LMManageListSearch } from '../../../sections/dashboard/explore/explore-list-search';
-import { LMManageListTable } from '../../../sections/dashboard/explore/explore-list-table';
-import { applyPagination } from '../../../utils/apply-pagination';
-import CollapsibleTable from '../../../sections/dashboard/explore/lesson-list-table';
-import { exploreApi } from '../../../api/explore';
-import { useAuth } from '../../../hooks/use-auth';
-import { userApi } from '../../../api/user';
-import { CreateLessonDialog } from '../../../sections/dashboard/explore/lesson-create-dialog';
-import { authApi } from '../../../api/used-auth';
+import { lm_manageApi } from '../../../../api/lm-manage';
+import { BreadcrumbsSeparator } from '../../../../components/breadcrumbs-separator';
+import { useMounted } from '../../../../hooks/use-mounted';
+import { usePageView } from '../../../../hooks/use-page-view';
+import { Layout as DashboardLayout } from '../../../../layouts/dashboard';
+import { paths } from '../../../../paths';
+import { LMManageListSearch } from '../../../../sections/dashboard/explore/explore-list-search';
+import { LMManageListTable } from '../../../../sections/dashboard/explore/explore-list-table';
+import { applyPagination } from '../../../../utils/apply-pagination';
+import CollapsibleTable from '../../../../sections/dashboard/explore/lesson-list-table';
+import { exploreApi } from '../../../../api/explore';
+import { useAuth } from '../../../../hooks/use-auth';
+import { userApi } from '../../../../api/user';
+import { CreateLessonDialog } from '../../../../sections/dashboard/explore/lesson-create-dialog';
+import { authApi } from '../../../../api/used-auth';
+import TopicEditTable from '../../../../sections/dashboard/explore/topic-edit-table';
+import { deepCopy } from '../../../../utils/deep-copy';
+import { useDispatch } from 'react-redux';
 
 const useSearch = () => {
   const [search, setSearch] = useState({
@@ -135,9 +140,11 @@ const LessonList = () => {
   const { search, updateSearch } = useSearch();
   const { user } = useAuth();
   // const { LMs, LMsCount } = useLMs(search);
+  const dispatch = useDispatch()
   const courseUrl = window.location.href.split('/');
   const courseId = (courseUrl[courseUrl.length - 1]);
   const [registered, setRegistered] = useState(false)
+  const [inCart, setInCart] = useState(false)
   const [topicList, setTopicList] = useState([]);
   const [courseTitle, setCourseTitle] = useState("");
   const [courseDescription, setCourseDescription] = useState("");
@@ -151,7 +158,6 @@ const LessonList = () => {
   useEffect(() => {(async () => {
     try {
       const response = await exploreApi.detailCourse(courseId, user.id);
-      console.log(user.id, response.data)
       setAvatarId(response.data.avatarId)
       setTopicList(response.data.topics)
       setCourseTitle(response.data.name)
@@ -159,10 +165,11 @@ const LessonList = () => {
       setLevel(response.data.level)
       setUpdated(response.data.updatedAt.slice(8, 10) + '-' + response.data.updatedAt.slice(5, 7) + '-' + response.data.updatedAt.slice(0, 4))
       setRegistered(response.data.registered)
+      setInCart(response.data.inCart)
     } catch (err) {
       console.error(err);
     }
-  })()}, []);
+  })()}, [registered, inCart]);
 
   usePageView();
 
@@ -191,6 +198,18 @@ const LessonList = () => {
     await userApi.registerCourse(user.id, courseId);
     setRegistered(true);
   }, [])
+
+  const handleUpdateOrderTopic = useCallback(async (sourceId, destinationId) => {
+    let temp = deepCopy(topicList)
+    temp[sourceId] = topicList[destinationId]
+    temp[destinationId] = topicList[sourceId]
+    setTopicList(temp)
+  }, [topicList])
+
+  const handleAddCart = useCallback(async () => {
+    await userApi.addCart(user.id, courseId)
+    setInCart(true)
+  }, [user, courseId])
 
   return (
     <>
@@ -240,7 +259,95 @@ const LessonList = () => {
                 direction="row"
                 spacing={3}
               > 
-                {user?.accountType !== 'LEARNER'  && 
+                {
+                  user?.accountType === 'ADMIN' && <Button
+                    // onClick={handleRegisterCourse}                    
+                    startIcon={(
+                      <SvgIcon>
+                        <DeleteIcon />
+                      </SvgIcon>
+                    )}
+                    variant="contained"
+                    color="error"
+                  >
+                    Xóa khóa học
+                  </Button>
+                }
+                {
+                  user?.accountType === 'LEARNER' && !registered && !inCart && <Button
+                    onClick={handleAddCart}                    
+                    startIcon={(
+                      <SvgIcon>
+                        <PlusIcon />
+                      </SvgIcon>
+                    )}
+                    variant="contained"
+                  >
+                    Chọn khóa học vào giỏ hàng
+                  </Button>
+                }
+                {
+                  user?.accountType === 'LEARNER' && inCart && <Button
+                    component={NextLink}                 
+                    href={paths.dashboard.cart}
+                    startIcon={(
+                      <SvgIcon>
+                        <ShoppingCartCheckoutIcon />
+                      </SvgIcon>
+                    )}
+                    variant="contained"
+                  >
+                    Trong giỏ hàng
+                  </Button>
+                }
+                {
+                  user?.accountType === 'LEARNER' && registered && 
+                  <Alert variant="filled" severity="success" sx={{ color: 'white' }}>
+                    Bạn đang học khóa học này
+                  </Alert>
+                }
+              </Stack>
+            </Stack>
+            <Grid container spacing={5}>
+              <Grid size={{ xs: 6, md: 10 }}>
+                <img src={!avatarId ? "assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
+              </Grid>
+              
+              <Grid size={{ xs: 6, md: 8 }}>
+                <CardContent>
+                  <Stack container spacing={3} direction={"column"}>
+                  <Stack direction={"column"} spacing={5}>
+                    <Stack direction={"row"} spacing={3}>  
+                      <Rating name="read-only" value={parseInt(rating,10)} readOnly />
+                      <Typography variant='h5'>
+                        Trình độ: {level}
+                      </Typography>
+                    </Stack>
+                    
+                    <Typography variant='h5'>
+                      Cập nhật: {updatedAt}
+                    </Typography>
+                  </Stack>
+                  <Grid item >
+                    <Typography variant='h6'dangerouslySetInnerHTML={{__html: courseDescription}}/>
+                  </Grid>
+                </Stack>
+                </CardContent>
+              </Grid>
+            </Grid>
+            <Card>
+              {
+                user?.accountType !== 'ADMIN' ?
+                <CollapsibleTable 
+                  accountType = {user?.accountType}
+                  registered = {registered}
+                  rows={topicList}  
+                  courseTitle={courseTitle}
+                />:
+                <TopicEditTable rows={topicList} updateOrder={handleUpdateOrderTopic}/>
+              }
+            </Card>
+            {user?.accountType !== 'LEARNER'  && 
                 <>
                 <Button
                   component={NextLink}
@@ -266,67 +373,6 @@ const LessonList = () => {
                 />
                 </>
                 }
-                {
-                  user?.accountType === 'LEARNER' && !registered && <Button
-                    onClick={handleRegisterCourse}                    
-                    startIcon={(
-                      <SvgIcon>
-                        <PlusIcon />
-                      </SvgIcon>
-                    )}
-                    variant="contained"
-                  >
-                    Đăng kí khóa học
-                  </Button>
-                }
-                {
-                  user?.accountType === 'LEARNER' && registered && 
-                  <Alert variant="filled" severity="success" sx={{ color: 'white' }}>
-                    Bạn đang học khóa học này
-                  </Alert>
-                }
-              </Stack>
-            </Stack>
-            <Grid>
-              <Stack direction={"row"} spacing={3}>
-                <img src={!avatarId ? "assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
-                <Stack container spacing={3} direction={"column"}>
-                  <Stack direction={"column"} spacing={5}>
-                    <Stack direction={"row"} spacing={3}>  
-                      <Rating name="read-only" value={parseInt(rating,10)} readOnly />
-                      <Typography variant='h5'>
-                        Trình độ: {level}
-                      </Typography>
-                    </Stack>
-                    
-                    <Typography variant='h5'>
-                      Cập nhật: {updatedAt}
-                    </Typography>
-                  </Stack>
-                  <Grid item>
-                    <Typography variant='h6'dangerouslySetInnerHTML={{__html: courseDescription}}/>
-                  </Grid>
-                </Stack>
-              </Stack>
-            </Grid>
-            <Card>
-              {/* <LMManageListSearch onFiltersChange={handleFiltersChange} />
-              <LMManageListTable
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
-                page={search.page}
-                LMs={LMs}
-                LMsCount={LMsCount}
-                rowsPerPage={search.rowsPerPage}
-              /> */}
-              <CollapsibleTable 
-                accountType = {user?.accountType}
-                // isInstructor = {user.id === 1}
-                registered = {registered}
-                rows={topicList}  
-                courseTitle={courseTitle}
-              />
-            </Card>
           </Stack>
         </Container>
       </Box>

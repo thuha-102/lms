@@ -8,7 +8,10 @@ import * as IntroQuestionDto from './dto/introQuestion.dto';
 //@UseGuards(AuthGuard)
 @Controller('introQuestion')
 export class IntroQuestionController {
-  constructor(private readonly introQuestionService: IntroQuestionService, private readonly sequenceCoursesService: SequenceCoursesService) {}
+  constructor(
+    private readonly introQuestionService: IntroQuestionService,
+    private readonly sequenceCoursesService: SequenceCoursesService,
+  ) {}
 
   @Post()
   async create(@Body() body: IntroQuestionDto.IntroQuestionCreateRequestDto) {
@@ -53,7 +56,7 @@ export class IntroQuestionController {
   async updateOne(@Param('id', ParseIntPipe) id: number, @Body() body: IntroQuestionDto.IntroQuestionUpdateRequestDto) {
     try {
       if (body.order) {
-        const curOrder = (await this.introQuestionService.getOne({id: id})).order;
+        const curOrder = (await this.introQuestionService.getOne({ id: id })).order;
 
         if (body.order > curOrder) {
           await this.introQuestionService.updateMany(
@@ -113,11 +116,12 @@ export class IntroQuestionController {
     }
   }
 
-  @Post("/submit")
+  @Post('/submit')
   async submitAnswerScore(@Body() body: IntroQuestionDto.IntroQuestionSubmitRequestDto) {
     try {
       const typeLearnerId = (await this.introQuestionService.getTypeLearner(body.score)).id;
-      const latestCourseId = (await this.sequenceCoursesService.getMany({typeLearnerId: typeLearnerId}, {order: "asc"}))[0].Course.id;
+      const latestCourseId = (await this.sequenceCoursesService.getMany({ typeLearnerId: typeLearnerId }, { order: 'asc' }))[0]
+        .Course.id;
       const result = await this.introQuestionService.registerSequenceCourse(body.learnerId, typeLearnerId, latestCourseId);
       return JSON.stringify(result);
     } catch (error) {

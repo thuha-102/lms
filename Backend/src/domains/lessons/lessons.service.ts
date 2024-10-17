@@ -33,7 +33,7 @@ export class LessonService {
       }
       return { id: lesson.id };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       throw new ConflictException(e);
     }
   }

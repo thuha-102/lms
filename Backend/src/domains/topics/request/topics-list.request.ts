@@ -5,7 +5,7 @@ export class TopicListREQ {
     return {
       name: true,
       order: true,
-      courseId: true
+      courseId: true,
     };
   }
 }

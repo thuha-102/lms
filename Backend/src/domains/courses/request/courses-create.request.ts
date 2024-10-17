@@ -16,6 +16,14 @@ export class CourseCreateREQ {
   visibility: boolean = false;
 
   @IsOptional()
+  @IsNumber()
+  price: number;
+
+  @IsOptional()
+  @IsNumber()
+  salePercent: number;
+
+  @IsOptional()
   @IsString()
   labels: string[];
 
@@ -45,9 +53,11 @@ export class CourseCreateREQ {
       name: body.name,
       labels: body.labels,
       description: body.description,
+      price: body.price,
+      salePercent: body.salePercent ? body.salePercent : 0,
       level: body.level,
       avatarId: body.avatarId,
-      passPercent: body.passPercent
+      passPercent: body.passPercent,
     };
   }
 }
