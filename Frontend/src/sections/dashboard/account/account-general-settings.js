@@ -13,16 +13,61 @@ import {
   Switch,
   TextField,
   Typography,
-  Unstable_Grid2 as Grid
+  Unstable_Grid2 as Grid,
+  InputAdornment,
+  IconButton,
+  OutlinedInput,
+  FormControl,
+  InputLabel,
+  FilledInput
 } from '@mui/material';
 import { alpha } from '@mui/material/styles';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { useEffect, useState } from 'react';
 
 const genderOptions = ["MALE", "FEMALE", "UNKNOWN"]
+const bankOptions = ["OCB"]
 
 export const AccountGeneralSettings = (props) => {
-  const { avatar, user } = props;
+  const { avatar, user, updateInfor} = props;
+  const [username, setUserName] = useState(null)
+  const [password, setPassword] = useState(null)
+  const [showPassword, setShowPassword] = useState(true);
 
-  const { email, name, username, gender, qualification, backgroundKnowledge } = user ? user : { email: null, name: null, username: null, gender: null, qualification: null, backgroundKnowledge: null }
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleMouseUpPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handeNameClick = (event) => {
+    updateInfor({
+      username
+    })
+  }
+
+  const handePasswordClick = (event) => {
+    updateInfor({
+      password
+    })
+  }
+
+  const handeNameChange = (event) => {
+    setUserName(event.target.value)
+  }
+
+  const handePasswordChange = (event) => {
+    setPassword(event.target.value)
+  }
+
+  useEffect(()=>{
+    setUserName(user.username)
+  }, [user])
   
   return (
     <Stack
@@ -47,7 +92,7 @@ export const AccountGeneralSettings = (props) => {
               md={8}
             >
               <Stack spacing={3}>
-                <Stack
+                {/* <Stack
                   alignItems="center"
                   direction="row"
                   spacing={2}
@@ -105,135 +150,24 @@ export const AccountGeneralSettings = (props) => {
                       </Avatar>
                     </Box>
                   </Box>
-                </Stack>
+                </Stack> */}
                 <Stack
                   alignItems="center"
                   direction="row"
                   spacing={2}
                 >
                   <TextField
-                    defaultValue={name}
-                    label="Tên"
-                    sx={{ flexGrow: 1 }}
-                  />
-                  <Button
-                    color="inherit"
-                    size="small"
-                  >
-                    Lưu
-                  </Button>
-                </Stack>
-                <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={2}
-                >
-                  <TextField
-                    defaultValue={qualification}
-                    label="Trình độ học vấn"
-                    sx={{ flexGrow: 1 }}
-                    disabled={true}
-                  />
-                  <Button
-                    color="inherit"
-                    size="small"
-                  >
-                    
-                  </Button>
-                </Stack>
-                <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={2}
-                >
-                  <TextField
-                    defaultValue={backgroundKnowledge}
-                    label="Kiến thức về AI"
-                    sx={{ flexGrow: 1 }}
-                    disabled={true}
-                  />
-                  <Button
-                    color="inherit"
-                    size="small"
-                  >
-                    
-                  </Button>
-                </Stack>
-                <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={2}
-                >
-                  <TextField
-                    defaultValue={email}
-                    label="Email"
-                    required
-                    sx={{
-                      flexGrow: 1,
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderStyle: 'dashed'
-                      }
-                    }}
-                  />
-                  <Button
-                    color="inherit"
-                    size="small"
-                  >
-                    Lưu
-                  </Button>
-                </Stack>
-                <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={2}
-                >
-                  <TextField
-                    defaultValue={gender}
-                    label="Giới tính"
-                    select
-                    SelectProps={{ native: true }}
-                    sx={{
-                      flexGrow: 1,
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderStyle: 'dashed'
-                      }
-                    }}
-                  >
-                    {genderOptions.map((option) => (
-                      <option
-                        key={option}
-                        value={option}
-                      >
-                        {option}
-                      </option>
-                    ))}
-                  </TextField>
-                  <Button
-                    color="inherit"
-                    size="small"
-                  >
-                    Lưu
-                  </Button>
-                </Stack>
-                <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={2}
-                >
-                  <TextField
-                    defaultValue={username}
                     label="Tài khoản"
-                    required
+                    placeholder={username}
                     sx={{
-                      flexGrow: 1,
-                      '& .MuiOutlinedInput-notchedOutline': {
-                        borderStyle: 'dashed'
-                      }
+                      flexGrow: 1
                     }}
+                    onChange={handeNameChange}
                   />
                   <Button
                     color="inherit"
                     size="small"
+                    onClick={handeNameClick}
                   >
                     Lưu
                   </Button>
@@ -243,56 +177,45 @@ export const AccountGeneralSettings = (props) => {
                   direction="row"
                   spacing={2}
                 >
-                  <TextField
-                    defaultValue={''}
-                    placeholder='***************'
-                    label="Mật khẩu"
-                    type='password'
-                    required
+                  <FormControl 
                     sx={{
                       flexGrow: 1,
                       '& .MuiOutlinedInput-notchedOutline': {
                         borderStyle: 'dashed'
                       }
-                    }}
-                  />
+                    }} 
+                    variant="filled"
+                  >
+                    <InputLabel htmlFor="filled-adornment-password">Mật khẩu</InputLabel>
+                    <FilledInput
+                      id="filled-adornment-password"
+                      placeholder='***************'
+                      type={showPassword ? 'text' : 'password'}
+                      onChange={handePasswordChange}
+                      endAdornment={
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label="toggle password visibility"
+                            onClick={handleClickShowPassword}
+                            onMouseDown={handleMouseDownPassword}
+                            onMouseUp={handleMouseUpPassword}
+                            edge="end"
+                          >
+                            {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                    />
+                  </FormControl>
                   <Button
                     color="inherit"
                     size="small"
+                    onClick={handePasswordClick}
                   >
                     Lưu
                   </Button>
                 </Stack>
               </Stack>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardContent>
-          <Grid
-            container
-            spacing={3}
-          >
-            <Grid
-              xs={12}
-              md={4}
-            >
-              <Typography variant="h6">
-                Xóa tài khoản
-              </Typography>
-            </Grid>
-            <Grid
-              xs={12}
-              md={8}
-            >
-              <Button
-                color="error"
-                variant="outlined"
-              >
-                Xóa vĩnh viễn
-              </Button>
             </Grid>
           </Grid>
         </CardContent>

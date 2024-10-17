@@ -85,7 +85,7 @@ export const CartListTable = (props) => {
 
     if (checked) {
       selectAll();
-      setPaymentCourse(cart)
+      setPaymentCourse(cart.map(c => c.courseId))
     } else {
       deselectAll();
       setPaymentCourse([])
@@ -218,7 +218,7 @@ export const CartListTable = (props) => {
                       {cart.salePercent !== 0 ? `-${cart.salePercent*100}` : "Không"}
                   </TableCell>
                   <TableCell>
-                      {cart.salePercent !== 0 ? `-${cart.salePercent*cart.price}` : cart.price.toLocaleString('de-DE')}
+                      {(cart.price*(1 - cart.salePercent)).toLocaleString('de-DE')}
                   </TableCell>
                 </TableRow>
               );

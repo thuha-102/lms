@@ -76,11 +76,11 @@ export class CourseService {
 
     if (userId) {
       const registered = await this.prismaService.registerCourse.findFirst({ where: { learnerId: userId, courseId: id } });
-      const inCart = await this.prismaService.cart.findFirst({where: {learnerId: userId, courseId: id}});
+      const inCart = await this.prismaService.cart.findFirst({ where: { learnerId: userId, courseId: id } });
       return {
         ...CourseDTO.fromEnTity(course as any, topcicDTOs),
         registered: registered ? true : false,
-        inCart: inCart ? true : false
+        inCart: inCart ? true : false,
       };
     }
 

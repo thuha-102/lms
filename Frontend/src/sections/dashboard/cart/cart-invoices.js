@@ -3,8 +3,11 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import ArrowRightIcon from '@untitled-ui/icons-react/build/esm/ArrowRight';
 import {
+  Box,
   Card,
+  CardContent,
   CardHeader,
+  CardMedia,
   IconButton,
   Stack,
   SvgIcon,
@@ -20,9 +23,21 @@ import { MoreMenu } from '../../../components/more-menu';
 import { Scrollbar } from '../../../components/scrollbar';
 import { SeverityPill } from '../../../components/severity-pill';
 import { paths } from '../../../paths';
+import { useEffect, useState } from 'react';
+import { paymentApi } from '../../../api/payment';
 
 export const CartInvoices = (props) => {
   const { invoices, ...other } = props;
+  const totalPrice = invoices.reduce((sum, item) => sum + item.price*(1 - item.salePercent), 0)
+  const [bankAccount, setBankAccount] = useState("")
+  const [bankName, setBankName] = useState("")
+  const [receiptId, setReceipt] = useState("")
+
+  useEffect(() => {
+    const reponse = paymentApi.getAccountBank()
+    setBankAccount(reponse.data.bankAccount)
+    setBankAccount(reponse.data.bankName)
+  }, [])
 
   return (
     <Card sx={{minHeight: 700, minWidth: 600}}>
@@ -36,7 +51,7 @@ export const CartInvoices = (props) => {
               <TableCell>
                 Tên khóa học
               </TableCell>
-              <TableCell>
+              <TableCell align='center'>
                 Giá tiền
               </TableCell>
             </TableRow>
@@ -48,19 +63,30 @@ export const CartInvoices = (props) => {
                   <TableCell>
                     {invoice.courseName}
                   </TableCell>
-                  <TableCell>
-                    {invoice.salePercent !== 0? invoice.salePercent*invoice.price : invoice.price}
+                  <TableCell align='center'>
+                    {(invoice.price*(1 - invoice.salePercent)).toLocaleString('de-DE')}
                   </TableCell>                 
                 </TableRow>
               );
             })}
-            <TableRow sx={{ '& td': { borderBottom: 'none' } }}>
-              <TableCell align="right">Tổng cộng</TableCell>
-              <TableCell>1000</TableCell>
+            <TableRow sx={{ '& td': { borderBottom: 'none', fontWeight: 'bold' } }}>
+              <TableCell align="right">Tổng cộng:</TableCell>
+              <TableCell align='center'>{totalPrice.toLocaleString('de-DE')}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
       </Scrollbar>
+      <Stack
+        sx={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      > 
+        <Typography>Vui lòng quét QR ở dưới để thanh toán</Typography>
+        <CardContent component="section" align='center'>
+          <img src={`https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAccount}&amount=${totalPrice}&des=DH--${1}`}/>
+        </CardContent>
+      </Stack>
     </Card>
   );
 };

@@ -15,6 +15,7 @@ import { join } from 'path';
 import { TopicModule } from './domains/topics/topics.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/http-exception.filter';
+import { PaymentModule } from './domains/payment/payment.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { HttpExceptionFilter } from './shared/http-exception.filter';
     TopicModule,
     LessonModule,
     FileModule,
+    PaymentModule,
     IntroQuestionModule,
     SequenceCoursesModule,
     TypeLearnerModule,

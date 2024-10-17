@@ -8,6 +8,10 @@ class UserApi {
     return axios.get(`${apiUrl}/${id}`);
   }
 
+  updateUser(id, request){
+    return axios.patch(`${apiUrl}/${id}`, request)
+  }
+
   getAllUser(username) {
     return axios.get(username ? `${apiUrl}?username=${username}` : apiUrl);
   }

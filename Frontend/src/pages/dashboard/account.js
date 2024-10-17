@@ -1,16 +1,44 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import { Box, Container, Divider, Stack, Tab, Tabs, Typography } from '@mui/material';
 import { usePageView } from '../../hooks/use-page-view';
 import { Layout as DashboardLayout } from '../../layouts/dashboard';
 import { AccountGeneralSettings } from '../../sections/dashboard/account/account-general-settings';
 import { useAuth } from '../../hooks/use-auth';
+import { userApi } from '../../api/user';
+import { BankSettings } from '../../sections/dashboard/account/account-bank-settings';
+import { paymentApi } from '../../api/payment';
 
 const now = new Date();
 
 const Page = () => {
-  const { user } = useAuth();
+  const { user } = useAuth()
   const [currentTab, setCurrentTab] = useState('general');
+  const [userInfor, setUserInfor] = useState("")
+  const [bankInfor, setBankInfor] = useState("")
+
+  const getUser = useCallback(async () => {
+    const response = await userApi.getUser(user?.id)
+    setUserInfor(response.data)
+  }, [])
+
+  const getBankInfor = useCallback(async () => {
+    const response = await paymentApi.getAccountBank()
+    setBankInfor(response.data)
+  }, [])
+
+  useEffect(()=> {
+    getUser()
+    getBankInfor()
+  }, [])
+
+  const handleUserChangeInfor = useCallback(async (request) => {
+    await userApi.updateUser(user.id, request)
+  }, [])
+
+  const handleBankChangeInfor = useCallback(async (request) => {
+    // await userApi.updateUser(user.id, request)
+  }, [])
 
   usePageView();
 
@@ -44,10 +72,13 @@ const Page = () => {
           </Stack>
           <AccountGeneralSettings
               avatar={'/assets/avatars/avatar-anika-visser.png'}
-              user = {user}
-              email=''
-              name=''
-            />
+              user = {userInfor}
+              updateInfor = {handleUserChangeInfor}
+          />
+          <BankSettings
+            bank = {bankInfor}
+            updateInfor = {handleBankChangeInfor}
+          />
         </Container>
       </Box>
     </>

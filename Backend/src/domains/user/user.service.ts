@@ -32,7 +32,7 @@ export class UserService {
       await this.prismaService.registerCourse.findMany({ where: { learnerId: user.id }, select: { courseId: true } })
     ).map((register) => register.courseId);
 
-    const {_count} = await this.prismaService.cart.aggregate({where: {learnerId: id}, _count: true})
+    const { _count } = await this.prismaService.cart.aggregate({ where: { learnerId: id }, _count: true });
 
     return UserInfoDTO.fromEntity(user as any, registerCourseIds, _count as any);
   }
@@ -54,7 +54,7 @@ export class UserService {
           data: UserRegisterCourseCreateREQ.toCreateInput(learnerId, courseId),
         });
 
-        await tx.cart.deleteMany({where: {learnerId, courseId}});
+        await tx.cart.deleteMany({ where: { learnerId, courseId } });
       } catch (e) {
         return e;
       }
@@ -222,7 +222,7 @@ export class UserService {
   }
 
   async addCart(id: number, courseId: number) {
-    return await this.prismaService.cart.create({ data: { learnerId: id, courseId: courseId }, select: {id: true} });
+    return await this.prismaService.cart.create({ data: { learnerId: id, courseId: courseId }, select: { id: true } });
   }
 
   async deleteCart(id: number, courseIds: number[]) {

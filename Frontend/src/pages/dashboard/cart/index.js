@@ -126,7 +126,7 @@ const Page = () => {
                     onClose={handleClose}
                 >
                     <Box>
-                        <CartInvoices invoices={paymentCourse}/>
+                        <CartInvoices invoices={cart.filter(_c => paymentCourse.includes(_c.courseId))}/>
                     </Box>
                 </Dialog>
         }

@@ -83,7 +83,6 @@ export class UserController {
     return await this.userService.getCart(id);
   }
 
-  
   @Post(':id/cart')
   async addCart(@Param('id', ParseIntPipe) id: number, @Body() body: { courseId: number }) {
     return await this.userService.addCart(id, body.courseId);
