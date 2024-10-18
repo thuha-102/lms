@@ -224,8 +224,8 @@ export const AccountGeneralSettings = (props) => {
   );
 };
 
-AccountGeneralSettings.propTypes = {
-  avatar: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired
-};
+// AccountGeneralSettings.propTypes = {
+//   avatar: PropTypes.string.isRequired,
+//   email: PropTypes.string.isRequired,
+//   name: PropTypes.string.isRequired
+// };

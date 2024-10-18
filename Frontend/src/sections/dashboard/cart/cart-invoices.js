@@ -23,7 +23,7 @@ import { MoreMenu } from '../../../components/more-menu';
 import { Scrollbar } from '../../../components/scrollbar';
 import { SeverityPill } from '../../../components/severity-pill';
 import { paths } from '../../../paths';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { paymentApi } from '../../../api/payment';
 
 export const CartInvoices = (props) => {
@@ -33,10 +33,14 @@ export const CartInvoices = (props) => {
   const [bankName, setBankName] = useState("")
   const [receiptId, setReceipt] = useState("")
 
-  useEffect(() => {
-    const reponse = paymentApi.getAccountBank()
+  const getAccountBank = useCallback(async ()=> {
+    const reponse = await paymentApi.getAccountBank()
     setBankAccount(reponse.data.bankAccount)
-    setBankAccount(reponse.data.bankName)
+    setBankName(reponse.data.bankName)
+  }, [])
+
+  useEffect(() => {
+    getAccountBank()
   }, [])
 
   return (
@@ -44,38 +48,41 @@ export const CartInvoices = (props) => {
       <CardHeader
         title="Thanh toán"
       />
-      <Scrollbar>
-        <Table sx={{ minWidth: 600}}>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                Tên khóa học
-              </TableCell>
-              <TableCell align='center'>
-                Giá tiền
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {invoices.map((invoice) => {
-              return (
-                <TableRow key={invoice.courseId}>
-                  <TableCell>
-                    {invoice.courseName}
-                  </TableCell>
-                  <TableCell align='center'>
-                    {(invoice.price*(1 - invoice.salePercent)).toLocaleString('de-DE')}
-                  </TableCell>                 
-                </TableRow>
-              );
-            })}
-            <TableRow sx={{ '& td': { borderBottom: 'none', fontWeight: 'bold' } }}>
-              <TableCell align="right">Tổng cộng:</TableCell>
-              <TableCell align='center'>{totalPrice.toLocaleString('de-DE')}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Scrollbar>
+      <CardContent>
+
+        <Scrollbar>
+          <Table sx={{ minWidth: 550}}>
+            <TableHead>
+              <TableRow>
+                <TableCell>
+                  Tên khóa học
+                </TableCell>
+                <TableCell align='center'>
+                  Giá tiền
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {invoices.map((invoice) => {
+                return (
+                  <TableRow key={invoice.courseId}>
+                    <TableCell>
+                      {invoice.courseName}
+                    </TableCell>
+                    <TableCell align='center'>
+                      {(invoice.price*(1 - invoice.salePercent)).toLocaleString('de-DE')}
+                    </TableCell>                 
+                  </TableRow>
+                );
+              })}
+              <TableRow sx={{ '& td': { borderBottom: 'none', fontWeight: 'bold' } }}>
+                <TableCell align="right">Tổng cộng:</TableCell>
+                <TableCell align='center'>{totalPrice.toLocaleString('de-DE')}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </Scrollbar>
+      </CardContent>
       <Stack
         sx={{
           justifyContent: "center",

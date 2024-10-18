@@ -215,7 +215,7 @@ export const CartListTable = (props) => {
                     {`${cart.price.toLocaleString('de-DE')}`}
                   </TableCell>
                   <TableCell>
-                      {cart.salePercent !== 0 ? `-${cart.salePercent*100}` : "Không"}
+                      {cart.salePercent !== 0 ? `${cart.salePercent*100}%` : "Không"}
                   </TableCell>
                   <TableCell>
                       {(cart.price*(1 - cart.salePercent)).toLocaleString('de-DE')}

@@ -77,7 +77,7 @@ export const BankSettings = (props) => {
         spacing={4}
         {...props}>
         {
-            user.accountType === "ADMIN" ? 
+            user?.accountType === "ADMIN" ? 
             <Card>
                 <CardContent>
                 <Grid

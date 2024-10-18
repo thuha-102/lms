@@ -7,7 +7,7 @@ export class PaymentController {
 
   @Post()
   async paymentCheck(@Body() body) {
-    console.log(body);
+    return body;
   }
 
   @Get('/bank-account')

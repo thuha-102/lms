@@ -398,7 +398,7 @@ export const CourseEditForm = () => {
                             Size: 700x430 pixels
                         </Typography>
                       <Card>
-                        <img src={!details?.avatarId ? "assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${details?.avatarId}`} width={600} height={300}/>
+                        <img src={!details?.avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${details?.avatarId}`} width={600} height={300}/>
                       </Card>
                       </Stack>
                   </Grid>

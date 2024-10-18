@@ -310,7 +310,7 @@ const LessonList = () => {
             </Stack>
             <Grid container spacing={5}>
               <Grid size={{ xs: 6, md: 10 }}>
-                <img src={!avatarId ? "assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
+                <img src={!avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
               </Grid>
               
               <Grid size={{ xs: 6, md: 8 }}>
