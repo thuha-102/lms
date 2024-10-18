@@ -91,7 +91,7 @@ export const CartInvoices = (props) => {
       > 
         <Typography>Vui lòng quét QR ở dưới để thanh toán</Typography>
         <CardContent component="section" align='center'>
-          <img src={`https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAccount}&amount=${totalPrice}&des=DH--${1}`}/>
+          <img src={`https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAccount}&amount=${totalPrice}&des=DH00${1}`}/>
         </CardContent>
       </Stack>
     </Card>
