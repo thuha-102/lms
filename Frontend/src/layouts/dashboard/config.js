@@ -10,12 +10,13 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
 import ModelTrainingOutlinedIcon from '@mui/icons-material/ModelTrainingOutlined';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
 import { tokens } from '../../locales/tokens';
 import { paths } from '../../paths';
 
-
+// side navigation config
 export const getSections = (t, accountType) => [
   {
     items: [
@@ -152,6 +153,15 @@ export const getSections = (t, accountType) => [
         icon: (
           <SvgIcon fontSize="small">
             <AccountBoxOutlinedIcon />
+          </SvgIcon>
+        )
+      },
+      {
+        title: t(tokens.nav.cart),
+        path: paths.dashboard.cart,
+        icon: (
+          <SvgIcon fontSize="small">
+            <ShoppingCartIcon />
           </SvgIcon>
         )
       },

@@ -8,5 +8,6 @@ import { HttpModule } from '@nestjs/axios';
   imports: [PrismaModule, HttpModule],
   controllers: [UserController],
   providers: [UserService],
+  exports: [UserService],
 })
 export class UserModule {}

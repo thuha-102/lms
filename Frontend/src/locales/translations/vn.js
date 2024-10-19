@@ -48,6 +48,7 @@ export const vn = {
   [tokens.nav.pages]: 'Trang',
   [tokens.nav.personal]: 'Cá nhân',
   [tokens.nav.personal_info]: 'Thông tin cá nhân',
+  [tokens.nav.cart]: 'Giỏ hàng',
   [tokens.nav.postCreate]: 'Post Create',
   [tokens.nav.postDetails]: 'Post Details',
   [tokens.nav.postList]: 'Post List',

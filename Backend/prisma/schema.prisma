@@ -97,8 +97,7 @@ model Course {
   Topic          Topic[]
   RegisterCourse RegisterCourse[]
   Cart           Cart[]
-  Receipt        Receipt?         @relation(fields: [receiptId], references: [id])
-  receiptId      Int?
+  Receipt        Receipt[]
 
   @@map("courses")
 }

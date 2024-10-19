@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { use, useCallback, useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import Head from 'next/head';
 import PaymentIcon from '@mui/icons-material/Payment';
@@ -12,6 +12,8 @@ import { userApi } from '../../../api/user';
 import { paths } from '../../../paths';
 import { useAuth } from '../../../hooks/use-auth';
 import { CartInvoices } from '../../../sections/dashboard/cart/cart-invoices';
+import io from 'socket.io-client';
+import { paymentApi } from '../../../api/payment';
 
 const useSearch = () => {
     const [search, setSearch] = useState({
@@ -30,7 +32,7 @@ const useSearch = () => {
     };
 };
 
-const useCart = (userId, search, deleted) => {
+const useCart = (userId, search, open) => {
     const isMounted = useMounted();
     const [state, setState] = useState({
         cart: [],
@@ -55,18 +57,21 @@ const useCart = (userId, search, deleted) => {
     useEffect(() => {
         getCart();
         },
-    [userId, search, deleted]);
+    [userId, search, open]);
 
     return state;
 };
 
 const Page = () => {
+    const socket = io(`${process.env.NEXT_PUBLIC_SERVER_API}`);
     const { user } = useAuth()
     const { search, updateSearch } = useSearch();
-    const { cart, cartCount } = useCart(user.id, search);
+    const { cart, cartCount } = useCart(user.id, search, open);
 
     const [open, setOpen] = useState(false)
     const [paymentCourse, setPaymentCourse] = useState([])
+    const [receiptId, setReceiptId] = useState(-1)
+    const [loading, setLoading] = useState(true)
 
     usePageView();
 
@@ -107,10 +112,30 @@ const Page = () => {
     }, [user])
 
     const handlePayment = useCallback(async () => {
-        if (paymentCourse.length !== 0) setOpen(true)
+        if (paymentCourse.length === 0) return;
+        const response = await paymentApi.createReceipt(user.id, paymentCourse);
+        setReceiptId(response.data.id)
+        setOpen(true)
     }, [paymentCourse])
 
     const handleClose = () => setOpen(false)
+
+    const paymentConfirm = useCallback(() => {
+        socket.on('payment', (receipt) => {
+            if (receiptId && receipt.id === receiptId) {
+                setLoading(false)
+            }
+        });
+
+        return () => {
+            socket.off('payment');
+        };
+    }, [receiptId])
+
+    useEffect(() => {
+        paymentConfirm()
+    }, [open]);
+
 
     return (
         <>
@@ -126,7 +151,12 @@ const Page = () => {
                     onClose={handleClose}
                 >
                     <Box>
-                        <CartInvoices invoices={cart.filter(_c => paymentCourse.includes(_c.courseId))}/>
+                        <CartInvoices 
+                            invoices={cart.filter(_c => paymentCourse.includes(_c.courseId))}                             
+                            loading={loading}
+                            receiptId={`${receiptId}`.padStart(3, '0')}
+                            paymentConfirm={paymentConfirm}
+                        />
                     </Box>
                 </Dialog>
         }
