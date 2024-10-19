@@ -83,7 +83,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Dashboard: My Course 
+          Khóa học của tôi
         </title>
       </Head>
       <Box

@@ -156,7 +156,7 @@ export const getSections = (t, accountType) => [
           </SvgIcon>
         )
       },
-      {
+      ...accountType === "LEARNER" ? [{
         title: t(tokens.nav.cart),
         path: paths.dashboard.cart,
         icon: (
@@ -164,7 +164,7 @@ export const getSections = (t, accountType) => [
             <ShoppingCartIcon />
           </SvgIcon>
         )
-      },
+      }]: [],
     ]
   },
   accountType === "ADMIN" && {

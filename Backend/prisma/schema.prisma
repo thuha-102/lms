@@ -246,7 +246,7 @@ model SequenceCourse {
   typeLearnerId Int         @map("type_learner_id")
   order         Int
 
-  Course   Course @relation(fields: [courseId], references: [id])
+  Course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   courseId Int    @map("course_id")
 
   @@unique([typeLearnerId, courseId, order])

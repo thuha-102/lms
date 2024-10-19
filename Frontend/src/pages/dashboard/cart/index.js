@@ -66,7 +66,7 @@ const Page = () => {
     const socket = io(`${process.env.NEXT_PUBLIC_SERVER_API}`);
     const { user } = useAuth()
     const { search, updateSearch } = useSearch();
-    const { cart, cartCount } = useCart(user.id, search, open);
+    const { cart, cartCount } = useCart(user?.id, search, open);
 
     const [open, setOpen] = useState(false)
     const [paymentCourse, setPaymentCourse] = useState([])

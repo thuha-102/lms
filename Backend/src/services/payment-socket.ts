@@ -16,13 +16,8 @@ export class PaymentGateway implements OnGatewayConnection, OnGatewayDisconnect 
     @WebSocketServer()
     server: Server;
 
-    handleConnection(client: Socket) {
-        console.log(`Web-socket is opened`);
-    }
-
-    handleDisconnect(client: Socket) {
-        console.log(`Web-socket is closed`);
-    }
+    handleConnection(client: Socket) {}
+    handleDisconnect(client: Socket) {}
 
     @SubscribeMessage('paymnet')
     paymentConfirmed(receipt : {id: number, isPayment: boolean}) {

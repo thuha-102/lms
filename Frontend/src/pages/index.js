@@ -9,7 +9,7 @@ const Page = () => {
   usePageView();
   const { user } = useAuth()
   const router = useRouter()
-  if (user?.id) router.push(paths.dashboard.index);
+  if (user && user.id) router.push(paths.dashboard.index);
 
   return (
     <>

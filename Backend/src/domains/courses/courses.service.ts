@@ -137,6 +137,11 @@ export class CourseService {
   }
 
   async delete(id: number) {
-    await this.prismaService.course.delete({ where: { id } });
+    try{
+      await this.prismaService.course.delete({ where: { id } });
+    }
+    catch(e){
+      return e
+    }
   }
 }

@@ -34,7 +34,7 @@ export const BankSettings = (props) => {
     const { bank, updateInfor} = props;
     const [bankAccount, setBankAccount] = useState(null)
     const [bankName, setBankName] = useState(null)
-    const [showBankAccount, setShowBankAccount] = useState(true);
+    const [showBankAccount, setShowBankAccount] = useState(false);
 
     const handleClickShowBankAccount = () => setShowBankAccount((show) => !show);
 
@@ -114,8 +114,8 @@ export const BankSettings = (props) => {
                             <InputLabel htmlFor="filled-adornment-bankAccount">Tài khoản ngân hàng</InputLabel>
                             <FilledInput
                             id="filled-adornment-bankAccount"
-                            placeholder={bank.bankAccount}
-                            type={showBankAccount ? 'text' : 'bankAccount'}
+                            value={bank.bankAccount}
+                            type={showBankAccount ? 'text' : 'password'}
                             onChange={handeBankAccountChange}
                             endAdornment={
                                 <InputAdornment position="end">

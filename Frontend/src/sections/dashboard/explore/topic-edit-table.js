@@ -43,6 +43,8 @@ import { batch, useDispatch } from 'react-redux';
 import { width } from '@mui/system';
 import { deepCopy } from '../../../utils/deep-copy';
 import { sortBy } from 'lodash';
+import { Scrollbar } from '../../../components/scrollbar';
+import { useTheme } from '@mui/material/styles';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -261,6 +263,7 @@ Row.propTypes = {
 
 export default function TopicEditTable(props) {
     const { rows, updateOrder} = props
+    const theme = useTheme()
     const dispatch = useDispatch()
     const handleDragEnd = useCallback(async ({ source, destination, draggableId }) => {
         try {
@@ -278,7 +281,7 @@ export default function TopicEditTable(props) {
             <Table>
                 <TableHead>
                     <TableRow>
-                        <TableCell align='center'>
+                        <TableCell align='center' colSpan={3}>
                             Tên chủ đề học
                         </TableCell>
                     </TableRow>
@@ -296,29 +299,37 @@ export default function TopicEditTable(props) {
                                     px: 3,
                                     pt: 1.5
                                 }}
-                            >
-                                {
-                                    rows.map((row, index) => (
-                                        <Draggable draggableId={`dragtable-${index}`} index={index}>
-                                            {(draggableProvided, snapshot) => (
-                                                <Stack
-                                                    ref={draggableProvided.innerRef}
-                                                    {...draggableProvided.draggableProps}
-                                                    {...draggableProvided.dragHandleProps}
-                                                    // style={{ ...draggableProvided.draggableProps.style }}
-                                                    direction="column"
-                                                    sx={{
-                                                        outline: 'none',
-                                                        py: 1.5,
-                                                        overflow: 'hidden'
-                                                    }}
-                                                >
-                                                    <Row key={index} row={row} dragging={snapshot.isDragging}></Row>
-                                                </Stack>
-                                            )}
-                                        </Draggable>
-                                    ))
-                                }
+                            >   
+                                <TableRow>
+                                    <TableCell>
+                                        {
+                                            rows.map((row, index) => (
+                                                <Draggable draggableId={`dragtable-${index}`} index={index} key={index}>
+                                                    {(draggableProvided, snapshot) => (
+                                                        <Table
+                                                            ref={draggableProvided.innerRef}
+                                                            {...draggableProvided.draggableProps}
+                                                            {...draggableProvided.dragHandleProps}
+                                                            // style={{ ...draggableProvided.draggableProps.style }}
+                                                            direction="column"
+                                                            sx={{
+                                                                outline: 'none',
+                                                                py: 1.5,
+                                                                overflow: 'hidden',
+                                                                bgcolor: theme.palette.background.paper,
+                                                            }}
+                                                        >
+                                                            
+                                                            <TableBody>
+                                                                <Row key={index} row={row} dragging={snapshot.isDragging}></Row>
+                                                            </TableBody>
+                                                        </Table>
+                                                    )}
+                                                </Draggable>
+                                            ))
+                                        }
+                                    </TableCell>
+                                </TableRow>
 
                                 {draggableProvided.placeholder}
                                 <TableRow></TableRow>

@@ -56,7 +56,6 @@ export const CreateLessonDialog = ({courseId, order, openCreateLessonDialog, set
             const formData = new FormData(event.currentTarget);
             const formJson = Object.fromEntries(formData.entries());
             const lesson_name = formJson.text;
-            console.log(lesson_name);
             try {
                 // NOTE: Make API request
                 // console.log(formik.values);
@@ -66,10 +65,10 @@ export const CreateLessonDialog = ({courseId, order, openCreateLessonDialog, set
                   order: order
               })
                 toast.success('Bài học đã được tạo');
-                router.push(`${paths.dashboard.explore}/${courseId}`);
+                // router.push(`${paths.dashboard.explore}/${courseId}`); 
               } catch (err) {
                 console.error(err);
-                toast.error('Something went wrong!');
+                toast.error('Xảy ra lỗi');
                 // helpers.setStatus({ success: false });
                 // helpers.setErrors({ submit: err.message });
                 // helpers.setSubmitting(false);

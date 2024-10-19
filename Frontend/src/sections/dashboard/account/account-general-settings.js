@@ -158,7 +158,8 @@ export const AccountGeneralSettings = (props) => {
                 >
                   <TextField
                     label="Tài khoản"
-                    placeholder={username}
+                    name="username"
+                    value={username}
                     sx={{
                       flexGrow: 1
                     }}

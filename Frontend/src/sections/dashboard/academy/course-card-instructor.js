@@ -25,6 +25,7 @@ import {
 import { paths } from '../../../paths';
 import { useCallback, useState } from 'react';
 import { exploreApi } from '../../../api/explore';
+import { CourseDeleteDialog } from './course-delete-dialog';
 
 export const CourseCardDelete = (props) => {
   const { course } = props;
@@ -127,29 +128,11 @@ export const CourseCardDelete = (props) => {
             onClick={() => setOpenDialog(true)}
             // href={`${paths.dashboard.explore}/${course.id}`}
             >
-                {"Xoá khoá học"}
+                {"Xóa khoá học"}
             </Button>
-            <Dialog
-            open={openDialog}
-            onClose={() => setOpenDialog(false)}
-            // aria-labelledby="alert-dialog-title"
-            // aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {"Xoá bài học"}
-                </DialogTitle>
-                <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Bạn chắc chắn xoá bài học này ?
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setOpenDialog(false)}>Huỷ bỏ</Button>
-                    <Button onClick={handleDeleteCourse} autoFocus>
-                        Xoá
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            {
+              openDialog && <CourseDeleteDialog courseId={course.id} open={openDialog} setDeleteDialog={setOpenDialog}/>
+            }
         </div>
         }
         <Button

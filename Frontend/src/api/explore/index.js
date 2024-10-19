@@ -37,6 +37,10 @@ class ExploreApi {
   deleteLesson(id) {
     return axios.delete(`${apiUrl}/lessons/${id}`);
   }
+
+  deleteCourse(id){
+    return axios.delete(`${apiUrl}/courses/${id}`);
+  }
 //   getForumDetail(id) {
 //     return axios.get(`${apiUrl}/${id}`);
 //     //return Promise.resolve(deepCopy(forumDetail));

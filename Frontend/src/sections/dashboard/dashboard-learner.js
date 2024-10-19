@@ -150,7 +150,6 @@ export const DashboardLearner = () => {
         >
             <Box sx={{ py: '64px' }}>
                 <Stack direction={'column'} maxWidth={settings.stretch ? false : 'xl'}>
-                     
                     {/* <Grid
                         container
                         spacing={{

@@ -4,6 +4,7 @@ import NextLink from 'next/link';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   Alert,
   Box,
@@ -37,6 +38,8 @@ import { authApi } from '../../../../api/used-auth';
 import TopicEditTable from '../../../../sections/dashboard/explore/topic-edit-table';
 import { deepCopy } from '../../../../utils/deep-copy';
 import { useDispatch } from 'react-redux';
+import { CourseDeleteDialog } from '../../../../sections/dashboard/academy/course-delete-dialog';
+import { CourseUpdateDialog } from '../../../../sections/dashboard/academy/course-update-dialog.';
 
 const useSearch = () => {
   const [search, setSearch] = useState({
@@ -144,16 +147,19 @@ const LessonList = () => {
   const courseUrl = window.location.href.split('/');
   const courseId = (courseUrl[courseUrl.length - 1]);
   const [registered, setRegistered] = useState(false)
+  const [price, setPrice] = useState(0)
+  const [salePercent, setSalePercent] = useState(0)
   const [inCart, setInCart] = useState(false)
   const [topicList, setTopicList] = useState([]);
   const [courseTitle, setCourseTitle] = useState("");
   const [courseDescription, setCourseDescription] = useState("");
-  const [instructor, setInstructor] = useState("");
   const [level, setLevel] = useState("");
   const [rating, setRating] = useState("");
   const [updatedAt, setUpdated] = useState("");
   const [avatarId, setAvatarId] = useState(null);
   const [openCreateLessonDialog, setOpenCreateLessonDialog] = useState(false)
+  const [openDeleteDialog, setDeleteDialog] = useState(false)
+  const [openUpdateDialog, setUpdateDialog] = useState(false)
 
   useEffect(() => {(async () => {
     try {
@@ -162,6 +168,8 @@ const LessonList = () => {
       setTopicList(response.data.topics)
       setCourseTitle(response.data.name)
       setCourseDescription(response.data.description)
+      setPrice(response.data.price)
+      setSalePercent(response.data.salePercent)
       setLevel(response.data.level)
       setUpdated(response.data.updatedAt.slice(8, 10) + '-' + response.data.updatedAt.slice(5, 7) + '-' + response.data.updatedAt.slice(0, 4))
       setRegistered(response.data.registered)
@@ -222,11 +230,17 @@ const LessonList = () => {
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8
+          py: 8,
         }}
-      >
+      > 
+        {
+          openDeleteDialog && <CourseDeleteDialog courseId={courseId} open={openDeleteDialog} setDeleteDialog={setDeleteDialog}/>
+        }
+        {
+          openUpdateDialog && <CourseUpdateDialog request={{orderTopicIds: topicList.map(topic => topic.id)}} courseId={courseId} open={openUpdateDialog} setUpdateDialog={setUpdateDialog}/>
+        }
         <Container maxWidth="xl">
-          <Stack spacing={4}>
+          <Stack spacing={4} >
             <Stack
               direction="row"
               justifyContent="space-between"
@@ -255,13 +269,28 @@ const LessonList = () => {
               </Stack>
               
               <Stack
-                alignItems="center"
-                direction="row"
+                alignItems="flex-end"
+                justifyContent='center'
                 spacing={3}
               > 
                 {
-                  user?.accountType === 'ADMIN' && <Button
-                    // onClick={handleRegisterCourse}                    
+                  user?.accountType === 'ADMIN' && 
+                  <Button
+                    onClick={() => setUpdateDialog(true)}                    
+                    startIcon={(
+                      <SvgIcon>
+                        <EditIcon />
+                      </SvgIcon>
+                    )}
+                    variant="contained"
+                  >
+                    Cập nhật thay đổi
+                  </Button>
+                }
+                {
+                  user?.accountType === 'ADMIN' && 
+                  <Button
+                    onClick={() => setDeleteDialog(true)}                    
                     startIcon={(
                       <SvgIcon>
                         <DeleteIcon />
@@ -306,6 +335,20 @@ const LessonList = () => {
                     Bạn đang học khóa học này
                   </Alert>
                 }
+                {
+                  salePercent === 0 ? 
+                  <Stack direction={'row'} spacing={2} alignItems={'center'} padding={1} borderRadius={2} border={'1px solid'}>
+                    <Typography variant='h5' color={'red'}>{`-${salePercent*100}%`}</Typography>
+                    <Stack>
+                      <Typography variant='h6' sx={{textDecoration: 'line-through', textAlign: 'right'}}>{`${price.toLocaleString('en-DE')} ₫`}</Typography>
+                      <Typography variant='h2'>{`${(price*(1 - salePercent)).toLocaleString('en-DE')} ₫`}</Typography>
+                    </Stack>
+                  </Stack>
+                  :
+                  <Stack padding={1} borderRadius={2} border={'1px solid'}>
+                    <Typography variant='h2'>{`${price.toLocaleString('en-DE')} ₫`}</Typography>
+                  </Stack>
+                }
               </Stack>
             </Stack>
             <Grid container spacing={5}>
@@ -315,23 +358,22 @@ const LessonList = () => {
               
               <Grid size={{ xs: 6, md: 8 }}>
                 <CardContent>
-                  <Stack container spacing={3} direction={"column"}>
-                  <Stack direction={"column"} spacing={5}>
-                    <Stack direction={"row"} spacing={3}>  
-                      <Rating name="read-only" value={parseInt(rating,10)} readOnly />
+                  <Stack spacing={3} direction={"column"}>
+                    <Stack direction={"column"} spacing={5}>
+                      <Stack direction={"row"} spacing={3}>  
+                        {/* <Rating name="read-only" value={parseInt(rating,10)} readOnly /> */}
+                        <Typography variant='h5'>
+                          Trình độ: {level}
+                        </Typography>
+                      </Stack>
                       <Typography variant='h5'>
-                        Trình độ: {level}
+                        Cập nhật: {updatedAt}
                       </Typography>
                     </Stack>
-                    
-                    <Typography variant='h5'>
-                      Cập nhật: {updatedAt}
-                    </Typography>
+                    <Grid item >
+                      <Typography variant='h6'dangerouslySetInnerHTML={{__html: courseDescription}}/>
+                    </Grid>
                   </Stack>
-                  <Grid item >
-                    <Typography variant='h6'dangerouslySetInnerHTML={{__html: courseDescription}}/>
-                  </Grid>
-                </Stack>
                 </CardContent>
               </Grid>
             </Grid>
@@ -348,7 +390,7 @@ const LessonList = () => {
               }
             </Card>
             {user?.accountType !== 'LEARNER'  && 
-                <>
+              <>
                 <Button
                   component={NextLink}
                   // Thay đổi đường dẫn để lưu vào db
@@ -371,8 +413,8 @@ const LessonList = () => {
                   openCreateLessonDialog={openCreateLessonDialog}
                   setOpenCreateLessonDialog={setOpenCreateLessonDialog}
                 />
-                </>
-                }
+              </>
+            }
           </Stack>
         </Container>
       </Box>
