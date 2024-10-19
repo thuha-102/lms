@@ -62,13 +62,16 @@ export const DashboardLearner = () => {
     }, [chatContent]);
 
     const HandelStartChat = useCallback(async () => {
-        setChatMess("");
         setConversationId("1");
+        setChatMess("");
         setChatContent(pre => [...pre, { content: chatMess }, { isLoading: true, bot_id: "bot" }]);
         setRecommendQues([]);
 
         try {
-            const res = await cozeChatbotApi.postMessage(user.id, chatMess, undefined);
+            const conversationData = await cozeChatbotApi.createConversation();
+            setConversationId(conversationData.data.data.id);
+
+            const res = await cozeChatbotApi.postMessage(user.id, chatMess, conversationData.data.id);
             const lines = res.data.split('\n');
 
             lines.forEach((line, i) => {
@@ -78,11 +81,7 @@ export const DashboardLearner = () => {
 
                     if (dataLine && dataLine.startsWith('data:')) {
                         const data = JSON.parse(dataLine.substring(5).trim());
-                        switch (eventType) {
-                            case process.env.NEXT_PUBLIC_COZE_CHAT_CONVERSATION_CREATE_EVENT:
-                                setConversationId(data.id);
-                                break;
-            
+                        switch (eventType) {       
                             case process.env.NEXT_PUBLIC_COZE_CHAT_CONVERSATION_MESS_COMPLETE:
                                 if (data.type === "answer") {
                                     setChatContent(pre => [...pre.slice(0, -1), data]);
@@ -110,7 +109,6 @@ export const DashboardLearner = () => {
         try {
             const res = await cozeChatbotApi.postMessage(user.id, chatMess, conversationId);
             const lines = res.data.split('\n');
-            console.log(res.data);
 
             lines.forEach((line, i) => {
                 if (line.startsWith('event:')) {
