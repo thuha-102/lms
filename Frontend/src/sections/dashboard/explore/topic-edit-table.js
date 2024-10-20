@@ -41,8 +41,6 @@ import { paths } from '../../../paths';
 import { useAuth } from '../../../hooks/use-auth';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { batch, useDispatch } from 'react-redux';
-import { width } from '@mui/system';
-import { deepCopy } from '../../../utils/deep-copy';
 import { sortBy } from 'lodash';
 import { Scrollbar } from '../../../components/scrollbar';
 import { useTheme } from '@mui/material/styles';
@@ -81,17 +79,17 @@ function Row(props) {
 });
     const [fileGet, setFileGet] = useState("")
     const [openDeleteTopicDialog, setOpenDeleteTopicDialog] = useState(false)
-    const getLesson = useCallback(async (id) => {
-        try {
-        // const response = await exploreApi.getTopic(id);
+    // const getLesson = useCallback(async (id) => {
+    //     try {
+    //     // const response = await exploreApi.getTopic(id);
 
-        if (isMounted()) {
-            setListLMAccordingToLesson(response.data);
-        }
-        } catch (err) {
-        console.error(err);
-        }
-    }, [open])
+    //     if (isMounted()) {
+    //         setListLMAccordingToLesson(response.data);
+    //     }
+    //     } catch (err) {
+    //     console.error(err);
+    //     }
+    // }, [open])
 
     // const getUser = useCallback(async (id) => {
     //   try {
@@ -204,7 +202,7 @@ function Row(props) {
                         aria-label="expand row"
                         size="small"
                         onClick={() => {setOpen(!open)
-                                        getLesson(row.id)
+                                        // getLesson(row.id)
                         }}
                     >
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -258,10 +256,12 @@ function Row(props) {
                 onClose={handleMenuClose}
                 onDelete={() => handleDeleteTopic(row.id)}
                 open={openMenu}
-                idLesson={row.id}
+                topicId={row.id}
+                topicName={row.name}
                 idCourse={parseInt(courseId, 10)}
                 openDialog={openDeleteTopicDialog}
                 setOpenDialog={setOpenDeleteTopicDialog}
+                setTopicList={setTopicList}
             />
         </React.Fragment>
     );

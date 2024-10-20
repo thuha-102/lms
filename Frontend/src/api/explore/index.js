@@ -29,6 +29,10 @@ class ExploreApi {
     return axios.get(`${apiUrl}/topics/${id}`);
   }
 
+  updateTopic(topicId, request) {
+    return axios.patch(`${apiUrl}/topics/${topicId}`, request);
+  }
+
   getListCourse(keyword){
     if (keyword) return axios.get(`${apiUrl}/courses?keyword=${keyword}`)
     return axios.get(`${apiUrl}/courses`);

@@ -9,6 +9,7 @@ export const CourseUpdateDialog = (props) => {
     const handleUpdateCourse = useCallback(async () => {
         try {
             await exploreApi.updateCourse(courseId, request);
+            setUpdateDialog(false)
             toast.success("Đã cập nhật thành công khóa học")
         }
         catch (error){

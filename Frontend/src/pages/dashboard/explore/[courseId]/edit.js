@@ -3,6 +3,7 @@ import NextLink from 'next/link';
 import { usePageView } from "../../../../hooks/use-page-view";
 import { Layout as DashboardLayout } from '../../../../layouts/dashboard';
 import { Box, Breadcrumbs, Button, Container, Link, Stack, SvgIcon, Typography } from "@mui/material";
+import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { BreadcrumbsSeparator } from "../../../../components/breadcrumbs-separator";
 import { paths } from "../../../../paths";
@@ -71,18 +72,32 @@ const CourseEdit = () => {
                                 Chỉnh sửa
                                 </Link>
                             </Breadcrumbs>
-                            <Button
-                                onClick={() => setDeleteCourseDialog(true)}                    
-                                startIcon={(
-                                <SvgIcon>
-                                    <DeleteIcon />
-                                </SvgIcon>
-                                )}
-                                variant="contained"
-                                color="error"
-                            >
-                                Xóa khóa học
-                            </Button>
+                            <Stack direction={'row'} spacing={2}>
+                                <Button
+                                    component={NextLink}
+                                    href={`${paths.dashboard.explore}/${courseId}`}
+                                    startIcon={(
+                                    <SvgIcon>
+                                        <EditIcon />
+                                    </SvgIcon>
+                                    )}
+                                    variant="contained"
+                                >
+                                    Chỉnh sửa nội dung học
+                                </Button>
+                                <Button
+                                    onClick={() => setDeleteCourseDialog(true)}                    
+                                    startIcon={(
+                                    <SvgIcon>
+                                        <DeleteIcon />
+                                    </SvgIcon>
+                                    )}
+                                    variant="contained"
+                                    color="error"
+                                >
+                                    Xóa khóa học
+                                </Button>
+                            </Stack>
                         </Stack>
                     </Stack>
                     <CourseEditForm />
