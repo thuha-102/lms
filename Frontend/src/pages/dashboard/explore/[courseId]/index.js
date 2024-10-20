@@ -275,21 +275,19 @@ const LessonList = () => {
               > 
                 {
                   user?.accountType === 'ADMIN' && 
-                  <Button
-                    onClick={() => setUpdateDialog(true)}                    
-                    startIcon={(
-                      <SvgIcon>
-                        <EditIcon />
-                      </SvgIcon>
-                    )}
-                    variant="contained"
-                  >
-                    Cập nhật thay đổi
-                  </Button>
-                }
-                {
-                  user?.accountType === 'ADMIN' && 
-                  <Button
+                  <Stack direction='row' spacing={3}>
+                    <Button
+                      onClick={() => setUpdateDialog(true)}                    
+                      startIcon={(
+                        <SvgIcon>
+                          <EditIcon />
+                        </SvgIcon>
+                      )}
+                      variant="contained"
+                    >
+                      Cập nhật thay đổi
+                    </Button>
+                    <Button
                     onClick={() => setDeleteDialog(true)}                    
                     startIcon={(
                       <SvgIcon>
@@ -301,6 +299,7 @@ const LessonList = () => {
                   >
                     Xóa khóa học
                   </Button>
+                  </Stack>
                 }
                 {
                   user?.accountType === 'LEARNER' && !registered && !inCart && <Button
@@ -386,7 +385,7 @@ const LessonList = () => {
                   rows={topicList}  
                   courseTitle={courseTitle}
                 />:
-                <TopicEditTable rows={topicList} updateOrder={handleUpdateOrderTopic}/>
+                <TopicEditTable rows={topicList} setTopicList={setTopicList} updateOrder={handleUpdateOrderTopic}/>
               }
             </Card>
             {user?.accountType !== 'LEARNER'  && 

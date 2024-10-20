@@ -12,6 +12,7 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DotsVerticalIcon from '@untitled-ui/icons-react/build/esm/DotsVertical';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { toast } from 'react-hot-toast';
 import {
     Avatar,
@@ -45,6 +46,7 @@ import { deepCopy } from '../../../utils/deep-copy';
 import { sortBy } from 'lodash';
 import { Scrollbar } from '../../../components/scrollbar';
 import { useTheme } from '@mui/material/styles';
+import { LessonDeleteDialog } from '../academy/lesson-delete-dialog';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -62,7 +64,8 @@ function Row(props) {
     const menuRef = useRef(null);
     const { user } = useAuth();
     const [openMenu, setOpenMenu] = useState(false);
-    const { row, dragging, ref } = props;
+    const [ openDeleteLessonDialog, setDeleteLessonDialog] = useState(0)
+    const { row, dragging, ref, setTopicList } = props;
     const [open, setOpen] = React.useState(false);
     const [listLMAccordingToLesson, setListLMAccordingToLesson] = useState({
         "id": -1, 
@@ -167,10 +170,11 @@ function Row(props) {
     }, []);
 
     const handleDeleteLesson = useCallback(async (id) => {
-        console.log("Delete lesson")
+        console.log("delete topic")
         try {
-        const response = await exploreApi.deleteLesson(id);
-        console.log(response)
+            // await exploreApi.deleteTopic(id);
+            setTopicList(prev => prev.filter(topic => topic.id !== id))
+            toast.success("Đã xóa bài học thành công")
         } catch (err) {
         console.error(err);
         }
@@ -178,6 +182,9 @@ function Row(props) {
 
     return (
         <React.Fragment>
+            {
+                openDeleteLessonDialog === 0 ? <LessonDeleteDialog lessonId={openDeleteLessonDialog} open={openDeleteLessonDialog} setDeleteDialog={setDeleteLessonDialog}/> : <></>
+            }
             <TableRow 
                 ref={ref}
                 sx={{
@@ -223,15 +230,19 @@ function Row(props) {
                                 <Box key={_lm.id}>
                                     <Item
                                         sx={{
-                                        my: 1,
-                                        mx: 'auto',
-                                        p: 1,
+                                            my: 1,
+                                            mx: 'auto',
+                                            p: 1,
                                         }}
-                                        onClick={() => handlePageChange(_lm)}
                                     >
-                                        <Stack spacing={2} direction="row" alignItems="center">
-                                            <FileIcon extension={_lm.type} />
-                                            <Typography noWrap>{_lm.title}</Typography>
+                                        <Stack direction="row" alignItems={'center'} justifyContent={'space-between'}>
+                                            <Stack spacing={2} direction='row' alignItems='center'>
+                                                <FileIcon extension={_lm.type} />
+                                                <Typography align='left' noWrap>{_lm.title}</Typography>
+                                            </Stack>
+                                            <IconButton aria-label="delete" size="large" onClick={() => setDeleteLessonDialog(_lm.id)}>
+                                                <DeleteIcon />
+                                            </IconButton>
                                         </Stack>
                                     </Item>
                                 </Box>
@@ -262,7 +273,7 @@ Row.propTypes = {
 };
 
 export default function TopicEditTable(props) {
-    const { rows, updateOrder} = props
+    const { rows, updateOrder, setTopicList} = props
     const theme = useTheme()
     const dispatch = useDispatch()
     const handleDragEnd = useCallback(async ({ source, destination, draggableId }) => {
@@ -319,9 +330,8 @@ export default function TopicEditTable(props) {
                                                                 bgcolor: theme.palette.background.paper,
                                                             }}
                                                         >
-                                                            
                                                             <TableBody>
-                                                                <Row key={index} row={row} dragging={snapshot.isDragging}></Row>
+                                                                <Row key={index} row={row} dragging={snapshot.isDragging} setTopicList={setTopicList}></Row>
                                                             </TableBody>
                                                         </Table>
                                                     )}

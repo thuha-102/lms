@@ -34,6 +34,10 @@ class ExploreApi {
     return axios.get(`${apiUrl}/courses`);
   }
 
+  deleteTopic(id) {
+    return axios.delete(`${apiUrl}/topics/${id}`);
+  }
+
   deleteLesson(id) {
     return axios.delete(`${apiUrl}/lessons/${id}`);
   }
