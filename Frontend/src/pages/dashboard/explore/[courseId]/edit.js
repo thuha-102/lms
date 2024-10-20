@@ -7,8 +7,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { BreadcrumbsSeparator } from "../../../../components/breadcrumbs-separator";
 import { paths } from "../../../../paths";
 import { CourseEditForm } from "../../../../sections/dashboard/explore/explore-edit-form"
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { CourseDeleteDialog } from "../../../../sections/dashboard/academy/course-delete-dialog";
 
 const CourseEdit = () => {
+    const param = usePathname()
+    const [courseId, setCourseId] = useState("");
+    const [openDeleteCourseDialog, setDeleteCourseDialog]= useState(false)
+
+    useEffect(() => {
+        if (param) setCourseId(param.split('/')[3]);
+    },[param]);
+
     usePageView();
 
     return (
@@ -25,6 +36,9 @@ const CourseEdit = () => {
             py: 8
             }}
         >
+            {
+                openDeleteCourseDialog && <CourseDeleteDialog courseId={courseId} open={openDeleteCourseDialog} setDeleteDialog={setDeleteCourseDialog}/>
+            }
             <Container maxWidth="xl">
                 <Stack spacing={3}>
                         <Stack spacing={1}>
@@ -34,10 +48,10 @@ const CourseEdit = () => {
                         <Stack direction='row' justifyContent='space-between'>
                             <Breadcrumbs separator={<BreadcrumbsSeparator />}>
                                 <Link
-                                color="text.primary"
-                                component={NextLink}
-                                href={paths.dashboard.index}
-                                variant="subtitle2"
+                                    color="text.primary"
+                                    component={NextLink}
+                                    href={paths.dashboard.index}
+                                    variant="subtitle2"
                                 >
                                 Trang chủ
                                 </Link>
@@ -58,7 +72,7 @@ const CourseEdit = () => {
                                 </Link>
                             </Breadcrumbs>
                             <Button
-                                // onClick={handleRegisterCourse}                    
+                                onClick={() => setDeleteCourseDialog(true)}                    
                                 startIcon={(
                                 <SvgIcon>
                                     <DeleteIcon />

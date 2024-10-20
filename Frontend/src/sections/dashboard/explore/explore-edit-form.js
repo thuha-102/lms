@@ -122,23 +122,24 @@ export const CourseEditForm = () => {
     onSubmit: async (values, helpers) => {
       try {
         // NOTE: Make API request
-        // console.log(formik.values);
-        // const response = await exploreApi.updateCourse({
-        //   name: values.name,
-        //   description: values.description ,
-        //   avatarId: fileIds[0],
-        //   // idInstructor: parseInt(localStorage.getItem("id"), 10),
-        //   // visibility: visibilityChecked,
-        //   level: values.level,
-        //   labels: [],
-        //   // amountOfTime: values.amountOfTime ,
-        //   topicNames: [],
-        //   lessons: [],
-        // })
+        await exploreApi.updateCourse(values.id, {
+          name: values.name,
+          description: values.description ,
+          avatarId: fileIds[0],
+          price: value.price,
+          salePercent: values.salePercent,
+          // idInstructor: parseInt(localStorage.getItem("id"), 10),
+          visibility: freeChecked,
+          level: values.level,
+          // labels: [],
+          amountOfTime: values.amountOfTime,
+          topicNames: [],
+          lessons: [],
+        })
         toast.success('Khoá học đã cập nhật');
         // router.push(`${paths.dashboard.explore}/${response.data.id}`);
       } catch (err) {
-        toast.error('Something went wrong!');
+        toast.error('Xảy ra lỗi');
         helpers.setStatus({ success: false });
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
@@ -193,7 +194,6 @@ export const CourseEditForm = () => {
             'Content-Type': 'multipart/form-data'
           }
         });
-        // const response = await axios.get(`http://localhost:8080/files/9/information`);
 
         setFileIds([response.data["id"]])
         setDisabled(true);
@@ -351,7 +351,7 @@ export const CourseEditForm = () => {
                               disabled={freeChecked}
                               type="number"
                               // placeholder={details?.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}
-                              value={formik.values.price}
+                              value={freeChecked ? 0 : formik.values.price}
                           />
                           <TextField
                               error={!!(formik.touched.salePercent && formik.errors.salePercent)}
@@ -363,7 +363,7 @@ export const CourseEditForm = () => {
                               onChange={formik.handleChange}
                               disabled={freeChecked}
                               type="number"
-                              value={formik.values.salePercent*100}
+                              value={freeChecked ? 0 : formik.values.salePercent*100}
                           />
                           <div>
                               <FormControlLabel
@@ -382,6 +382,7 @@ export const CourseEditForm = () => {
                 <Grid
                   container
                   spacing={3}
+                  direction={'column'}
                 >
                   <Grid
                       xs={12}
@@ -397,25 +398,25 @@ export const CourseEditForm = () => {
                         >
                             Size: 700x430 pixels
                         </Typography>
-                      <Card>
-                        <img src={!details?.avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${details?.avatarId}`} width={600} height={300}/>
-                      </Card>
                       </Stack>
                   </Grid>
-                  <Grid
-                      xs={12}
-                      md={8}
-                  >
-                    <Stack>
+                  <Grid>
+                    <Stack direction={'row'} justifyContent={'space-around'} alignItems={'center'}>
+                      <Card sx={{height: 300, width: 600}}> 
+                        <CardMedia 
+                          sx={{height: 300}}
+                          image={!details?.avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${details?.avatarId}`}
+                        />
+                      </Card>
                       <FileDropzoneVn
-                      accept={{ '*//*': [] }}
-                      caption="(PDF, SVG, JPG, PNG, or gif maximum 900x400, ...)"
-                      files={files}
-                      disabled={disabled}
-                      onDrop={handleFilesDrop}
-                      onRemove={handleFileRemove}
-                      onRemoveAll={handleFilesRemoveAll}
-                      onUpload={handleFilesUpload}
+                        accept={{ '*//*': [] }}
+                        caption="(JPG, PNG maximum 700x430)"
+                        files={files}
+                        disabled={disabled}
+                        onDrop={handleFilesDrop}
+                        onRemove={handleFileRemove}
+                        onRemoveAll={handleFilesRemoveAll}
+                        onUpload={handleFilesUpload}
                       />
                     </Stack>
                   </Grid>

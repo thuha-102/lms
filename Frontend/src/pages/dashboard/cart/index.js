@@ -186,6 +186,7 @@ const Page = () => {
                 >
                     <Button
                         onClick={handlePayment}
+                        disabled={paymentCourse.length === 0}
                         startIcon={(
                             <SvgIcon>
                             <PaymentIcon />

@@ -12,8 +12,10 @@ import {
   Button,
   Card,
   CardContent,
+  CardMedia,
   Container,
   Grid,
+  IconButton,
   Link,
   Rating,
   Stack,
@@ -335,45 +337,52 @@ const LessonList = () => {
                   </Alert>
                 }
                 {
-                  salePercent === 0 ? 
-                  <Stack direction={'row'} spacing={2} alignItems={'center'} padding={1} borderRadius={2} border={'1px solid'}>
-                    <Typography variant='h5' color={'red'}>{`-${salePercent*100}%`}</Typography>
-                    <Stack>
-                      <Typography variant='h6' sx={{textDecoration: 'line-through', textAlign: 'right'}}>{`${price.toLocaleString('en-DE')} ₫`}</Typography>
-                      <Typography variant='h2'>{`${(price*(1 - salePercent)).toLocaleString('en-DE')} ₫`}</Typography>
+                  !registered && user?.accountType === 'LEARNER' && (
+                    salePercent === 0 ? 
+                    <Stack direction={'row'} spacing={2} alignItems={'center'} padding={1} borderRadius={2} border={'1px solid'}>
+                      <Typography variant='h5' color={'red'}>{`-${salePercent*100}%`}</Typography>
+                      <Stack>
+                        <Typography variant='h6' sx={{textDecoration: 'line-through', textAlign: 'right'}}>{`${price.toLocaleString('en-DE')} ₫`}</Typography>
+                        <Typography variant='h2'>{`${(price*(1 - salePercent)).toLocaleString('en-DE')} ₫`}</Typography>
+                      </Stack>
                     </Stack>
-                  </Stack>
-                  :
-                  <Stack padding={1} borderRadius={2} border={'1px solid'}>
-                    <Typography variant='h2'>{`${price.toLocaleString('en-DE')} ₫`}</Typography>
-                  </Stack>
+                    :
+                    <Stack padding={1} borderRadius={2} border={'1px solid'}>
+                      <Typography variant='h2'>{`${price.toLocaleString('en-DE')} ₫`}</Typography>
+                    </Stack>
+                  )
                 }
               </Stack>
             </Stack>
-            <Grid container spacing={5}>
-              <Grid size={{ xs: 6, md: 10 }}>
-                <img src={!avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`} width={600} height={300}/>
+            <Grid container spacing={1}>
+              <Grid item xs={12} md={6} lg={5}>
+                <CardMedia sx={{height: 300}} image={!avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`}/>
               </Grid>
               
-              <Grid size={{ xs: 6, md: 8 }}>
-                <CardContent>
-                  <Stack spacing={3} direction={"column"}>
-                    <Stack direction={"column"} spacing={5}>
-                      <Stack direction={"row"} spacing={3}>  
-                        {/* <Rating name="read-only" value={parseInt(rating,10)} readOnly /> */}
-                        <Typography variant='h5'>
-                          Trình độ: {level}
-                        </Typography>
-                      </Stack>
+              <Grid item xs={12} md={6} lg={7}>
+                <Stack spacing={3} direction={"column"} marginLeft={2} marginRight={2}>
+                  <Stack direction={"column"} spacing={5}>
+                    <Stack direction={"row"} spacing={3} justifyContent={'space-between'}>  
+                      {/* <Rating name="read-only" value={parseInt(rating,10)} readOnly /> */}
                       <Typography variant='h5'>
-                        Cập nhật: {updatedAt}
+                        Trình độ: {level}
                       </Typography>
+                      <Button
+                        component={NextLink}
+                        href={`${paths.dashboard.explore}/${courseId}/edit`}
+                        variant='outlined'
+                      >
+                        <SvgIcon>
+                          <EditIcon />
+                        </SvgIcon>
+                      </Button>
                     </Stack>
-                    <Grid item >
-                      <Typography variant='h6'dangerouslySetInnerHTML={{__html: courseDescription}}/>
-                    </Grid>
+                    <Typography variant='h5'>
+                      Cập nhật: {updatedAt}
+                    </Typography>
                   </Stack>
-                </CardContent>
+                  <Typography variant='h6'dangerouslySetInnerHTML={{__html: courseDescription}}/>
+                </Stack>
               </Grid>
             </Grid>
             <Card>
@@ -391,11 +400,6 @@ const LessonList = () => {
             {user?.accountType !== 'LEARNER'  && 
               <>
                 <Button
-                  component={NextLink}
-                  // Thay đổi đường dẫn để lưu vào db
-                  // href={`${paths.dashboard.explore}/lesson/${courseId}`}
-                  href={"#"}
-
                   startIcon={(
                     <SvgIcon>
                       <PlusIcon />
@@ -409,6 +413,7 @@ const LessonList = () => {
                 <CreateLessonDialog
                   courseId = {courseId}
                   order = {topicList.length != 0 ? topicList.length : 1}
+                  setTopicList={setTopicList}
                   openCreateLessonDialog={openCreateLessonDialog}
                   setOpenCreateLessonDialog={setOpenCreateLessonDialog}
                 />

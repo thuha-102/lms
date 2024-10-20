@@ -80,7 +80,7 @@ function Row(props) {
         ],
 });
     const [fileGet, setFileGet] = useState("")
-    const [openDialog, setOpenDialog] = useState(false)
+    const [openDeleteTopicDialog, setOpenDeleteTopicDialog] = useState(false)
     const getLesson = useCallback(async (id) => {
         try {
         // const response = await exploreApi.getTopic(id);
@@ -142,23 +142,21 @@ function Row(props) {
         }
     }, [open])
 
-    const handlePageChange = (lesson) => {  
-
-        switch(lesson.type) {
+    const handleCheckLm = (lm) => {
+        switch(lm.type) {
             case "VIDEO":
-            router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
+            router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
             break;
             case "PDF":
-            router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
+            router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
             break;
             case "QUIZ":
-            router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
+            router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
             break;
             default:
-            router.push(`${paths.dashboard.explore}/preview_lm/${lesson.fileId}`);
+            router.push(`${paths.dashboard.explore}/preview_lm/${lm.fileId}`);
             break;
-            }
-        if (lesson.type !== "QUIZ") createFileLog(lesson.id, user)
+        }
     }
 
     const handleMenuClose = useCallback(() => {
@@ -169,10 +167,10 @@ function Row(props) {
         setOpenMenu(true);
     }, []);
 
-    const handleDeleteLesson = useCallback(async (id) => {
+    const handleDeleteTopic = useCallback(async (id) => {
         console.log("delete topic")
         try {
-            // await exploreApi.deleteTopic(id);
+            await exploreApi.deleteTopic(id);
             setTopicList(prev => prev.filter(topic => topic.id !== id))
             toast.success("Đã xóa bài học thành công")
         } catch (err) {
@@ -180,10 +178,14 @@ function Row(props) {
         }
     }, [])
 
+    const handleDeleteLesson = useCallback(async (lmId) => {
+        setDeleteLessonDialog(lmId)
+    }, [])
+
     return (
         <React.Fragment>
             {
-                openDeleteLessonDialog === 0 ? <LessonDeleteDialog lessonId={openDeleteLessonDialog} open={openDeleteLessonDialog} setDeleteDialog={setDeleteLessonDialog}/> : <></>
+                openDeleteLessonDialog !== 0 && <LessonDeleteDialog lessonId={openDeleteLessonDialog} open={openDeleteLessonDialog} setDeleteDialog={setDeleteLessonDialog} setTopicList={setTopicList}/>
             }
             <TableRow 
                 ref={ref}
@@ -236,11 +238,11 @@ function Row(props) {
                                         }}
                                     >
                                         <Stack direction="row" alignItems={'center'} justifyContent={'space-between'}>
-                                            <Stack spacing={2} direction='row' alignItems='center'>
+                                            <Stack spacing={2} direction='row' alignItems='center' onClick={() => handleCheckLm(_lm)}>
                                                 <FileIcon extension={_lm.type} />
                                                 <Typography align='left' noWrap>{_lm.title}</Typography>
                                             </Stack>
-                                            <IconButton aria-label="delete" size="large" onClick={() => setDeleteLessonDialog(_lm.id)}>
+                                            <IconButton aria-label="delete" color='error' size="large" id={_lm.id} onClick={() => handleDeleteLesson(_lm.id)}>
                                                 <DeleteIcon />
                                             </IconButton>
                                         </Stack>
@@ -254,12 +256,12 @@ function Row(props) {
             <ItemMenu
                 anchorEl={menuRef.current}
                 onClose={handleMenuClose}
-                onDelete={handleDeleteLesson}
+                onDelete={() => handleDeleteTopic(row.id)}
                 open={openMenu}
                 idLesson={row.id}
                 idCourse={parseInt(courseId, 10)}
-                openDialog={openDialog}
-                setOpenDialog={setOpenDialog}
+                openDialog={openDeleteTopicDialog}
+                setOpenDialog={setOpenDeleteTopicDialog}
             />
         </React.Fragment>
     );
@@ -331,7 +333,7 @@ export default function TopicEditTable(props) {
                                                             }}
                                                         >
                                                             <TableBody>
-                                                                <Row key={index} row={row} dragging={snapshot.isDragging} setTopicList={setTopicList}></Row>
+                                                                <Row key={index} row={row} dragging={snapshot.isDragging} setTopicList={setTopicList}/>
                                                             </TableBody>
                                                         </Table>
                                                     )}
@@ -340,7 +342,6 @@ export default function TopicEditTable(props) {
                                         }
                                     </TableCell>
                                 </TableRow>
-
                                 {draggableProvided.placeholder}
                                 <TableRow></TableRow>
                             </TableBody>

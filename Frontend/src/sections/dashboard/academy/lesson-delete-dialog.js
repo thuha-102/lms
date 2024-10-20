@@ -5,12 +5,19 @@ import { exploreApi } from "../../../api/explore"
 import { paths } from "../../../paths"
 
 export const LessonDeleteDialog = (props) => {
-    const {lessonId, open, setDeleteDialog} = props
+    const {lessonId, open, setDeleteDialog, setTopicList} = props
 
     const handleDeleteLesson = useCallback(async () => {
         try {
-            // await exploreApi.deleteLesson(lessonId);
-            toast.success("Đã xóa thành công bài học")
+            await exploreApi.deleteLesson(lessonId);
+            setTopicList(prev => {
+                prev.forEach((topic) => {
+                    topic.lessons = topic.lessons.filter(lesson => lesson.id !== lessonId);
+                });
+
+                return prev
+            })
+            toast.success("Đã xóa thành công tài liệu học")
         }
         catch (error){
             toast.error("Xảy ra lỗi")
@@ -28,7 +35,7 @@ export const LessonDeleteDialog = (props) => {
             </DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    Bạn có chắc chắn muốn xoá bái học này không?
+                    Bạn có chắc chắn muốn xoá tài liệu học này không?
                 </DialogContentText>
             </DialogContent>
             <DialogActions>

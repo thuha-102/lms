@@ -85,7 +85,7 @@ export const ItemMenu = (props) => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Bạn chắc chắn xoá bài học này ?
+            Bạn chắc chắn muốn xoá bài học này không?
           </DialogContentText>
         </DialogContent>
         <DialogActions>

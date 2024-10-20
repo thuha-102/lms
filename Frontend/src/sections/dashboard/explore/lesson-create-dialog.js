@@ -12,7 +12,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { exploreApi } from '../../../api/explore';
 
-export const CreateLessonDialog = ({courseId, order, openCreateLessonDialog, setOpenCreateLessonDialog}) => {
+export const CreateLessonDialog = ({courseId, order, setTopicList, openCreateLessonDialog, setOpenCreateLessonDialog}) => {
     const handleCreateLesson = useCallback(async () => {
           try {
             // NOTE: Make API request
@@ -52,18 +52,19 @@ export const CreateLessonDialog = ({courseId, order, openCreateLessonDialog, set
         PaperProps={{
           component: 'form',
           onSubmit: async (event) => {
-            // event.preventDefault();
+            event.preventDefault();
             const formData = new FormData(event.currentTarget);
             const formJson = Object.fromEntries(formData.entries());
             const lesson_name = formJson.text;
             try {
-                // NOTE: Make API request
-                // console.log(formik.values);
-                await exploreApi.createLesson({
+                const response = await exploreApi.createLesson({
                   name: lesson_name,
                   courseId: parseInt(courseId, 10),
                   order: order
-              })
+                })
+                setTopicList(prev => {
+                  return [...prev, {id: response.data.id, name: lesson_name, lessons: []}]
+                })
                 toast.success('Bài học đã được tạo');
                 // router.push(`${paths.dashboard.explore}/${courseId}`); 
               } catch (err) {
