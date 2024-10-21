@@ -31,7 +31,7 @@ export const LessonDeleteDialog = (props) => {
             onClose={() => setDeleteDialog(0)}
         >
             <DialogTitle id="alert-dialog-title">
-                {"Xoá bái học"}
+                {"Xoá bài học"}
             </DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">

@@ -17,7 +17,7 @@ export const CreateLessonDialog = ({courseId, order, setTopicList, openCreateLes
           try {
             // NOTE: Make API request
             // console.log(formik.values);
-            await exploreApi.createLesson({
+            await exploreApi.createTopic({
               title: values.name,
               idCourse: parseInt(courseId, 10),
               order: order
@@ -57,7 +57,7 @@ export const CreateLessonDialog = ({courseId, order, setTopicList, openCreateLes
             const formJson = Object.fromEntries(formData.entries());
             const lesson_name = formJson.text;
             try {
-                const response = await exploreApi.createLesson({
+                const response = await exploreApi.createTopic({
                   name: lesson_name,
                   courseId: parseInt(courseId, 10),
                   order: order

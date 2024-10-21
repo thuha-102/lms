@@ -13,6 +13,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DotsVerticalIcon from '@untitled-ui/icons-react/build/esm/DotsVertical';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { toast } from 'react-hot-toast';
 import {
     Avatar,
@@ -45,6 +46,7 @@ import { sortBy } from 'lodash';
 import { Scrollbar } from '../../../components/scrollbar';
 import { useTheme } from '@mui/material/styles';
 import { LessonDeleteDialog } from '../academy/lesson-delete-dialog';
+import { LessonEditDialog } from '../academy/lesson-edit-dialog';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -55,6 +57,7 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 function Row(props) {
+    const theme = useTheme()
     const router = useRouter();
     const courseUrl = window.location.href.split('/');
     const courseId = (courseUrl[courseUrl.length - 1]);
@@ -63,8 +66,10 @@ function Row(props) {
     const { user } = useAuth();
     const [openMenu, setOpenMenu] = useState(false);
     const [ openDeleteLessonDialog, setDeleteLessonDialog] = useState(0)
-    const { row, dragging, ref, setTopicList } = props;
+    const [ openEditLessonDialog, setEditLessonDialog] = useState(0)
+    const { row, topicIndex, dragging, ref, setTopicList } = props;
     const [open, setOpen] = React.useState(false);
+    const [openDeleteTopicDialog, setOpenDeleteTopicDialog] = useState(false)
     const [listLMAccordingToLesson, setListLMAccordingToLesson] = useState({
         "id": -1, 
         "name": "",
@@ -78,7 +83,9 @@ function Row(props) {
         ],
 });
     const [fileGet, setFileGet] = useState("")
-    const [openDeleteTopicDialog, setOpenDeleteTopicDialog] = useState(false)
+    const [editLessonTitle, setEditLessonTitle] = useState("")
+    const [currentLessonType, setCurrentLessonType] = useState("")
+
     // const getLesson = useCallback(async (id) => {
     //     try {
     //     // const response = await exploreApi.getTopic(id);
@@ -180,10 +187,22 @@ function Row(props) {
         setDeleteLessonDialog(lmId)
     }, [])
 
+    const handleEditLesson = useCallback(async (lmId, lessonName, lessonType) => {
+        setEditLessonDialog(lmId)
+        setEditLessonTitle(lessonName)
+        setCurrentLessonType(lessonType)
+    }, [])
+
     return (
         <React.Fragment>
             {
                 openDeleteLessonDialog !== 0 && <LessonDeleteDialog lessonId={openDeleteLessonDialog} open={openDeleteLessonDialog} setDeleteDialog={setDeleteLessonDialog} setTopicList={setTopicList}/>
+            }
+            {
+                openEditLessonDialog !== 0 && currentLessonType !== 'QUIZ' && <LessonEditDialog topicIndex={topicIndex} lessonId={openEditLessonDialog} lessonTitle={editLessonTitle} open={openEditLessonDialog} setEditDialog={setEditLessonDialog} setTopicList={setTopicList}/>
+            }
+            {
+                openEditLessonDialog !== 0 && currentLessonType === 'QUIZ' && <></>
             }
             <TableRow 
                 ref={ref}
@@ -222,6 +241,7 @@ function Row(props) {
                     </IconButton>
                 </TableCell>
             </TableRow>
+            
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
@@ -240,9 +260,14 @@ function Row(props) {
                                                 <FileIcon extension={_lm.type} />
                                                 <Typography align='left' noWrap>{_lm.title}</Typography>
                                             </Stack>
-                                            <IconButton aria-label="delete" color='error' size="large" id={_lm.id} onClick={() => handleDeleteLesson(_lm.id)}>
-                                                <DeleteIcon />
-                                            </IconButton>
+                                            <Stack direction={'row'}>
+                                                <IconButton aria-label="edit" color='primary' size="large" onClick={() => handleEditLesson(_lm.id, _lm.title, _lm.type)}>
+                                                    <EditIcon/>
+                                                </IconButton>
+                                                <IconButton aria-label="delete" color='error' size="large" onClick={() => handleDeleteLesson(_lm.id)}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </Stack>
                                         </Stack>
                                     </Item>
                                 </Box>
@@ -333,7 +358,7 @@ export default function TopicEditTable(props) {
                                                             }}
                                                         >
                                                             <TableBody>
-                                                                <Row key={index} row={row} dragging={snapshot.isDragging} setTopicList={setTopicList}/>
+                                                                <Row key={index} topicIndex={index} row={row} dragging={snapshot.isDragging} setTopicList={setTopicList}/>
                                                             </TableBody>
                                                         </Table>
                                                     )}

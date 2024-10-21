@@ -21,6 +21,7 @@ export const ItemMenu = (props) => {
 
   const renameTopic = useCallback(async () => {
     try{
+      console.log("hello");
       await exploreApi.updateTopic(topicId, {name: newTopicName})
       setTopicList(prev => {
         prev.forEach(topic => {
@@ -87,7 +88,7 @@ export const ItemMenu = (props) => {
         </SvgIcon>
         Tạo tài liệu câu hỏi mới
       </MenuItem> */}
-      <MenuItem 
+      {/* <MenuItem 
         onClick={onClose}
         component={NextLink}
         href={`${paths.dashboard.explore}/lm_code_create/${topicId}`}
@@ -96,7 +97,7 @@ export const ItemMenu = (props) => {
           <CodeOutlinedIcon />
         </SvgIcon>
         Tạo tài liệu code mới
-      </MenuItem>
+      </MenuItem> */}
       <MenuItem
         onClick={() => setOpenDialog(true)}
         sx={{ color: 'error.main' }}
@@ -132,6 +133,13 @@ export const ItemMenu = (props) => {
         fullWidth
         open={openRenameDialog}
         onClose={() => setRenameDialog(false)}
+        PaperProps={{
+          component: 'form',
+          onSubmit: (event) => {
+            event.preventDefault();
+            renameTopic()
+          },
+        }}
       >
         <DialogTitle id="alert-dialog-title">
           Tên mới cho bài học "{topicName}"
@@ -149,7 +157,7 @@ export const ItemMenu = (props) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setRenameDialog(false)}>Huỷ bỏ</Button>
-          <Button onClick={renameTopic}>
+          <Button type='submit'>
             Cập nhật
           </Button>
         </DialogActions>
