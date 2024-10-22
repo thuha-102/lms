@@ -7,17 +7,20 @@ export class QuizDTO {
   questions: string[];
   choices: string[][];
   correctAnswers: number[];
+  coverIds: number[]
 
   static fromEntity(e: Prisma.QuizGetPayload<unknown>[]): QuizDTO {
     const type = 'QUIZ';
     let questions: string[] = [];
     let choices: string[][] = [];
     let correctAnswers: number[] = [];
+    let coverIds: number[] = [];
 
     for (let i = 0; i < e.length; i++) {
       questions.push(e[i].question);
       choices.push(e[i].answers);
       correctAnswers.push(e[i].correctAnswer);
+      coverIds.push(e[i].coverId);
     }
 
     return {
@@ -25,6 +28,7 @@ export class QuizDTO {
       questions,
       choices,
       correctAnswers,
+      coverIds,
     };
   }
 

@@ -29,7 +29,7 @@ import { exploreApi } from '../../../../api/explore';
 import { useMounted } from '../../../../hooks/use-mounted';
 import axios from 'axios';
 import { QuizQuestionaire } from './quiz-questionarie';
-
+import { QuizQuestionaireEdit } from './quiz-question-create';
 
 const typeOptions = [
   {
@@ -60,10 +60,10 @@ const typeOptions = [
 
 const initialValues = {
   // id: '',
-  type: 'PDF',
+  type: 'QUIZ',
   // description: '',
   // images: [],
-  name: '',
+  title: '',
   time : 0,
   difficulty: 1,
   percentOfPass: 80,
@@ -93,47 +93,51 @@ const validationSchema = Yup.object({
   // oldPrice: Yup.number().min(0),
 });
 
-export const LMCreateForm = (props) => {
+export const LMEditForm = (props) => {
   const lmcreateformUrl = window.location.href.split('/');
   const lessonId = (lmcreateformUrl[lmcreateformUrl.length - 1]);
-  // const courseId = (lmcreateformUrl[lmcreateformUrl.length - 2]);
   const isMounted = useMounted();
   const router = useRouter();
-  const [topicIds, setTopicIds] = useState([])
-  const [newTopicId, setNewTopicId] = useState('');
   const [files, setFiles] = useState([]);
-  const filter = createFilterOptions();
-  const [topicOptions, setTopicOptions] = useState([]);
   const [idLMList, setIdLMList] = useState([]);
   const [disabled, setDisabled] = useState(false);
   const [order, setOrder] = useState(null)
-  const [listLMAccordingToLesson, setListLMAccordingToLesson] = useState({
-    "title": "",
-    "learningMaterial": [
-        {
-            "id": 9,
-            "name": "Document21"
-        }
-    ],
-    "amountOfTime": 0,
-    "visibility": true,
-    "courseId": 1
+  const [lesson, setLesson] = useState({
+    id: 0,
+    title: 0,
+    time: 0
   });
-  const [questionarie, setQuestionnaire] = useState({
+  const [questionnaire, setQuestionnaire] = useState({
     length: 0,
     questions: [],
     coverIds: [],
     correctAnswers: [[]],
     answers: [],
   })
+  const [quizData, setQuizData] = useState([[]])
+  const [rawData, setRawData] = useState()
+  const [canceled, setCancel] = useState(false)
+
 
   const getLesson = useCallback(async (id) => {
     try {
-      const response = await exploreApi.getTopic(id);
+      const responseLesson = await exploreApi.getLesson(id);
+      const responseQuiz = await exploreApi.getLM(responseLesson.data.lmId)
 
       if (isMounted()) {
-        setListLMAccordingToLesson(response.data);
-        setOrder(response.data.learningMaterial ? response.data.learningMaterial.length + 1 : 1)
+        setLesson(responseLesson.data);
+        formik.setValues(responseLesson.data)
+        setQuizData(
+          responseQuiz.data.questions.map(
+            (question, index) => [question, String.fromCharCode(responseQuiz.data.correctAnswers[index] + 65), ...responseQuiz.data.choices[index]]
+          )
+        )
+        setRawData({
+          lesson: responseLesson.data,
+          questionnaire: responseQuiz.data.questions.map(
+            (question, index) => [question, String.fromCharCode(responseQuiz.data.correctAnswers[index] + 65), ...responseQuiz.data.choices[index]]
+          )
+        })
       }
     } catch (err) {
       console.error(err);
@@ -145,22 +149,16 @@ export const LMCreateForm = (props) => {
     validationSchema,
     onSubmit: async (values, helpers) => {
       try {
-        const response = await lm_manageApi.createLesson({
-          title: values.name,
+        const response = await exploreApi.updateLesson({
+          title: values.title,
           time: values.time,
-          order: order,
-          fileId: idLMList.length > 0 ? idLMList[0] : null,
-          topicId: parseInt(lessonId,10),
           // difficulty: values.difficulty,
           // type: values.type,
           // score: values.score,
         })
 
-        if (formik.values.type === 'QUIZ')
-          await lm_manageApi.createQuiz(response.data.id, questionarie)
-
         toast.success('Tài liệu học tập đã được tạo');
-        router.push(`${paths.dashboard.explore}/${listLMAccordingToLesson.courseId}`);
+        router.push(`${paths.dashboard.explore}/${lesson.courseId}`);
       } catch (err) {
         console.error(err);
         toast.error('Something went wrong!');
@@ -171,23 +169,9 @@ export const LMCreateForm = (props) => {
     }
   });
 
-  const getTopics = useCallback(async () => {
-    try {
-      const response = await topic_manageApi.getListTopic();
-
-      if (isMounted()) {
-        setTopicOptions([...response.data]);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [])
-
   useEffect(() => {
-    // getTopics();
-    // console.log(lessonId)
     getLesson(lessonId);  
-  },[]);
+  },[lessonId]);
 
   const handleFilesDrop = useCallback((newFiles) => {
     setFiles((prevFiles) => {
@@ -211,7 +195,6 @@ export const LMCreateForm = (props) => {
   const handleFilesRemoveAll = useCallback(() => {
     setFiles([]);
     setDisabled(false);
-
   }, []);
 
   const handleFilesUpload = async (event) => {
@@ -235,6 +218,14 @@ export const LMCreateForm = (props) => {
         console.error('Error uploading file:', err);
       }
   };
+
+  const handleCancelUpdate = useCallback(() => {
+    setQuizData(rawData.questionnaire)
+  }, [rawData])
+
+  const handleUpdateQuiz = useCallback(() => {
+    
+  }, [quizData])
 
   return (
     <form
@@ -265,19 +256,20 @@ export const LMCreateForm = (props) => {
                     fullWidth
                     helperText={formik.touched.name && formik.errors.name && "Tên tài liệu là trường bắt buộc"}
                     label="Tên tài liệu học tập"
-                    name="name"
+                    name="title"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    value={formik.values.name}
+                    value={formik.values.title}
                   />
                   <TextField
                     error={!!(formik.touched.type && formik.errors.type)}
+                    disabled={true}
                     fullWidth
                     label="Phân loại"
                     name="type"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
-                    value={formik.values.type}
+                    value={"QUIZ"}
                     select
                   >
                     {typeOptions.map((option) => (
@@ -328,11 +320,11 @@ export const LMCreateForm = (props) => {
           </CardContent>
         </Card>
         <Card>
-          {formik.values.type === "QUIZ" ? <CardMedia
+          <CardMedia
             component="img"
             src="/quiz_create_template.png"
             alt="Mô tả cho ảnh của bạn"
-          /> : <></>}
+          />
           <CardContent>
             <Grid
               container
@@ -358,8 +350,7 @@ export const LMCreateForm = (props) => {
                 xs={12}
                 md={8}
               >
-                {formik.values.type === "QUIZ" 
-                ? <FileDropzoneVn
+                <FileDropzoneVn
                     accept={{
                       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['xlsx'],
                       'text/csv': ['csv'],
@@ -371,61 +362,54 @@ export const LMCreateForm = (props) => {
                     onRemove={handleFileRemove}
                     onRemoveAll={handleFilesRemoveAll}
                 />
-                :<FileDropzoneVn
-                  accept={{...formik.values.type === 'PDF' ? {'application/pdf': ['.pdf']} : {'video/mp4': ['.mp4']}}}
-                  caption={formik.values.type}
-                  files={files}
-                  disabled={disabled}
-                  onDrop={handleFilesDrop}
-                  onRemove={handleFileRemove}
-                  onRemoveAll={handleFilesRemoveAll}
-                  onUpload={handleFilesUpload}
-                />}
               </Grid>
             </Grid>
           </CardContent>
         </Card>
-        {
-          formik.values.type === 'QUIZ' && files.length > 0 && 
-          <Card>
-            <CardContent>
+
+        <Card>
+          <CardContent>
+            <Grid
+              container
+              spacing={3}
+            >
               <Grid
-                container
-                spacing={3}
+                xs={12}
               >
-                <Grid
-                  xs={12}
-                >
-                  <Stack spacing={1}>
-                    <Typography variant="h6">
-                      Thông tin các câu hỏi
-                    </Typography>
-                    <Typography
-                      color="text.secondary"
-                      variant="body2"
-                    >
-                      <QuizQuestionaire file={files[0]} setQuestionnaire={setQuestionnaire}/>
-                    </Typography>
-                  </Stack>
-                </Grid>
+                <Stack spacing={1}>
+                  <Typography variant="h6">
+                    Thông tin các câu hỏi
+                  </Typography>
+                  <Typography
+                    color="text.secondary"
+                    variant="body2"
+                  >
+                    <QuizQuestionaire rows={quizData} setQuizData= {setQuizData} file={files[0]} setQuestionnaire={setQuestionnaire}/>
+                  </Typography>
+                </Stack>
               </Grid>
-            </CardContent>
-          </Card>
-        }
+            </Grid>
+          </CardContent>
+        </Card>
+        
         <Stack
           alignItems="center"
           direction="row"
           justifyContent="flex-end"
           spacing={1}
         >
-          <Button color="inherit">
+          <Button 
+            onClick={handleCancelUpdate}
+            color="inherit"
+          >
             Huỷ thay đổi
           </Button>
           <Button
+            onClick={handleUpdateQuiz}
             type="submit"
             variant="contained"
           >
-            Tạo mới
+            Cập nhật
           </Button>
         </Stack>
       </Stack>

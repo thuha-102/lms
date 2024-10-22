@@ -44,14 +44,14 @@ export class PaymentService {
       for (let i = 0; i < willRegister.Course.length; i++)
         await this.userService.registerCourse(willRegister.learnerId, willRegister.Course[i].id);
 
-      return {id: receiptId, isPayment: true}
+      return { id: receiptId, isPayment: true };
     });
   }
 
-  async paymentCheck(id: number){
-    const receipt = await this.prismaService.receipt.findUnique({where: {id}, select: {isPayment: true}})
+  async paymentCheck(id: number) {
+    const receipt = await this.prismaService.receipt.findUnique({ where: { id }, select: { isPayment: true } });
     return {
-      isPayment: receipt.isPayment
-    }
+      isPayment: receipt.isPayment,
+    };
   }
 }

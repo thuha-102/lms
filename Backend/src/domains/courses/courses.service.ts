@@ -8,6 +8,7 @@ import { LessonService } from '../lessons/lessons.service';
 import { TopicService } from '../topics/topics.service';
 import { TopicDTO } from '../topics/dto/topics.dto';
 import { LessonDTO } from '../lessons/dto/lessons.dto';
+import { connectRelation } from 'src/shared/prisma.helper';
 
 @Injectable()
 export class CourseService {
@@ -38,7 +39,7 @@ export class CourseService {
         if (i < body.lessons.length) {
           for (let j = 0; j < body.lessons[i].length; j++) {
             const lesson = body.lessons[i][j];
-            await this.lessonService.create({ order: j, title: lesson.title, fileId: lesson.fileId, topicId: id }, tx, j);
+            await this.lessonService.create({ order: j, title: lesson.title, fileId: lesson.fileId, topicId: id, time: lesson.time }, tx, j);
           }
           numberLessons += body.lessons[i].length;
         }
@@ -117,19 +118,28 @@ export class CourseService {
   }
 
   async update(id: number, body: CourseUpdateREQ) {
-    const course = await this.prismaService.course.findFirst({ where: { id } });
+    const course = await this.prismaService.course.findFirst({ where: { id }, select: { Topic: { select: { id: true } } } });
     if (!course) throw new NotFoundException('Course not found');
 
     //update order of topicIds
     if (body.orderTopicIds) {
       body.orderTopicIds.map(async (id, index) => {
-        await this.prismaService.topic.update({ where: { id }, data: { order: index } });
+        await this.prismaService.topic.update({ where: { id }, data: { order: index} });
       });
     }
+
     if (body.orderLessonIds) {
       for (let i = 0; i < body.orderLessonIds.length; i++) {
         const lessonIds = body.orderLessonIds[i];
-        lessonIds.map(async (id, index) => await this.prismaService.lesson.update({ where: { id }, data: { order: index } }));
+        await this.prismaService.topic.update({ where: { id: course.Topic[i].id }, data: {totalLessons: lessonIds.length} });
+
+        lessonIds.map(
+          async (id, index) =>
+            await this.prismaService.lesson.update({
+              where: { id },
+              data: { order: index, Topic: connectRelation(course.Topic[i].id) },
+            }),
+        );
       }
     }
 
@@ -137,11 +147,10 @@ export class CourseService {
   }
 
   async delete(id: number) {
-    try{
+    try {
       await this.prismaService.course.delete({ where: { id } });
-    }
-    catch(e){
-      return e
+    } catch (e) {
+      return e;
     }
   }
 }

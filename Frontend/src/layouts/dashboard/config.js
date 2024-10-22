@@ -47,7 +47,7 @@ export const getSections = (t, accountType) => [
           </SvgIcon>
         ),
       },
-      {
+      ...accountType === "LEARNER" ? [{
         title: t(tokens.nav.explore),
         path: paths.dashboard.explore,
         icon: (
@@ -55,7 +55,7 @@ export const getSections = (t, accountType) => [
             <SearchOutlinedIcon />
           </SvgIcon>
         )
-      },
+      }] : [],
     ]
   },
   // {

@@ -209,10 +209,24 @@ const LessonList = () => {
     setRegistered(true);
   }, [])
 
-  const handleUpdateOrderTopic = useCallback(async (sourceId, destinationId) => {
+  const handleUpdateOrder = useCallback(async (type, source, destination) => {
     let temp = deepCopy(topicList)
-    temp[sourceId] = topicList[destinationId]
-    temp[destinationId] = topicList[sourceId]
+    if (type === 'topic'){
+      temp[source] = topicList[destination]
+      temp[destination] = topicList[source]
+    }
+    else
+    {
+      if (source.topicIndex === destination.topicIndex) {
+        temp[source.topicIndex].lessons[source.lessonIndex] = topicList[destination.topicIndex].lessons[destination.lessonIndex]
+        temp[destination.topicIndex].lessons[destination.lessonIndex] = topicList[source.topicIndex].lessons[source.lessonIndex]
+      }
+      else {
+        temp[source.topicIndex].lessons = [...topicList[source.topicIndex].lessons.slice(0, source.lessonIndex), ...topicList[source.topicIndex].lessons.slice(source.lessonIndex + 1)]
+
+        temp[destination.topicIndex].lessons = [...topicList[destination.topicIndex].lessons.slice(0, destination.lessonIndex), topicList[source.topicIndex].lessons[source.lessonIndex], ...topicList[destination.topicIndex].lessons.slice(destination.lessonIndex)]
+      }
+    }
     setTopicList(temp)
   }, [topicList])
 
@@ -220,6 +234,15 @@ const LessonList = () => {
     await userApi.addCart(user.id, courseId)
     setInCart(true)
   }, [user, courseId])
+
+  const createRequestForUpdating = useCallback(() => {
+    const orderTopicIds = topicList.map(topic => topic.id)
+    const orderLessonIds = topicList.map(topic => topic.lessons.map(lesson => lesson.id))
+    return {
+      orderTopicIds: orderTopicIds,
+      orderLessonIds: orderLessonIds
+    }
+  }, [topicList])
 
   return (
     <>
@@ -239,7 +262,7 @@ const LessonList = () => {
           openDeleteDialog && <CourseDeleteDialog courseId={courseId} open={openDeleteDialog} setDeleteDialog={setDeleteDialog}/>
         }
         {
-          openUpdateDialog && <CourseUpdateDialog request={{orderTopicIds: topicList.map(topic => topic.id)}} courseId={courseId} open={openUpdateDialog} setUpdateDialog={setUpdateDialog}/>
+          openUpdateDialog && <CourseUpdateDialog request={createRequestForUpdating()} courseId={courseId} open={openUpdateDialog} setUpdateDialog={setUpdateDialog}/>
         }
         <Container maxWidth="xl">
           <Stack spacing={4} >
@@ -394,7 +417,7 @@ const LessonList = () => {
                   rows={topicList}  
                   courseTitle={courseTitle}
                 />:
-                <TopicEditTable rows={topicList} setTopicList={setTopicList} updateOrder={handleUpdateOrderTopic}/>
+                <TopicEditTable rows={topicList} setTopicList={setTopicList} updateOrder={handleUpdateOrder}/>
               }
             </Card>
             {user?.accountType !== 'LEARNER'  && 

@@ -38,7 +38,7 @@ export class TopicService {
           for (let i = 0; i < body.lessons.length; i++) {
             const lesson = body.lessons[i];
             await this.lessonService.create(
-              { title: lesson.title, order: i, fileId: lesson.fileId, topicId: topic.id },
+              { title: lesson.title, order: i, fileId: lesson.fileId, topicId: topic.id, time: lesson.time},
               undefined,
               i,
             );

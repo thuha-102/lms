@@ -12,15 +12,21 @@ export class LessonCreateREQ {
   @IsOptional()
   order: number;
 
+  @IsOptional()
   @IsNumber()
   fileId: number;
+
+  @IsOptional()
+  @IsNumber()
+  time: number
 
   static toCreateInput(body: LessonCreateREQ, order: number): Prisma.LessonCreateInput {
     return {
       title: body.title,
       order: order,
+      time: body.time,
       Topic: connectRelation(body.topicId),
-      LearningMaterial: connectRelation(body.fileId),
+      ...body.fileId && {LearningMaterial: connectRelation(body.fileId)}
     };
   }
 }

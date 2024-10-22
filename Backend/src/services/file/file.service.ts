@@ -64,6 +64,7 @@ export class FileService {
           question: true,
           answers: true,
           correctAnswer: true,
+          coverId: true
         },
       });
 

@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Header,
@@ -22,6 +23,7 @@ import { createReadStream } from 'fs';
 import { join } from 'path';
 import { LearningMaterialType } from '@prisma/client';
 import { FileDTO, VideoDTO } from './dto/file.dto';
+import { QuizCreateREQ } from './request/quiz.create';
 
 @Controller('files')
 export class FileController {

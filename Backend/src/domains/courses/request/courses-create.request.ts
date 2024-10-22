@@ -3,6 +3,7 @@ import { IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'clas
 import { connectManyRelation, connectRelation } from 'src/shared/prisma.helper';
 
 export class Lesson {
+  time: number;
   title: string;
   fileId: number;
 }

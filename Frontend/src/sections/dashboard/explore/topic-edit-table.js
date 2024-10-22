@@ -19,6 +19,7 @@ import {
     Avatar,
     AvatarGroup,
     Box,
+    Button,
     Card,
     CardContent,
     Divider,
@@ -193,6 +194,12 @@ function Row(props) {
         setCurrentLessonType(lessonType)
     }, [])
 
+    useEffect(() => {
+        if (openEditLessonDialog !== 0 && currentLessonType === 'QUIZ') {
+            router.push(`${paths.dashboard.explore}/lm_edit/${openEditLessonDialog}`);
+        }
+    }, [openEditLessonDialog, currentLessonType, router]);
+
     return (
         <React.Fragment>
             {
@@ -200,9 +207,6 @@ function Row(props) {
             }
             {
                 openEditLessonDialog !== 0 && currentLessonType !== 'QUIZ' && <LessonEditDialog topicIndex={topicIndex} lessonId={openEditLessonDialog} lessonTitle={editLessonTitle} open={openEditLessonDialog} setEditDialog={setEditLessonDialog} setTopicList={setTopicList}/>
-            }
-            {
-                openEditLessonDialog !== 0 && currentLessonType === 'QUIZ' && <></>
             }
             <TableRow 
                 ref={ref}
@@ -220,8 +224,8 @@ function Row(props) {
                     <IconButton
                         aria-label="expand row"
                         size="small"
-                        onClick={() => {setOpen(!open)
-                                        // getLesson(row.id)
+                        onClick={() => {
+                            setOpen(!open)
                         }}
                     >
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -245,34 +249,62 @@ function Row(props) {
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            {row.lessons.map((_lm) => (
-                                <Box key={_lm.id}>
-                                    <Item
-                                        sx={{
-                                            my: 1,
-                                            mx: 'auto',
-                                            p: 1,
-                                        }}
-                                    >
-                                        <Stack direction="row" alignItems={'center'} justifyContent={'space-between'}>
-                                            <Stack spacing={2} direction='row' alignItems='center' onClick={() => handleCheckLm(_lm)}>
-                                                <FileIcon extension={_lm.type} />
-                                                <Typography align='left' noWrap>{_lm.title}</Typography>
-                                            </Stack>
-                                            <Stack direction={'row'}>
-                                                <IconButton aria-label="edit" color='primary' size="large" onClick={() => handleEditLesson(_lm.id, _lm.title, _lm.type)}>
-                                                    <EditIcon/>
-                                                </IconButton>
-                                                <IconButton aria-label="delete" color='error' size="large" onClick={() => handleDeleteLesson(_lm.id)}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </Stack>
-                                        </Stack>
-                                    </Item>
+                        <Droppable droppableId={`droppatable-lesson-${topicIndex}`}>
+                            {(droppableProvided, snapshot) => (
+                                <Box
+                                    ref={droppableProvided.innerRef}
+                                    {...droppableProvided.droppableProps}
+                                    sx={{
+                                        flexGrow: 1,
+                                        minHeight: 80,
+                                        overflowY: 'auto',
+                                    }}
+                                >
+                                    {row.lessons.map((_lm, index) => (
+                                        <Draggable draggableId={`dragtable-lm-${_lm.id}-${index}`} index={index} key={index}>
+                                            {(draggableProvided, snapshot) => (
+                                                <Box 
+                                                    ref={draggableProvided.innerRef}
+                                                    {...draggableProvided.draggableProps}
+                                                    {...draggableProvided.dragHandleProps}
+                                                    // style={{ ...draggableProvided.draggableProps.style }}
+                                                    direction="column"
+                                                    sx={{
+                                                        outline: 'none',
+                                                        overflow: 'hidden',
+                                                        bgcolor: theme.palette.background.paper,
+                                                    }}
+                                                >
+                                                    <Item
+                                                        sx={{
+                                                            my: 1,
+                                                            mx: 'auto',
+                                                            p: 1,
+                                                        }}
+                                                    >
+                                                        <Stack direction="row" alignItems={'center'} justifyContent={'space-between'}>
+                                                            <Stack spacing={2} direction='row' alignItems='center' onClick={() => handleCheckLm(_lm)}>
+                                                                <FileIcon extension={_lm.type} />
+                                                                <Typography align='left' noWrap>{_lm.title}</Typography>
+                                                            </Stack>
+                                                            <Stack direction={'row'}>
+                                                                <IconButton aria-label="edit" color='primary' size="large" onClick={() => handleEditLesson(_lm.id, _lm.title, _lm.type)}>
+                                                                    <EditIcon/>
+                                                                </IconButton>
+                                                                <IconButton aria-label="delete" color='error' size="large" onClick={() => handleDeleteLesson(_lm.id)}>
+                                                                    <DeleteIcon />
+                                                                </IconButton>
+                                                            </Stack>
+                                                        </Stack>
+                                                    </Item>
+                                                </Box>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {droppableProvided.placeholder}
                                 </Box>
-                            ))}
-                        </Box>
+                            )}
+                        </Droppable>
                     </Collapse>
                 </TableCell>
             </TableRow>
@@ -305,8 +337,21 @@ export default function TopicEditTable(props) {
     const dispatch = useDispatch()
     const handleDragEnd = useCallback(async ({ source, destination, draggableId }) => {
         try {
-            if (!source || !destination) return;
-            updateOrder(source.index, destination.index)
+            if (!source || !destination || !draggableId) return;
+
+            if (draggableId.includes('topic')){
+                updateOrder('topic', source.index, destination.index)
+            }
+            else{
+                const sourceLessonIndex = source.index, sourceTopicIndex = `${source.droppableId}`.split('-').slice(-1)[0];
+                const destinationLessonIndex = destination.index, destinationTopicIndex = `${destination.droppableId}`.split('-').slice(-1)[0];
+                
+                updateOrder(
+                    'lesson', 
+                    {topicIndex: parseInt(sourceTopicIndex), lessonIndex: sourceLessonIndex}, 
+                    {topicIndex: parseInt(destinationTopicIndex), lessonIndex: destinationLessonIndex}
+                )
+            }
         }
         catch (err) {
             console.error(err);
@@ -326,10 +371,10 @@ export default function TopicEditTable(props) {
                 </TableHead>
                 <DragDropContext onDragEnd={handleDragEnd}>
                     <Droppable droppableId='topic' type='topic'>
-                        {(draggableProvided, snapshot) => (
+                        {(droppableProvided, snapshot) => (
                             <TableBody
-                                ref={draggableProvided.innerRef}
-                                {...draggableProvided.droppableProps}
+                                ref={droppableProvided.innerRef}
+                                {...droppableProvided.droppableProps}
                                 sx={{
                                     flexGrow: 1,
                                     minHeight: 80,
@@ -342,14 +387,13 @@ export default function TopicEditTable(props) {
                                     <TableCell>
                                         {
                                             rows.map((row, index) => (
-                                                <Draggable draggableId={`dragtable-${index}`} index={index} key={index}>
+                                                <Draggable draggableId={`dragtable-topic-${index}`} index={index} key={index}>
                                                     {(draggableProvided, snapshot) => (
                                                         <Table
                                                             ref={draggableProvided.innerRef}
                                                             {...draggableProvided.draggableProps}
                                                             {...draggableProvided.dragHandleProps}
                                                             // style={{ ...draggableProvided.draggableProps.style }}
-                                                            direction="column"
                                                             sx={{
                                                                 outline: 'none',
                                                                 py: 1.5,
@@ -367,8 +411,7 @@ export default function TopicEditTable(props) {
                                         }
                                     </TableCell>
                                 </TableRow>
-                                {draggableProvided.placeholder}
-                                <TableRow></TableRow>
+                                {droppableProvided.placeholder}
                             </TableBody>
                         )}
                     </Droppable>

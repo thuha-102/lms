@@ -10,6 +10,7 @@ export const CourseDeleteDialog = (props) => {
     const handleDeleteCourse = useCallback(async () => {
         try {
             await exploreApi.deleteCourse(courseId);
+            setDeleteDialog(false)
             toast.success("Đã xóa thành công khóa học")
             window.location.replace(paths.dashboard.academy.index);
         }

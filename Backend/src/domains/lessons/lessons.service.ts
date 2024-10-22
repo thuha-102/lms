@@ -3,7 +3,8 @@ import { LessonCreateREQ } from './request/lessons-create.request';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { LessonUpdateREQ } from './request/lessons-update.request';
 import { LessonListREQ } from './request/lessons-list.request';
-import { Prisma } from '@prisma/client';
+import { QuizCreateREQ } from 'src/services/file/request/quiz.create';
+import { connectRelation } from 'src/shared/prisma.helper';
 
 @Injectable()
 export class LessonService {
@@ -36,6 +37,18 @@ export class LessonService {
       console.log(e);
       throw new ConflictException(e);
     }
+  }
+
+  async createQuiz(id: number, body: QuizCreateREQ) {
+    return await this.prismaService.$transaction(async (tx) => {
+      const lm = await tx.learningMaterial.create({ data: { Lesson: connectRelation(id), type: 'QUIZ' }, select: { id: true } });
+
+      for (let i = 0; i < body.length; i++) {
+        await tx.quiz.create({ data: QuizCreateREQ.toCreateInput(body, i, lm.id) });
+      }
+
+      return { fileId: lm.id };
+    });
   }
 
   async detail(id: number) {

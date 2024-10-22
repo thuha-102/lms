@@ -17,6 +17,7 @@ export const LessonDeleteDialog = (props) => {
 
                 return prev
             })
+            setDeleteDialog(false)
             toast.success("Đã xóa thành công tài liệu học")
         }
         catch (error){
