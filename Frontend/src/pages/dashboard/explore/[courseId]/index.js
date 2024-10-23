@@ -394,10 +394,13 @@ const LessonList = () => {
                         component={NextLink}
                         href={`${paths.dashboard.explore}/${courseId}/edit`}
                         variant='outlined'
+                        startIcon={
+                          <SvgIcon>
+                            <EditIcon />
+                          </SvgIcon>
+                        }
                       >
-                        <SvgIcon>
-                          <EditIcon />
-                        </SvgIcon>
+                        Cập nhật thông tin chung
                       </Button>
                     </Stack>
                     <Typography variant='h5'>

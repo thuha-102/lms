@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import CheckIcon from '@untitled-ui/icons-react/build/esm/Check';
-import { Avatar, Step, StepContent, StepLabel, Stepper, SvgIcon, Typography } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, CardMedia, CircularProgress, Stack, Step, StepContent, StepLabel, Stepper, SvgIcon, Typography } from '@mui/material';
 import { JobCategoryStep } from '././././question/preview_category_step';
 import { JobPreview } from '././././question/preview_question_result';
 import { useMounted } from '../../../../hooks/use-mounted';
@@ -63,12 +63,16 @@ const StepIcon = (props) => {
           1
       ]
       }
-  
+    
+    const [duration, setDuration] = useState(0)
+    const [minutes, setMinutes] = useState("00")
+    const [seconds, setSeconds] = useState("00")
+    const [startQuiz, setStartQuiz] = useState(false)
+
     const [resultDT, setResultDT] = useState([{
       questions: [],
       choices: []
     }])
-
   
     useEffect(() => {
       const fetchData = async (id) => {
@@ -77,7 +81,9 @@ const StepIcon = (props) => {
           
           if (isMounted()) {
             const temp = Object.entries(response.data)
-            setResultDT(temp)
+            setDuration(temp[0][1])
+            setMinutes(temp[0][1])
+            setResultDT(temp.slice(1))
           }
         } catch (err) {
           console.error(err);
@@ -86,13 +92,12 @@ const StepIcon = (props) => {
     
       fetchData(lmId);
     }, []);
-    console.log(resultDT)
   
     const [answers, setAnswers] = useState([])
 
     useEffect(() => {
-      setAnswers(new Array(resultDT[1]?.length))
-    }, []);
+      if (resultDT[1] && resultDT[1].length > 1) setAnswers(new Array(resultDT[1][1]?.length))
+    }, [resultDT]);
   
     const handleNext = useCallback(() => {
       setActiveStep((prevState) => prevState + 1);
@@ -119,8 +124,8 @@ const StepIcon = (props) => {
     }
   
     const steps = useMemo(() => {
-      console.log(resultDT)
       return resultDT[1]?.[1].map((question, index) => (index != resultDT[1][1]?.length - 1 ? {
+          coverId: resultDT[4][1][index],
           label: `Câu hỏi ${index + 1}`,
           content: (
             <JobCategoryStep
@@ -134,6 +139,7 @@ const StepIcon = (props) => {
             />     
           )} 
           : {
+              coverId: resultDT[4][1][index],
               label: `Câu hỏi ${index + 1}`,
               content: (
                 <JobCategoryStep
@@ -149,57 +155,115 @@ const StepIcon = (props) => {
             }
       ))
     }, [resultDT, answers, handleBack, handleNext, handleComplete]);
-  
-    if (complete) {
-      return <JobPreview 
-                lessonId={lessonId}
-                lmId={lmId}
-                user={user}
-                answers={answers}
-              />;
-    }
-  
+
+    
+    useEffect(() => {
+      if (!duration) return
+      if (!startQuiz) return;
+
+      let initialDuration =  duration*60;
+
+      const interval = setInterval(() => {
+        const mi = Math.floor(initialDuration / 60);
+        const sec = initialDuration % 60;
+
+        setMinutes(mi < 10 ? '0' + mi : mi);
+        setSeconds(sec < 10 ? '0' + sec : sec);
+
+        if (initialDuration === 0) {
+          clearInterval(interval);
+          setComplete(true)
+        } else {
+          initialDuration--;
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+
+    }, [startQuiz])
+
+
     return (
-      <Stepper
-        activeStep={activeStep}
-        orientation="vertical"
-        sx={{
-          '& .MuiStepConnector-line': {
-            borderLeftColor: 'divider',
-            borderLeftWidth: 2,
-            ml: 1
+      <>
+
+        {
+        complete ?
+        <JobPreview 
+          lessonId={lessonId}
+          lmId={lmId}
+          user={user}
+          answers={answers}
+        />
+        :
+        <Stack>
+          {duration !== 0 && <Stack alignItems={'flex-end'} marginBottom={3} >
+              <Stack direction={'row'} width={200} padding={1} spacing={2} borderRadius={2} border={'1px solid'} alignItems={'center'} justifyContent={'space-between'}>
+                <Box justifyItems={'center'}  width={80}>
+                  <Typography variant='h2'>{minutes}</Typography>
+                </Box>
+                <Box width={20}>
+                  <Typography variant='h2'>:</Typography>
+                </Box>
+                <Box justifyItems={'center'}  width={80}>
+                  <Typography variant='h2'>{seconds}</Typography>
+                </Box>
+              </Stack>
+          </Stack>}
+          {
+            !startQuiz && 
+            <Button variant='contained' onClick={() => setStartQuiz(true)}>
+              Bắt đầu làm bài
+            </Button>
           }
-        }}
-      >
-        {steps?.map((step, index) => {
-          const isCurrentStep = activeStep === index;
-          console.log(answers)
-          return (
-            <Step key={step.label}>
-              <StepLabel StepIconComponent={StepIcon} onClick={() => handleClickIcon(index)}>
-                <Typography
-                  sx={{ ml: 2 }}
-                  variant="overline"
-                >
-                  {step.label}
-                </Typography>
-              </StepLabel>
-              <StepContent
-                sx={{
-                  borderLeftColor: 'divider',
-                  borderLeftWidth: 2,
-                  ml: '20px',
-                  ...(isCurrentStep && {
-                    py: 4
-                  })
-                }}
-              >
-                {step.content}
-              </StepContent>
-            </Step>
-          );
-        })}
-      </Stepper>
+          { 
+            startQuiz && duration !== 0 && minutes === duration && <Stack alignItems={'center'}>
+              <CircularProgress size={100}/>
+            </Stack>
+          }
+          {startQuiz && (duration === 0 || minutes !== duration) && <Stepper
+            activeStep={activeStep}
+            orientation="vertical"
+            sx={{
+              '& .MuiStepConnector-line': {
+                borderLeftColor: 'divider',
+                borderLeftWidth: 2,
+                ml: 1
+              }
+            }}
+          >
+            {steps?.map((step, index) => {
+              const isCurrentStep = activeStep === index;
+
+              return (
+                <Step key={step.label}>
+                  <StepLabel StepIconComponent={StepIcon} onClick={() => handleClickIcon(index)}>
+                    <Typography
+                      sx={{ ml: 2 }}
+                      variant="overline"
+                    >
+                      {step.label}
+                    </Typography>
+                  </StepLabel>
+                  <StepContent
+                    sx={{
+                      borderLeftColor: 'divider',
+                      borderLeftWidth: 2,
+                      ml: '20px',
+                      ...(isCurrentStep && {
+                        py: 4
+                      })
+                    }}
+                  >
+                    {step.coverId && <CardMedia sx={{height: 300, marginBottom: 3}} image={`${process.env.NEXT_PUBLIC_SERVER_API}/files/${step.coverId}`}/>}
+                    {step.content}
+                  </StepContent>
+                </Step>
+              );
+            })}
+          </Stepper>}
+        </Stack>
+        }
+      </>
     );
   };
   

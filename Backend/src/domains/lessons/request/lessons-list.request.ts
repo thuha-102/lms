@@ -21,15 +21,15 @@ export class LessonListREQ {
         },
       },
       Topic: {
-        select:{
-          courseId: true
-        }
+        select: {
+          courseId: true,
+        },
       },
       topicId: true,
     };
   }
 
-  static fromEntity(e: Prisma.LessonGetPayload<{ include: { LearningMaterial: true, Topic: true } }>): LessonListREQ {
+  static fromEntity(e: Prisma.LessonGetPayload<{ include: { LearningMaterial: true; Topic: true } }>): LessonListREQ {
     return {
       id: e.id,
       time: e.time,
@@ -37,7 +37,7 @@ export class LessonListREQ {
       order: e.order,
       lmId: e.LearningMaterial.id,
       topicId: e.topicId,
-      courseId: e.Topic.courseId
+      courseId: e.Topic.courseId,
     };
   }
 }

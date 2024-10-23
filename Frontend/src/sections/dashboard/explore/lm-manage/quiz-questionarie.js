@@ -5,41 +5,25 @@ import { QuizQuestion } from './quiz-question'
 import { QuizQuestionCreate } from './quiz-question-create'
 
 export const QuizQuestionaire = (props) => {
-    const { file, rows, setQuestionnaire, setQuizData} = props
-    const [questions, setQuestions] = useState([])
+    const { file, questionnaire, setQuestionnaire} = props
     const [addingQuestion, setAddingQuestion] = useState(false)
 
     useEffect(() => {
         if (file)
             readXlsxFile(file).then((rows) => {
-                setQuestions(rows.slice(1))
-                setQuestionnaire(prev => {
-                    prev.length = rows.length - 1
-                    prev.questions = new Array(rows.length - 1);
-                    prev.correctAnswers = new Array(rows.length - 1);
-                    prev.coverIds = new Array(rows.length - 1);
-                    prev.answers = new Array(rows.length - 1);
-                    return prev
-                })
+                setQuestionnaire(() => rows.slice(1).map(row => [[null], row[0], `${row[1]}`.charCodeAt(0) - 65, ...row.slice(2)]));
             })
-        else if (rows){
-            setQuestions(rows)
-        }
-    }, [file, rows])
-
-    useEffect(() => {
-        setAddingQuestion(false)
-    }, [rows])
+    }, [file])
     
     return (
         <Stack spacing={2}>
             {
-                questions.map((row, index) => (
+                questionnaire?.map((row, index) => (
                     <QuizQuestion key={index} row={row} questionIndex={index} setQuestionnaire={setQuestionnaire}/>
                 ))
             }
             {
-                addingQuestion && <QuizQuestionCreate questionIndex={questions.length} setAddingQuestion={setAddingQuestion} setQuizData={setQuizData}/>
+                addingQuestion && <QuizQuestionCreate questionIndex={questionnaire.length} setQuestionnaire={setQuestionnaire} setAddingQuestion={setAddingQuestion}/>
             }
             <Button
                 onClick={() => setAddingQuestion(true)}

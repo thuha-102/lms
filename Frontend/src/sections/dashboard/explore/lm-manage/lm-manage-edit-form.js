@@ -107,17 +107,19 @@ export const LMEditForm = (props) => {
     title: 0,
     time: 0
   });
-  const [questionnaire, setQuestionnaire] = useState({
-    length: 0,
-    questions: [],
-    coverIds: [],
-    correctAnswers: [[]],
-    answers: [],
-  })
-  const [quizData, setQuizData] = useState([[]])
+  const [questionnaire, setQuestionnaire] = useState([])
   const [rawData, setRawData] = useState()
-  const [canceled, setCancel] = useState(false)
 
+  const createUpdateQuestionaire = useCallback(() => {
+    console.log(questionnaire)
+    return {
+      length: questionnaire.length,
+      coverIds: questionnaire.map(q => q[0]),
+      questions: questionnaire.map(q => q[1]),
+      correctAnswers: questionnaire.map(q => q[2]),
+      answers: questionnaire.map(q => q.slice(3)),
+    }
+  }, [questionnaire])
 
   const getLesson = useCallback(async (id) => {
     try {
@@ -125,17 +127,18 @@ export const LMEditForm = (props) => {
       const responseQuiz = await exploreApi.getLM(responseLesson.data.lmId)
 
       if (isMounted()) {
-        setLesson(responseLesson.data);
         formik.setValues(responseLesson.data)
-        setQuizData(
+
+        setQuestionnaire(
           responseQuiz.data.questions.map(
-            (question, index) => [question, String.fromCharCode(responseQuiz.data.correctAnswers[index] + 65), ...responseQuiz.data.choices[index]]
+            (question, index) => [responseQuiz.data.coverIds[index], question, responseQuiz.data.correctAnswers[index], ...responseQuiz.data.choices[index]]
           )
         )
+
         setRawData({
           lesson: responseLesson.data,
           questionnaire: responseQuiz.data.questions.map(
-            (question, index) => [question, String.fromCharCode(responseQuiz.data.correctAnswers[index] + 65), ...responseQuiz.data.choices[index]]
+            (question, index) => [responseQuiz.data.coverIds[index], question, responseQuiz.data.correctAnswers[index], ...responseQuiz.data.choices[index]]
           )
         })
       }
@@ -149,13 +152,15 @@ export const LMEditForm = (props) => {
     validationSchema,
     onSubmit: async (values, helpers) => {
       try {
-        const response = await exploreApi.updateLesson({
-          title: values.title,
-          time: values.time,
-          // difficulty: values.difficulty,
-          // type: values.type,
-          // score: values.score,
-        })
+        console.log("go to the moonnn")
+        // await exploreApi.updateLesson(lessonId, {
+        //   title: values.title,
+        //   time: values.time,
+        //   questionnaire: []
+        //   // difficulty: values.difficulty,
+        //   // type: values.type,
+        //   // score: values.score,
+        // })
 
         toast.success('Tài liệu học tập đã được tạo');
         router.push(`${paths.dashboard.explore}/${lesson.courseId}`);
@@ -197,35 +202,29 @@ export const LMEditForm = (props) => {
     setDisabled(false);
   }, []);
 
-  const handleFilesUpload = async (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append('file', files[0]);
-    try {
-        const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_API}/files`,
-            formData, {
-            headers: {
-                "Content-Type": "multipart/form-data",
-              },
-          });
-
-        setIdLMList([response.data["id"]])
-        setDisabled(true);
-        toast.success('File đã đăng tải thành công');
-      } catch (err) {
-        console.error(err);
-        toast.error('Something went wrong!');
-        console.error('Error uploading file:', err);
-      }
-  };
-
   const handleCancelUpdate = useCallback(() => {
-    setQuizData(rawData.questionnaire)
+    setQuestionnaire(rawData.questionnaire)
   }, [rawData])
 
-  const handleUpdateQuiz = useCallback(() => {
-    
-  }, [quizData])
+  const handleUpdateQuiz = useCallback(async () => {
+    try {
+      await exploreApi.updateLesson(lessonId, {
+          title: formik.values.title,
+          time: formik.values.time,
+          questionnaire: createUpdateQuestionaire()
+          // difficulty: values.difficulty,
+          // type: values.type,
+          // score: values.score,
+        })
+      
+      toast.success('Tài liệu học tập đã được cập nhật');
+      // router.push(`${paths.dashboard.explore}/${lesson.courseId}`);
+    }
+    catch(error){
+      console.error(error);
+      toast.error("Xảy ra lỗi")
+    }
+  }, [formik, questionnaire])
 
   return (
     <form
@@ -357,6 +356,7 @@ export const LMEditForm = (props) => {
                     }}
                     caption="(Vui lòng tạo file excel bảng câu hỏi theo mẫu trên)"
                     files={files}
+                    oneFile={files.length === 1}
                     disabled={true}
                     onDrop={handleFilesDrop}
                     onRemove={handleFileRemove}
@@ -384,7 +384,7 @@ export const LMEditForm = (props) => {
                     color="text.secondary"
                     variant="body2"
                   >
-                    <QuizQuestionaire rows={quizData} setQuizData= {setQuizData} file={files[0]} setQuestionnaire={setQuestionnaire}/>
+                    <QuizQuestionaire questionnaire={questionnaire} file={files[0]} setQuestionnaire={setQuestionnaire}/>
                   </Typography>
                 </Stack>
               </Grid>

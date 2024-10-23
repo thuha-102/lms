@@ -4,13 +4,15 @@ import { connectRelation } from 'src/shared/prisma.helper';
 
 export class QuizDTO {
   type: string;
+  minutes: number;
   questions: string[];
   choices: string[][];
   correctAnswers: number[];
-  coverIds: number[]
+  coverIds: number[];
 
-  static fromEntity(e: Prisma.QuizGetPayload<unknown>[]): QuizDTO {
+  static fromEntity(e: Prisma.QuizGetPayload<unknown>[], time: number): QuizDTO {
     const type = 'QUIZ';
+    const minutes = time;
     let questions: string[] = [];
     let choices: string[][] = [];
     let correctAnswers: number[] = [];
@@ -24,6 +26,7 @@ export class QuizDTO {
     }
 
     return {
+      minutes,
       type,
       questions,
       choices,

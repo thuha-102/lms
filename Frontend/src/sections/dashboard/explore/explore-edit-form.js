@@ -108,12 +108,13 @@ export const CourseEditForm = () => {
   const [details, setDetails] = useState();
   const [visibilityChecked, setVisibilityChecked] = useState(false);
   const [freeChecked, setFreeChecked] = useState(false);
+  const [preview, setPreview] = useState();
 
   const handleVisibilityChange = () => {
     setVisibilityChecked(!visibilityChecked);
   };
   const [files, setFiles] = useState([]);
-  const [fileIds, setFileIds] = useState([]);
+  const [fileId, setFileId] = useState(null);
   const [disabled, setDisabled] = useState(false);
 
   const formik = useFormik({
@@ -125,8 +126,8 @@ export const CourseEditForm = () => {
         await exploreApi.updateCourse(values.id, {
           name: values.name,
           description: values.description ,
-          avatarId: fileIds[0],
-          price: value.price,
+          avatarId: fileId,
+          price: values.price,
           salePercent: values.salePercent,
           // idInstructor: parseInt(localStorage.getItem("id"), 10),
           visibility: freeChecked,
@@ -136,6 +137,9 @@ export const CourseEditForm = () => {
           topicNames: [],
           lessons: [],
         })
+
+        setFiles([])
+        setFileId(null)
         toast.success('Khoá học đã cập nhật');
         // router.push(`${paths.dashboard.explore}/${response.data.id}`);
       } catch (err) {
@@ -165,29 +169,39 @@ export const CourseEditForm = () => {
     if (param) getDetails(param.split('/')[3]);
   },[param]);
 
+  useEffect(() => {
+    console.log(fileId)
+  }, [preview, fileId])
+
   const handleFilesDrop = useCallback((newFiles) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+        setPreview([reader.result]);
+    };
+    reader.readAsDataURL(newFiles[0]);
+
     setFiles((prevFiles) => {
       return [...prevFiles, ...newFiles];
     });
   }, []);
 
   const handleFileRemove = useCallback((file) => {
+    setPreview(null)
     setFiles((prevFiles) => {
       return prevFiles.filter((_file) => _file.path !== file.path);
     });
   }, []);
 
   const handleFilesRemoveAll = useCallback(() => {
+    setPreview(null)
     setFiles([]);
   }, []);
 
   const handleFilesUpload = async (event) => {
     event.preventDefault();
     const formData = new FormData();
+    formData.append('file', files[0]);
     try {
-        // NOTE: Make API request
-        // console.log(formik.values);
-        // console.log(files.map((_file) => _file.path))
         const response = await axios.post(`${process.env.NEXT_PUBLIC_SERVER_API}/files/avatar`
         , formData, {
           headers: {
@@ -195,7 +209,7 @@ export const CourseEditForm = () => {
           }
         });
 
-        setFileIds([response.data["id"]])
+        setFileId(response.data["id"])
         setDisabled(true);
         toast.success('File đã đăng tải thành công');
         // router.push(`${paths.dashboard.explore}/course`);
@@ -401,16 +415,29 @@ export const CourseEditForm = () => {
                       </Stack>
                   </Grid>
                   <Grid>
-                    <Stack direction={'row'} justifyContent={'space-around'} alignItems={'center'}>
+                    <Stack direction={'row'} justifyContent={'center'} alignItems={'center'} spacing={4}>
                       <Card sx={{height: 300, width: 600}}> 
                         <CardMedia 
                           sx={{height: 300}}
-                          image={!details?.avatarId ? "/assets/cards/card-visa.png" :`${process.env.NEXT_PUBLIC_SERVER_API}/files/${details?.avatarId}`}
+                          image={
+                            preview
+                            ? 
+                              preview
+                            :
+                              (
+                                !details?.avatarId  
+                                ? 
+                                  `${process.env.NEXT_PUBLIC_SERVER_API}/files/${details?.avatarId}`
+                                :
+                                  "/assets/cards/card-visa.png"
+                              )
+                          }
                         />
                       </Card>
                       <FileDropzoneVn
-                        accept={{ '*//*': [] }}
+                        accept={{ 'image/*': [] }}
                         caption="(JPG, PNG maximum 700x430)"
+                        oneFile={files.length === 1}
                         files={files}
                         disabled={disabled}
                         onDrop={handleFilesDrop}

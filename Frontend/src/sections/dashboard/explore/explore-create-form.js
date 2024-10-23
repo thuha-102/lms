@@ -372,8 +372,8 @@ export const CourseCreateForm = (props) => {
                   md={8}
               >
                   <FileDropzoneVn
-                  accept={{ '*//*': [] }}
-                  caption="(PDF, SVG, JPG, PNG, or gif maximum 900x400, ...)"
+                  accept={{ 'image/*': [] }}
+                  caption="(JPG, PNG maximum 700x430)"
                   files={files}
                   disabled={disabled}
                   onDrop={handleFilesDrop}

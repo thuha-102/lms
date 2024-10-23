@@ -7,32 +7,28 @@ import axios from "axios";
 
 export const QuizQuestion = (props) => {
     const { row, questionIndex, setQuestionnaire } = props
-    const [fileId, setFileId] = useState()
     const [images, setImage] = useState([])
     const [preview, setPreview] = useState()
     const [disabled, setDisabled] = useState(false)
-    const [question, setQuestion] = useState([])
-    const [correctAnswer, setCorrectAnswer] = useState([])
-    const [answers, setAnswers] = useState([[]])
+    
+    const [fileId, setFileId] = useState(null)
+    const [question, setQuestion] = useState("")
+    const [correctAnswer, setCorrectAnswer] = useState(0)
+    const [answers, setAnswers] = useState([])
 
     useEffect(() => {
-        setQuestion(row[0])
-        setCorrectAnswer(`${row[1]}`.toUpperCase().charCodeAt(0) - 65)
-        setAnswers(row.slice(2).filter(a => a))
+        if (row[0]) setFileId(row[0])
+        setQuestion(row[1])
+        setCorrectAnswer(row[2])
+        setAnswers(row.slice(3).filter(a => a))
     }, [row])
 
     useEffect(() => {
-        // console.log(questionIndex, question, correctAnswer, answers, fileId)
         setQuestionnaire(prev => {
-            if (prev && prev.questions.length > 0) {
-                prev.questions[questionIndex] = question
-                prev.correctAnswers[questionIndex] = correctAnswer
-                prev.answers[questionIndex] = answers
-                prev.coverIds[questionIndex] = fileId
-            }
-
+            prev[questionIndex] = [fileId, question, correctAnswer, ...answers]
             return prev
         })
+
     }, [fileId, questionIndex, question, correctAnswer, answers])
 
     const handleFileDrop = useCallback((newFiles) => {
@@ -93,8 +89,8 @@ export const QuizQuestion = (props) => {
                     >
                         <Stack alignItems={'center'}>
                             {
-                                preview ?
-                                <CardMedia sx={{height: 300, width: 600}} image={preview}/>
+                                (preview || fileId) ?
+                                <CardMedia sx={{height: 300, width: 600}} image={preview ? preview : `${process.env.NEXT_PUBLIC_SERVER_API}/files/${fileId}`}/>
                                 :
                                 <SvgIcon sx={{height: 300, width: 600, border: '1px dashed'}}>
                                     <ImageNotSupportedIcon/>
@@ -106,6 +102,7 @@ export const QuizQuestion = (props) => {
                         <FileDropzoneVn
                             accept={{'image/*': []}}
                             caption="Hình ảnh minh họa"
+                            oneFile={images.length === 1}
                             files={images}
                             disabled={disabled}
                             onDrop={handleFileDrop}

@@ -129,6 +129,6 @@ export class FileController {
 
   @Get('')
   async getAll(@Query() query?: { name: string; type: string }) {
-    return this.fileService.getAll(query?.name, query?.type?.split(','));
+    return this.fileService.getAll(query);
   }
 }

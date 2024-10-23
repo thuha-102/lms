@@ -46,7 +46,7 @@ export const CourseCardDelete = (props) => {
       <CardMedia
         component={NextLink}
         href={`${paths.dashboard.explore}/${course.id}`}
-        image={`${process.env.NEXT_PUBLIC_SERVER_API}/files/${course.avatarId}`}
+        image={course.avatarId ? `${process.env.NEXT_PUBLIC_SERVER_API}/files/${course.avatarId}` : "/assets/cards/card-visa.png"}
         sx={{ height: 180 }}
       />
       <CardContent>

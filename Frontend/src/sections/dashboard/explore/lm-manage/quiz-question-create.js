@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 export const QuizQuestionCreate = (props) => { 
-    const { questionIndex, setAddingQuestion, setQuestionnaire, setQuizData } = props
+    const { questionIndex, setAddingQuestion, setQuestionnaire } = props
     const [question, setQuestion] = useState("")
     const [fileId, setFileId] = useState()
     const [images, setImage] = useState([])
@@ -62,12 +62,14 @@ export const QuizQuestionCreate = (props) => {
     };
 
     const handleAddQuestion = useCallback(() => {
-        setQuizData(prev => {
-            const newQuestion = [question, String.fromCharCode(correctAnswer + 65), ...answers]
-            return [...prev, newQuestion]
-        })
+        console.log(questionIndex, correctAnswer)
         setAddingQuestion(false)
-    }, [question, answers, correctAnswer, fileId])
+
+        setQuestionnaire(prev => {
+            prev[questionIndex] = [fileId, question, correctAnswer, ...answers]
+            return prev
+        })
+    }, [questionIndex, question, answers, correctAnswer, fileId])
 
     return (
         <Card>
@@ -94,6 +96,7 @@ export const QuizQuestionCreate = (props) => {
                         <FileDropzoneVn
                             accept={{'image/*': []}}
                             caption="Hình ảnh minh họa"
+                            onFile={images.length === 1}
                             files={images}
                             disabled={disabled}
                             onDrop={handleFileDrop}
@@ -122,7 +125,7 @@ export const QuizQuestionCreate = (props) => {
                                 <TextField                                        
                                     fullWidth
                                     margin="dense"
-                                    placeholder={ans}
+                                    // placeholder={ans}
                                     onChange={(event) => setAnswers(prev => {prev[index] = event.target.value; return prev})}
                                 />
                             </Stack>

@@ -12,6 +12,10 @@ export class CourseUpdateREQ {
   description: string;
 
   @IsOptional()
+  @IsNumber()
+  avatarId: number;
+
+  @IsOptional()
   @IsNumber({}, { each: true })
   orderTopicIds: number[];
 
@@ -21,6 +25,7 @@ export class CourseUpdateREQ {
   static toUpdateInput(body: CourseUpdateREQ): Prisma.CourseUpdateInput {
     return leanObject({
       name: body.name,
+      avatarId: body.avatarId,
       updatedAt: new Date(),
       description: body.description,
     });

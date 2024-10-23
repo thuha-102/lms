@@ -58,17 +58,18 @@ export class FileService {
 
     if (file.type !== 'QUIZ') return FileDTO.fromEntity(file as any);
     else {
+      const lesson = await this.prismaService.lesson.findFirst({ where: { id: file.id }, select: { time: true } });
       const quiz = await this.prismaService.quiz.findMany({
         where: { id: file.id },
         select: {
           question: true,
           answers: true,
           correctAnswer: true,
-          coverId: true
+          coverId: true,
         },
       });
 
-      return QuizDTO.fromEntity(quiz as any);
+      return QuizDTO.fromEntity(quiz as any, lesson.time);
     }
   }
 
@@ -90,7 +91,15 @@ export class FileService {
     return VideoDTO.fromEntity(file.mimetype, start, end, fileSize, streamableFile);
   }
 
-  async getAll(name?: string, type?: string[]) {
+  async getAll(condition: { name: string; type: string }) {
+    let name: string = null,
+      type: string[] = null;
+
+    if (condition) {
+      name = condition.name ? condition.name : null;
+      type = condition.type ? condition.type.split(',') : null;
+    }
+
     const query: Prisma.LearningMaterialWhereInput[] = [
       name ? { filepath: { contains: name, mode: Prisma.QueryMode.insensitive } } : undefined,
       type ? { type: { in: type as LearningMaterialType[] } } : undefined,
@@ -99,9 +108,11 @@ export class FileService {
     const lms = (
       await this.prismaService.learningMaterial.findMany({
         where: query.length !== 0 ? { OR: query } : undefined,
-        select: { id: true, type: true, filepath: true },
+        select: { id: true, type: true, name: true, filepath: true },
       })
-    ).map((lm) => ({ id: lm.id, type: lm.type, name: (lm.filepath = lm.filepath.split('--')[1]) }));
+    ).map((lm) => {
+      return { id: lm.id, type: lm.type, name: lm.name !== '' ? lm.name : lm.filepath?.split('--')[1] };
+    });
 
     return lms;
   }

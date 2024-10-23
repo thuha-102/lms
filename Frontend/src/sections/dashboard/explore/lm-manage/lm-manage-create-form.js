@@ -99,11 +99,7 @@ export const LMCreateForm = (props) => {
   // const courseId = (lmcreateformUrl[lmcreateformUrl.length - 2]);
   const isMounted = useMounted();
   const router = useRouter();
-  const [topicIds, setTopicIds] = useState([])
-  const [newTopicId, setNewTopicId] = useState('');
   const [files, setFiles] = useState([]);
-  const filter = createFilterOptions();
-  const [topicOptions, setTopicOptions] = useState([]);
   const [idLMList, setIdLMList] = useState([]);
   const [disabled, setDisabled] = useState(false);
   const [order, setOrder] = useState(null)
@@ -119,13 +115,7 @@ export const LMCreateForm = (props) => {
     "visibility": true,
     "courseId": 1
   });
-  const [questionarie, setQuestionnaire] = useState({
-    length: 0,
-    questions: [],
-    coverIds: [],
-    correctAnswers: [[]],
-    answers: [],
-  })
+  const [questionnaire, setQuestionnaire] = useState([])
 
   const getLesson = useCallback(async (id) => {
     try {
@@ -139,6 +129,16 @@ export const LMCreateForm = (props) => {
       console.error(err);
     }
   }, [])
+
+  const createInputQuestionaire = useCallback(() => {
+    return {
+      length: questionnaire.length,
+      coverIds: questionnaire.map(q => q[0]),
+      questions: questionnaire.map(q => q[1]),
+      correctAnswers: questionnaire.map(q => q[2]),
+      answers: questionnaire.map(q => q.slice(3)),
+    }
+  }, [questionnaire])
 
   const formik = useFormik({
     initialValues,
@@ -157,7 +157,7 @@ export const LMCreateForm = (props) => {
         })
 
         if (formik.values.type === 'QUIZ')
-          await lm_manageApi.createQuiz(response.data.id, questionarie)
+          await lm_manageApi.createQuiz(response.data.id, createInputQuestionaire())
 
         toast.success('Tài liệu học tập đã được tạo');
         router.push(`${paths.dashboard.explore}/${listLMAccordingToLesson.courseId}`);
@@ -184,8 +184,6 @@ export const LMCreateForm = (props) => {
   }, [])
 
   useEffect(() => {
-    // getTopics();
-    // console.log(lessonId)
     getLesson(lessonId);  
   },[]);
 
@@ -193,11 +191,6 @@ export const LMCreateForm = (props) => {
     setFiles((prevFiles) => {
       return [...prevFiles, ...newFiles];
     });
-    setDisabled(false);
-  }, []);
-  
-  const handleFileDrop = useCallback((newFiles) => {
-    setFiles(newFiles);
     setDisabled(false);
   }, []);
 
@@ -361,10 +354,11 @@ export const LMCreateForm = (props) => {
                 {formik.values.type === "QUIZ" 
                 ? <FileDropzoneVn
                     accept={{
-                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['xlsx'],
-                      'text/csv': ['csv'],
+                      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
+                      'text/csv': ['.csv']
                     }}
                     caption="(Vui lòng tạo file excel bảng câu hỏi theo mẫu trên)"
+                    oneFile={files.length === 1}
                     files={files}
                     disabled={true}
                     onDrop={handleFilesDrop}
@@ -404,7 +398,7 @@ export const LMCreateForm = (props) => {
                       color="text.secondary"
                       variant="body2"
                     >
-                      <QuizQuestionaire file={files[0]} setQuestionnaire={setQuestionnaire}/>
+                      <QuizQuestionaire file={files[0]} questionnaire={questionnaire} setQuestionnaire={setQuestionnaire}/>
                     </Typography>
                   </Stack>
                 </Grid>
