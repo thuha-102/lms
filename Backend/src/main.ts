@@ -5,7 +5,7 @@ import { HttpExceptionFilter } from './shared/http-exception.filter';
 import { PrismaClientExceptionFilter } from './shared/prisma-client-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { logger: ['log', 'debug'] });
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));

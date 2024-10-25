@@ -31,8 +31,8 @@ const bankOptions = ["OCB"]
 
 export const AccountGeneralSettings = (props) => {
   const { avatar, user, updateInfor} = props;
-  const [username, setUserName] = useState(null)
-  const [password, setPassword] = useState(null)
+  const [username, setUserName] = useState("")
+  const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(true);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -190,7 +190,8 @@ export const AccountGeneralSettings = (props) => {
                     <InputLabel htmlFor="filled-adornment-password">Mật khẩu</InputLabel>
                     <FilledInput
                       id="filled-adornment-password"
-                      placeholder='***************'
+                      placeholder='***********'
+                      value={password}
                       type={showPassword ? 'text' : 'password'}
                       onChange={handePasswordChange}
                       endAdornment={
@@ -225,8 +226,6 @@ export const AccountGeneralSettings = (props) => {
   );
 };
 
-// AccountGeneralSettings.propTypes = {
-//   avatar: PropTypes.string.isRequired,
-//   email: PropTypes.string.isRequired,
-//   name: PropTypes.string.isRequired
-// };
+AccountGeneralSettings.propTypes = {
+  user: PropTypes.object.isRequired,
+};

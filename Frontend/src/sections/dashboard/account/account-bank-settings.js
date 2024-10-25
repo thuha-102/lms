@@ -32,8 +32,8 @@ const bankOptions = ["NONE", "OCB"]
 export const BankSettings = (props) => {
     const {user} = useAuth()
     const { bank, updateInfor} = props;
-    const [bankAccount, setBankAccount] = useState(null)
-    const [bankName, setBankName] = useState(null)
+    const [bankAccount, setBankAccount] = useState("")
+    const [bankName, setBankName] = useState("")
     const [showBankAccount, setShowBankAccount] = useState(false);
 
     const handleClickShowBankAccount = () => setShowBankAccount((show) => !show);
@@ -46,20 +46,19 @@ export const BankSettings = (props) => {
         event.preventDefault();
     };
 
-    const handeBankNameClick = (event) => {
+    const handeBankNameClick = () => {
         updateInfor({
             bankName
         })
     }
 
-    const handeBankAccountClick = (event) => {
+    const handeBankAccountClick = () => {
         updateInfor({
             bankAccount
         })
     }
 
     const handeBankNameChange = (event) => {
-        console.log(event.target.value)
         setBankName(event.target.value)
     }
 
@@ -113,23 +112,23 @@ export const BankSettings = (props) => {
                         >
                             <InputLabel htmlFor="filled-adornment-bankAccount">Tài khoản ngân hàng</InputLabel>
                             <FilledInput
-                            id="filled-adornment-bankAccount"
-                            value={bank.bankAccount}
-                            type={showBankAccount ? 'text' : 'password'}
-                            onChange={handeBankAccountChange}
-                            endAdornment={
-                                <InputAdornment position="end">
-                                <IconButton
-                                    aria-label="toggle bankAccount visibility"
-                                    onClick={handleClickShowBankAccount}
-                                    onMouseDown={handleMouseDownBankAccount}
-                                    onMouseUp={handleMouseUpBankAccount}
-                                    edge="end"
-                                >
-                                    {showBankAccount ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                                </IconButton>
-                                </InputAdornment>
-                            }
+                                id="filled-adornment-bankAccount"
+                                value={bankAccount}
+                                type={showBankAccount ? 'text' : 'password'}
+                                onChange={handeBankAccountChange}
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle bankAccount visibility"
+                                        onClick={handleClickShowBankAccount}
+                                        onMouseDown={handleMouseDownBankAccount}
+                                        onMouseUp={handleMouseUpBankAccount}
+                                        edge="end"
+                                    >
+                                        {showBankAccount ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                    </IconButton>
+                                    </InputAdornment>
+                                }
                             />
                         </FormControl>
                         <Button
@@ -145,7 +144,7 @@ export const BankSettings = (props) => {
                         direction="row"
                         spacing={2}
                         >
-                        <TextField
+                        {/* <TextField
                             value={bankName}
                             label="Ngân hàng"
                             select
@@ -167,7 +166,13 @@ export const BankSettings = (props) => {
                                     {option}
                                 </option>
                             ))}
-                        </TextField>
+                        </TextField> */}
+                        <TextField
+                            fullWidth
+                            label="Ngân hàng"
+                            value={bankName}
+                            onChange={handeBankNameChange}
+                        />
                         <Button
                             color="inherit"
                             size="small"
@@ -217,7 +222,6 @@ export const BankSettings = (props) => {
 };
 
 BankSettings.propTypes = {
-    avatar: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
+    bank: PropTypes.object.isRequired,
+    // updateInfor: PropTypes.func
 };

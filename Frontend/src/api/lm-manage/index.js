@@ -69,12 +69,11 @@ class lm_manage_Api {
     return data;
   }
 
-  getLMs(name, type) {
+  getLMs(name, type, usage) {
     let url = name ? `${apiUrl}?name=${name}` : apiUrl;
     let types = type ? type.join(',') : "";
-    url = types !== "" ? (name ? url + `&type=${types}` : url + "?type=${types}") : url;
+    url = types !== "" ? (name ? url + `&type=${types}` : url + `?type=${types}`) : url;
     return axios.get(url);
-    //return Promise.resolve(deepCopy(forums));
   }
 
   get1Lm(id) {

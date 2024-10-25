@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import SearchMdIcon from '@untitled-ui/icons-react/build/esm/SearchMd';
-import { Box, Chip, Divider, Input, Stack, SvgIcon, Typography } from '@mui/material';
+import { Box, Checkbox, Chip, Divider, Input, Stack, SvgIcon, Typography } from '@mui/material';
 import { MultiSelect } from '../../../components/multi-select';
 import { useUpdateEffect } from '../../../hooks/use-update-effect';
 
@@ -34,12 +34,12 @@ const typeOptions = [
 
 const statusOptions = [
   {
-    label: 'Published',
-    value: 'published'
+    label: 'Được sử dụng',
+    value: 'inUsed'
   },
   {
-    label: 'Draft',
-    value: 'draft'
+    label: 'Không được sử dụng',
+    value: 'noUsed'
   }
 ];
 
@@ -147,8 +147,8 @@ export const LMManageListSearch = (props) => {
           const option = typeOptions.find((option) => option.value === value);
 
           newChips.push({
-            label: 'Type',
-            field: 'type',
+            // label: 'Type',
+            // field: 'type',
             value,
             displayValue: option.label
           });
@@ -188,8 +188,8 @@ export const LMManageListSearch = (props) => {
           const option = statusOptions.find((option) => option.value === value);
 
           newChips.push({
-            label: 'TopicId',
-            field: 'topicId',
+            // label: 'Usage',
+            // field: 'topicId',
             value,
             displayValue: option.label
           });
@@ -306,11 +306,11 @@ export const LMManageListSearch = (props) => {
                     }}
                   >
                     <>
-                        <span>
+                        {/* <span>
                           {chip.label}
                         </span>
                       :
-                      {' '}
+                      {' '} */}
                       {chip.displayValue || chip.value}
                     </>
                   </Box>
@@ -346,12 +346,12 @@ export const LMManageListSearch = (props) => {
           value={typeValues}
         />
         {/* <MultiSelect
-          label="TopicId"
+          label="Tình trạng sử dụng"
           onChange={handleStatusChange}
           options={statusOptions}
           value={statusValues}
-        />
-        <MultiSelect
+        /> */}
+        {/* <MultiSelect
           label="Stock"
           onChange={handleStockChange}
           options={stockOptions}

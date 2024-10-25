@@ -131,4 +131,9 @@ export class FileController {
   async getAll(@Query() query?: { name: string; type: string }) {
     return this.fileService.getAll(query);
   }
+
+  @Get('no-used')
+  async getNoUsed() {
+    return this.fileService.getNoUsed();
+  }
 }

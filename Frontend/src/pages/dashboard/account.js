@@ -39,7 +39,7 @@ const Page = () => {
   }, [])
 
   const handleBankChangeInfor = useCallback(async (request) => {
-    await userApi.updateUser(user.id, request)
+    await paymentApi.updateAccountbank(request)
   }, [])
 
   usePageView();
@@ -82,9 +82,9 @@ const Page = () => {
             }
             {
               bankInfor && <BankSettings
-              bank = {bankInfor}
-              updateInfor = {handleBankChangeInfor}
-            />
+                bank = {bankInfor}
+                updateInfor = {handleBankChangeInfor}
+              />
             }
           </Stack>
         </Container>

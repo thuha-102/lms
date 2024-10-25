@@ -92,8 +92,7 @@ export class FileService {
   }
 
   async getAll(condition: { name: string; type: string }) {
-    let name: string = null,
-      type: string[] = null;
+    let name: string = null, type: string[] = null;
 
     if (condition) {
       name = condition.name ? condition.name : null;
@@ -125,5 +124,18 @@ export class FileService {
     return {
       type: lm.type,
     };
+  }
+
+  async getNoUsed() {
+    const noUsedList = (
+      await this.prismaService.learningMaterial.findMany({
+        where: {usedCount: 0},
+        select: { id: true, type: true, name: true, filepath: true },
+      })
+    ).map((lm) => {
+      return { id: lm.id, type: lm.type, name: lm.name !== '' ? lm.name : lm.filepath?.split('--')[1] };
+    });
+    
+    return noUsedList;
   }
 }

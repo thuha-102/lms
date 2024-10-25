@@ -10,6 +10,10 @@ class PaymentApi {
     async createReceipt(learnerId, courseIds){
         return axios.post(`${apiUrl}/receipt`, {learnerId, courseIds})
     }
+
+    async updateAccountbank(request) {
+        return axios.patch(`${apiUrl}/bank-account`, request)
+    }
 }
 
 export const paymentApi = new PaymentApi

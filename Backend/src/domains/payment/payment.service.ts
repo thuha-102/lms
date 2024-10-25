@@ -15,7 +15,7 @@ export class PaymentService {
 
   async getAccountBank() {
     return await this.prismaService.bankAccount.findFirst({
-      where: { actived: true },
+      where: { id: 1 },
       select: { bankAccount: true, bankName: true },
     });
   }

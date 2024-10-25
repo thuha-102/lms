@@ -16,6 +16,8 @@ import { TopicModule } from './domains/topics/topics.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/http-exception.filter';
 import { PaymentModule } from './domains/payment/payment.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { TasksService } from './services/cronjob/tasks-cronjob';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { PaymentModule } from './domains/payment/payment.module';
     IntroQuestionModule,
     SequenceCoursesModule,
     TypeLearnerModule,
+    ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
@@ -38,6 +41,7 @@ import { PaymentModule } from './domains/payment/payment.module';
   controllers: [AppController],
   providers: [
     AppService,
+    TasksService,
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
