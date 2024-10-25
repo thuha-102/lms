@@ -24,7 +24,7 @@ import {
 import { alpha } from '@mui/material/styles';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../../hooks/use-auth';
 
 const bankOptions = ["NONE", "OCB"]
@@ -46,17 +46,17 @@ export const BankSettings = (props) => {
         event.preventDefault();
     };
 
-    const handeBankNameClick = () => {
+    const handeBankNameClick = useCallback(() => {
         updateInfor({
             bankName
         })
-    }
+    }, [bankName])
 
-    const handeBankAccountClick = () => {
+    const handeBankAccountClick = useCallback(() => {
         updateInfor({
             bankAccount
         })
-    }
+    }, [bankAccount])
 
     const handeBankNameChange = (event) => {
         setBankName(event.target.value)

@@ -33,9 +33,14 @@ export const AccountGeneralSettings = (props) => {
   const { avatar, user, updateInfor} = props;
   const [username, setUserName] = useState("")
   const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+
   const [showPassword, setShowPassword] = useState(true);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(true);
+
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const handleClickShowConfirmPassword = () => setShowConfirmPassword((show) => !show);
 
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
@@ -52,6 +57,7 @@ export const AccountGeneralSettings = (props) => {
   }
 
   const handePasswordClick = (event) => {
+    if (confirmPassword !== password) return;
     updateInfor({
       password
     })
@@ -193,6 +199,7 @@ export const AccountGeneralSettings = (props) => {
                       placeholder='***********'
                       value={password}
                       type={showPassword ? 'text' : 'password'}
+                      onCopy={(event) => event.preventDefault()}
                       onChange={handePasswordChange}
                       endAdornment={
                         <InputAdornment position="end">
@@ -217,6 +224,49 @@ export const AccountGeneralSettings = (props) => {
                     Lưu
                   </Button>
                 </Stack>
+                {
+                  password !== "" &&
+                  <Stack direction={'row'} spacing={2}>
+                    <FormControl 
+                      sx={{
+                        flexGrow: 1,
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          borderStyle: 'dashed'
+                        }
+                      }} 
+                      variant="filled"
+                    >
+                      <InputLabel htmlFor="filled-adornment-password">Nhập lại mật khẩu</InputLabel>
+                      <FilledInput
+                        id="filled-adornment-password"
+                        error={password !== confirmPassword}
+                        placeholder='***********'
+                        value={confirmPassword}
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        onPaste={(event) => event.preventDefault()}
+                        onChange={(event) => setConfirmPassword(event.target.value)}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowConfirmPassword}
+                              onMouseDown={handleMouseDownPassword}
+                              onMouseUp={handleMouseUpPassword}
+                              edge="end"
+                            >
+                              {showConfirmPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                    </FormControl>
+                    <Button
+                      color="inherit"
+                      size="small"
+                      disabled={true}
+                    />
+                  </Stack>
+                }
               </Stack>
             </Grid>
           </Grid>
