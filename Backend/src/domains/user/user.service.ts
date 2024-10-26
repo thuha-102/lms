@@ -22,6 +22,10 @@ export class UserService {
     return learners.map((learner) => LearnerListREPS.fromEntity(learner as any));
   }
 
+  async delete(id: number){
+    await this.prismaService.user.delete({where: {id}})
+  }
+
   async detail(id: number) {
     const user = await this.prismaService.user.findUnique({
       where: { id },
@@ -36,6 +40,7 @@ export class UserService {
 
     return UserInfoDTO.fromEntity(user as any, registerCourseIds, _count as any);
   }
+
 
   async update(id: number, body: UserUpdateREQ) {
     if (body.username) {

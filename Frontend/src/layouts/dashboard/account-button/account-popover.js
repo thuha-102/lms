@@ -170,7 +170,7 @@ export const AccountPopover = (props) => {
           onClick={handleLogout}
           size="small"
         >
-          Logout
+          Đăng xuất
         </Button>
       </Box>
     </Popover>

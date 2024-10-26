@@ -26,6 +26,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../../hooks/use-auth';
+import { AccountDeleteDialog } from './account-delete-dialog';
 
 const bankOptions = ["NONE", "OCB"]
 
@@ -35,6 +36,7 @@ export const BankSettings = (props) => {
     const [bankAccount, setBankAccount] = useState("")
     const [bankName, setBankName] = useState("")
     const [showBankAccount, setShowBankAccount] = useState(false);
+    const [deleteUser, setDeleteUser] = useState(false)
 
     const handleClickShowBankAccount = () => setShowBankAccount((show) => !show);
 
@@ -206,6 +208,7 @@ export const BankSettings = (props) => {
                     md={8}
                     >
                     <Button
+                        onClick={() => setDeleteUser(true)}
                         color="error"
                         variant="outlined"
                     >
@@ -216,7 +219,9 @@ export const BankSettings = (props) => {
                 </CardContent>
             </Card>
         }
-        
+        {
+            deleteUser && <AccountDeleteDialog open={deleteUser} setDeleteDialog={setDeleteUser}/>
+        }
         </Stack>
     );
 };

@@ -51,6 +51,9 @@ class UserApi {
     return axios.patch(`${apiUrl}/${userId}/latest-course-in-sequence`, request);
   }
 
+  deleteUser(userId){
+    return axios.delete(`${apiUrl}/${userId}`)
+  }
 }
 
 export const userApi = new UserApi();

@@ -52,6 +52,11 @@ export class UserController {
     return this.userService.detail(id);
   }
 
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number){
+    return this.userService.delete(id);
+  }
+
   @Get()
   async getAll(@Query('username') username?: string) {
     return await this.userService.getAll(username);
