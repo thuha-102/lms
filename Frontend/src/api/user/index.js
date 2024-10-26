@@ -46,6 +46,11 @@ class UserApi {
   deleteCart(userId, courseIds){
     return axios.post(`${apiUrl}/${userId}/cart/delete-batch`, {courseIds: courseIds});
   }
+
+  updateLastedCourseInSequence(userId, request){
+    return axios.patch(`${apiUrl}/${userId}/latest-course-in-sequence`, request);
+  }
+
 }
 
 export const userApi = new UserApi();

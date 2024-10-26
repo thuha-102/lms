@@ -1,4 +1,5 @@
 import { LevelType, Prisma } from '@prisma/client';
+import { LargeNumberLike } from 'crypto';
 import { TopicDTO } from 'src/domains/topics/dto/topics.dto';
 
 export class CourseDTO {
@@ -28,6 +29,7 @@ export class CourseDTO {
       salePercent: true,
       level: true,
       amountOfTime: true,
+      passPercent: true,
       Topic: {
         select: {
           id: true,
