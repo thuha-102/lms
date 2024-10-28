@@ -8,6 +8,7 @@ import { LessonService } from '../lessons/lessons.service';
 import { TopicService } from '../topics/topics.service';
 import { TopicDTO } from '../topics/dto/topics.dto';
 import { LessonDTO } from '../lessons/dto/lessons.dto';
+import { connectRelation } from 'src/shared/prisma.helper';
 
 @Injectable()
 export class CourseService {
@@ -21,19 +22,28 @@ export class CourseService {
     return this.prismaService.$transaction(async (tx) => {
       const course = await tx.course.create({ data: CourseCreateREQ.toCreateInput(body), select: { id: true } });
 
-      let numberLessons = 0, numberTopics = body.topicNames.length;
+      let numberLessons = 0,
+        numberTopics = body.topicNames.length;
 
       for (let i = 0; i < body.topicNames.length; i++) {
         const { id } = await this.topicService.create(
-          { courseId: course.id, name: body.topicNames[i], totalLessons: i < body.lessons.length ? body.lessons[i].length : 0 } as any,
+          {
+            courseId: course.id,
+            name: body.topicNames[i],
+            totalLessons: i < body.lessons.length ? body.lessons[i].length : 0,
+          } as any,
           tx,
           i,
         );
 
-        if (i < body.lessons.length){
+        if (i < body.lessons.length) {
           for (let j = 0; j < body.lessons[i].length; j++) {
             const lesson = body.lessons[i][j];
-            await this.lessonService.create({ order: j, title: lesson.title, fileId: lesson.fileId, topicId: id }, tx, j);
+            await this.lessonService.create(
+              { order: j, title: lesson.title, fileId: lesson.fileId, topicId: id, time: lesson.time },
+              tx,
+              j,
+            );
           }
           numberLessons += body.lessons[i].length;
         }
@@ -45,39 +55,66 @@ export class CourseService {
   }
 
   async detail(id: number, userId?: number) {
-    const course = await this.prismaService.course.findFirst({ where: { id }, select: CourseDTO.selectFields() });
-    if (!course) throw new NotFoundException('Course not found');
+    try {
+      const course = await this.prismaService.course.findFirst({ where: { id }, select: CourseDTO.selectFields() });
+      if (!course) throw new NotFoundException('Course not found');
 
-    const topics = await this.prismaService.topic.findMany({
-      orderBy: { order: 'asc' },
-      where: { courseId: course.id },
-      select: TopicDTO.selectTopicField(),
-    });
-    let topcicDTOs: TopicDTO[] = [];
-
-    for (let i = 0; i < topics.length; i++) {
-      const lessons = await this.prismaService.lesson.findMany({
+      const topics = await this.prismaService.topic.findMany({
         orderBy: { order: 'asc' },
-        where: { topicId: topics[i].id },
-        select: LessonDTO.selectLessonField(),
+        where: { courseId: id },
+        select: TopicDTO.selectTopicField(),
       });
-      topcicDTOs.push(
-        TopicDTO.fromEntity(
-          topics[i],
-          lessons.map((lesson) => LessonDTO.fromEntity(lesson)),
-        ),
-      );
-    }
-    
-    if (userId){
-      const registered = await this.prismaService.registerCourse.findFirst({where: {learnerId: userId, courseId: id}});
-      return {
-        ...CourseDTO.fromEnTity(course as any, topcicDTOs),
-        registered: registered ? true : false
-      }
-    }
+      let topcicDTOs: TopicDTO[] = [];
 
-    return CourseDTO.fromEnTity(course as any, topcicDTOs);
+      for (let i = 0; i < topics.length; i++) {
+        const lessons = await this.prismaService.lesson.findMany({
+          orderBy: { order: 'asc' },
+          where: { topicId: topics[i].id },
+          select: LessonDTO.selectLessonField(),
+        });
+
+        topcicDTOs.push(
+          TopicDTO.fromEntity(
+            topics[i],
+            lessons.map((lesson) => LessonDTO.fromEntity(lesson)),
+          ),
+        );
+      }
+
+      if (userId) {
+        const [registered, inCart, learner] = await Promise.all([
+            this.prismaService.registerCourse.findFirst({ where: { learnerId: userId, courseId: id } }),
+            this.prismaService.cart.findFirst({ where: { learnerId: userId, courseId: id } }),
+            this.prismaService.learner.findFirst({ where: { id: userId }, select: { typeLearnerId: true } })
+        ]);
+
+        const sequenceCourse = await this.prismaService.sequenceCourse.findMany({orderBy: {order: 'asc'}, where: {typeLearnerId: learner.typeLearnerId ? learner.typeLearnerId : -1}, select: {courseId: true, order: true}})
+
+        let nextCourseId: number = null;
+        for (let index = 0; index < sequenceCourse.length - 1; index++)
+          if (sequenceCourse[index].courseId === id){
+            nextCourseId =sequenceCourse[index + 1].courseId
+            break;
+          }
+
+        return {
+          ...CourseDTO.fromEnTity(course as any, topcicDTOs),
+          registered: registered ? true : false,
+          studied: !registered ? null : {
+            pass: course.passPercent <= registered.percentOfStudying,
+            nextCourseId: nextCourseId,
+            inSequenceCourse: sequenceCourse ? true : false,
+            lastCourse: sequenceCourse ? sequenceCourse.at(-1).courseId === id : null
+          },
+          inCart: inCart ? true : false,
+        };
+      }
+
+      return CourseDTO.fromEnTity(course as any, topcicDTOs);
+    } catch (e) {
+      console.log(e);
+      return e
+    }
   }
 
   async studiedCourse(courseId: number, learnerId: number) {
@@ -110,7 +147,7 @@ export class CourseService {
   }
 
   async update(id: number, body: CourseUpdateREQ) {
-    const course = await this.prismaService.course.findFirst({ where: { id } });
+    const course = await this.prismaService.course.findFirst({ where: { id }, select: { Topic: { select: { id: true } } } });
     if (!course) throw new NotFoundException('Course not found');
 
     //update order of topicIds
@@ -119,10 +156,19 @@ export class CourseService {
         await this.prismaService.topic.update({ where: { id }, data: { order: index } });
       });
     }
+
     if (body.orderLessonIds) {
       for (let i = 0; i < body.orderLessonIds.length; i++) {
         const lessonIds = body.orderLessonIds[i];
-        lessonIds.map(async (id, index) => await this.prismaService.lesson.update({ where: { id }, data: { order: index } }));
+        await this.prismaService.topic.update({ where: { id: course.Topic[i].id }, data: { totalLessons: lessonIds.length } });
+
+        lessonIds.map(
+          async (id, index) =>
+            await this.prismaService.lesson.update({
+              where: { id },
+              data: { order: index, Topic: connectRelation(course.Topic[i].id) },
+            }),
+        );
       }
     }
 
@@ -130,6 +176,10 @@ export class CourseService {
   }
 
   async delete(id: number) {
-    await this.prismaService.course.delete({ where: { id } });
+    try {
+      await this.prismaService.course.delete({ where: { id } });
+    } catch (e) {
+      return e;
+    }
   }
 }

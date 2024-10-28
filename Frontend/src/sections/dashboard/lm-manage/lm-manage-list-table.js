@@ -385,19 +385,6 @@ export const LMManageListTable = (props) => {
                                     type="number"
                                   />
                                 </Grid>
-                                <Grid
-                                  item
-                                  md={4}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    defaultValue={LM.Topic.title}
-                                    fullWidth
-                                    label="Chủ đề học liên quan"
-                                    name="topicTitle"
-                                    disabled
-                                  />
-                                </Grid>
                               </Grid>
                             </Grid>
                           </Grid>

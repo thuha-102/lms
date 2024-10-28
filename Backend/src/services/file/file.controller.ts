@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Header,
@@ -22,6 +23,7 @@ import { createReadStream } from 'fs';
 import { join } from 'path';
 import { LearningMaterialType } from '@prisma/client';
 import { FileDTO, VideoDTO } from './dto/file.dto';
+import { QuizCreateREQ } from './request/quiz.create';
 
 @Controller('files')
 export class FileController {
@@ -127,6 +129,11 @@ export class FileController {
 
   @Get('')
   async getAll(@Query() query?: { name: string; type: string }) {
-    return this.fileService.getAll(query?.name, query?.type?.split(','));
+    return this.fileService.getAll(query);
+  }
+
+  @Get('no-used')
+  async getNoUsed() {
+    return this.fileService.getNoUsed();
   }
 }

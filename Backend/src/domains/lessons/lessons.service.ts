@@ -3,7 +3,8 @@ import { LessonCreateREQ } from './request/lessons-create.request';
 import { PrismaService } from 'src/services/prisma/prisma.service';
 import { LessonUpdateREQ } from './request/lessons-update.request';
 import { LessonListREQ } from './request/lessons-list.request';
-import { Prisma } from '@prisma/client';
+import { QuizCreateREQ } from 'src/services/file/request/quiz.create';
+import { connectRelation } from 'src/shared/prisma.helper';
 
 @Injectable()
 export class LessonService {
@@ -33,9 +34,25 @@ export class LessonService {
       }
       return { id: lesson.id };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       throw new ConflictException(e);
     }
+  }
+
+  async createQuiz(id: number, body: QuizCreateREQ) {
+    return await this.prismaService.$transaction(async (tx) => {
+      const lesson = await tx.lesson.findFirst({ where: { id }, select: { title: true } });
+      const lm = await tx.learningMaterial.create({
+        data: { Lesson: connectRelation(id), name: lesson.title, type: 'QUIZ' },
+        select: { id: true },
+      });
+
+      for (let i = 0; i < body.length; i++) {
+        await tx.quiz.create({ data: QuizCreateREQ.toCreateInput(body, i, lm.id) });
+      }
+
+      return { fileId: lm.id };
+    });
   }
 
   async detail(id: number) {
@@ -55,7 +72,42 @@ export class LessonService {
     const lesson = await this.prismaService.lesson.findFirst({ where: { id } });
     if (!lesson) throw new NotFoundException('Lesson not found');
 
-    await this.prismaService.lesson.update({ where: { id }, data: LessonUpdateREQ.toUpdateInput(body) });
+    const { learningMaterialId } = await this.prismaService.lesson.update({
+      where: { id },
+      data: LessonUpdateREQ.toUpdateInput(body),
+      select: { learningMaterialId: true },
+    });
+
+    if (body.questionnaire) {
+      const oldQuestionnaire = await this.prismaService.quiz.findMany({
+        where: { id: learningMaterialId },
+        select: { index: true },
+      });
+
+      for (let i = 0; i < body.questionnaire.length; i++) {
+        if (i < oldQuestionnaire.length)
+          await this.prismaService.quiz.update({
+            where: { id_index: { id: learningMaterialId, index: i } },
+            data: {
+              question: body.questionnaire[i],
+              answers: body.questionnaire.answers[i],
+              correctAnswer: body.questionnaire.correctAnswers[i],
+              coverId: body.questionnaire.coverIds[i],
+            },
+          });
+        else
+          await this.prismaService.quiz.create({
+            data: {
+              id: learningMaterialId,
+              index: i,
+              question: body.questionnaire.questions[i],
+              answers: body.questionnaire.answers[i],
+              correctAnswer: body.questionnaire.correctAnswers[i],
+              coverId: body.questionnaire.coverIds[i],
+            },
+          });
+      }
+    }
   }
 
   async delete(id: number) {

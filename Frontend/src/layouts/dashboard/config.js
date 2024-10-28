@@ -10,16 +10,17 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
 import ModelTrainingOutlinedIcon from '@mui/icons-material/ModelTrainingOutlined';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
 import { tokens } from '../../locales/tokens';
 import { paths } from '../../paths';
 
-
+// side navigation config
 export const getSections = (t, accountType) => [
   {
     items: [
-      ...accountType === "ADMIN" ? [{
+      {
         title: t(tokens.nav.overview),
         path: paths.dashboard.index,
         icon: (
@@ -27,7 +28,7 @@ export const getSections = (t, accountType) => [
             <HomeSmileIcon />
           </SvgIcon>
         )
-      }] : [],
+      },
       ...accountType === "LEARNER" ? [{
         title: t(tokens.nav.learningPath),
         path: paths.dashboard.learningPaths.index,
@@ -46,7 +47,7 @@ export const getSections = (t, accountType) => [
           </SvgIcon>
         ),
       },
-      {
+      ...accountType === "LEARNER" ? [{
         title: t(tokens.nav.explore),
         path: paths.dashboard.explore,
         icon: (
@@ -54,7 +55,7 @@ export const getSections = (t, accountType) => [
             <SearchOutlinedIcon />
           </SvgIcon>
         )
-      },
+      }] : [],
     ]
   },
   // {
@@ -155,6 +156,15 @@ export const getSections = (t, accountType) => [
           </SvgIcon>
         )
       },
+      ...accountType === "LEARNER" ? [{
+        title: t(tokens.nav.cart),
+        path: paths.dashboard.cart,
+        icon: (
+          <SvgIcon fontSize="small">
+            <ShoppingCartIcon />
+          </SvgIcon>
+        )
+      }]: [],
     ]
   },
   accountType === "ADMIN" && {

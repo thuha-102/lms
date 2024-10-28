@@ -43,7 +43,6 @@ const Page = () => {
   const getCourses = useCallback(async (filter) => {
     try {
       const response = await exploreApi.getListCourse(filter ? filter.keyword : null);
-      console.log(filter)
       const course = response.data
       // if (filter){
       //   if (filter.name) course = course.filter(c => c.name.toLowerCase().includes(filter.name))
@@ -124,10 +123,11 @@ const Page = () => {
             </Grid>
             {listCourses
             .slice(page*consts.FORUMS_PER_PAGE, page*consts.FORUMS_PER_PAGE + consts.FORUMS_PER_PAGE)
-            .map((_course) => 
+            .map((_course, index) => 
             (<Grid
               xs={12}
               md={4}
+              key={_course.id}
             >
               <CourseCard course = {_course} isExplore = {true}/>  
             </Grid>

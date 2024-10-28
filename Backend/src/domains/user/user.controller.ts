@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -51,6 +52,11 @@ export class UserController {
     return this.userService.detail(id);
   }
 
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number){
+    return this.userService.delete(id);
+  }
+
   @Get()
   async getAll(@Query('username') username?: string) {
     return await this.userService.getAll(username);
@@ -68,15 +74,34 @@ export class UserController {
   }
 
   @Post(':id/lesson/:lessonId')
-  async studiedLesson(
-    @Param('id', ParseIntPipe) id: number,
-    @Param('lessonId', ParseIntPipe) lessonId: number,
-  ) {
+  async studiedLesson(@Param('id', ParseIntPipe) id: number, @Param('lessonId', ParseIntPipe) lessonId: number) {
     return await this.userService.studiedLesson(id, lessonId);
   }
 
+  
   @Post(':id/quiz')
-  async studiedQuiz(@Param('id', ParseIntPipe) id: number, @Body() body: QuizAnswers){
+  async studiedQuiz(@Param('id', ParseIntPipe) id: number, @Body() body: QuizAnswers) {
     return await this.userService.studiedQuiz(id, body);
+  }
+  
+  @Get(':id/cart')
+  async getCart(@Param('id', ParseIntPipe) id: number) {
+    return await this.userService.getCart(id);
+  }
+  
+  @Post(':id/cart')
+  async addCart(@Param('id', ParseIntPipe) id: number, @Body() body: { courseId: number }) {
+    return await this.userService.addCart(id, body.courseId);
+  }
+  
+  @Patch(':id/latest-course-in-sequence')
+  async updateLastedCourseInSequence(@Param('id', ParseIntPipe) id: number, @Body() body: {nextCourseId: number}) {
+    return await this.userService.updateLastedCourseInSequence(id, body.nextCourseId);
+  }
+
+  @HttpCode(204)
+  @Post(':id/cart/delete-batch')
+  async deleteCart(@Param('id', ParseIntPipe) id: number, @Body() body: { courseIds: number[] }) {
+    return await this.userService.deleteCart(id, body.courseIds);
   }
 }

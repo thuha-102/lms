@@ -180,9 +180,7 @@ export const CourseCreateForm = (props) => {
   const handleFilesUpload = async (event) => {
     event.preventDefault();
     const formData = new FormData();
-    console.log(formData)
     formData.append('file', files[0]);
-    console.log(formData)
     try {
         // NOTE: Make API request
         // console.log(formik.values);
@@ -402,8 +400,8 @@ export const CourseCreateForm = (props) => {
                   md={8}
               >
                   <FileDropzoneVn
-                  accept={{ '*//*': [] }}
-                  caption="(PDF, SVG, JPG, PNG, or gif maximum 900x400, ...)"
+                  accept={{ 'image/*': [] }}
+                  caption="(JPG, PNG maximum 700x430, ...)"
                   files={files}
                   disabled={disabled}
                   onDrop={handleFilesDrop}

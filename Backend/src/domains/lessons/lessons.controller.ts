@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Po
 import { LessonService } from './lessons.service';
 import { LessonCreateREQ } from './request/lessons-create.request';
 import { LessonUpdateREQ } from './request/lessons-update.request';
+import { QuizCreateREQ } from 'src/services/file/request/quiz.create';
 
 @Controller('lessons')
 export class LessonController {
@@ -10,6 +11,11 @@ export class LessonController {
   @Post('')
   async create(@Body() body: LessonCreateREQ) {
     return await this.lessonService.create(body);
+  }
+
+  @Post(':id/quiz')
+  async createQuiz(@Param('id', ParseIntPipe) id: number, @Body() body: QuizCreateREQ) {
+    return await this.lessonService.createQuiz(id, body);
   }
 
   @Get(':id')

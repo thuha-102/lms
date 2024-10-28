@@ -67,30 +67,30 @@ export class IntroQuestionService {
 
   async getTypeLearner(score: number) {
     const result = await this.prismaService.typeLearner.findMany({
-      where : {
+      where: {
         startScore: {
-          lte: score 
-        }
+          lte: score,
+        },
       },
       orderBy: {
-        startScore: "desc"
+        startScore: 'desc',
       },
       select: {
-        id: true
-      }
-    })
+        id: true,
+      },
+    });
     return result[0];
   }
 
   async registerSequenceCourse(learnerId: number, typeLearnerId: number, latestCourseInSequenceId: number) {
     return await this.prismaService.learner.update({
       where: {
-        id: learnerId
+        id: learnerId,
       },
       data: {
         typeLearnerId: typeLearnerId,
-        latestCourseInSequenceId: latestCourseInSequenceId
-      }
-    })
+        latestCourseInSequenceId: latestCourseInSequenceId,
+      },
+    });
   }
 }

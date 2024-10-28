@@ -87,6 +87,7 @@ export const paths = {
       details: '/dashboard/forum/:forumId',
       create: '/dashboard/forum/create'
     },
+    cart: '/dashboard/cart',
     calendar: '/dashboard/calendar',
     chat: '/dashboard/chat',
     code: '/dashboard/code',

@@ -8,6 +8,10 @@ class UserApi {
     return axios.get(`${apiUrl}/${id}`);
   }
 
+  updateUser(id, request){
+    return axios.patch(`${apiUrl}/${id}`, request)
+  }
+
   getAllUser(username) {
     return axios.get(username ? `${apiUrl}?username=${username}` : apiUrl);
   }
@@ -29,6 +33,26 @@ class UserApi {
 
   registerCourse(userId, courseId) {
     return axios.post(`${apiUrl}/${userId}/register/${courseId}`);
+  }
+
+  getCart(userId){
+    return axios.get(`${apiUrl}/${userId}/cart`);
+  }
+
+  addCart(userId, courseId){
+    return axios.post(`${apiUrl}/${userId}/cart`, {courseId: parseInt(courseId, 10)});
+  }
+
+  deleteCart(userId, courseIds){
+    return axios.post(`${apiUrl}/${userId}/cart/delete-batch`, {courseIds: courseIds});
+  }
+
+  updateLastedCourseInSequence(userId, request){
+    return axios.patch(`${apiUrl}/${userId}/latest-course-in-sequence`, request);
+  }
+
+  deleteUser(userId){
+    return axios.delete(`${apiUrl}/${userId}`)
   }
 }
 

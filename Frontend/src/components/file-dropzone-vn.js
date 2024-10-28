@@ -20,14 +20,14 @@ import { bytesToSize } from '../utils/bytes-to-size';
 import { FileIcon } from './file-icon';
 
 export const FileDropzoneVn = (props) => {
-  const { caption, disabled, files = [], onRemove, onRemoveAll, onUpload, ...other } = props;
+  const { caption, disabled, files = [], onRemove, onRemoveAll, onUpload, oneFile, ...other } = props;
   const { getRootProps, getInputProps, isDragActive } = useDropzone(other);
 
   const hasAnyFiles = files.length > 0;
 
   return (
     <div>
-      <Box
+      {!oneFile && <Box
         sx={{
           alignItems: 'center',
           border: 1,
@@ -87,7 +87,7 @@ export const FileDropzoneVn = (props) => {
             )}
           </Stack>
         </Stack>
-      </Box>
+      </Box>}
       {hasAnyFiles && (
         <Box sx={{ mt: 2 }}>
           <List>

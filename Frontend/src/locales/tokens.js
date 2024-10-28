@@ -11,6 +11,7 @@ export const tokens = {
     blog: 'nav.blog',
     browse: 'nav.browse',
     calendar: 'nav.calendar',
+    cart: 'nav.cart',
     chat: 'nav.chat',
     checkout: 'nav.checkout',
     concepts: 'nav.concepts',

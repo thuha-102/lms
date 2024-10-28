@@ -5,10 +5,14 @@ import axios from 'axios';
 const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/files`;
 
 class lm_manage_Api {
-  createLM(request) {
+  createLesson(request) {
     return axios.post(`${process.env.NEXT_PUBLIC_SERVER_API}/lessons`, request);
-    //return Promise.resolve(deepCopy(forums));
   }
+
+  createQuiz(lessonId, request) {
+    return axios.post(`${process.env.NEXT_PUBLIC_SERVER_API}/lessons/${lessonId}/quiz`, request);
+  }
+
 
   getLM(search){
     const res = axios.get(apiUrl);
@@ -65,12 +69,11 @@ class lm_manage_Api {
     return data;
   }
 
-  getLMs(name, type) {
+  getLMs(name, type, usage) {
     let url = name ? `${apiUrl}?name=${name}` : apiUrl;
-    let types = type.join(',');
-    url = types !== "" ? (name ? url + `&type=${types}` : url + "?type=${types}") : url;
+    let types = type ? type.join(',') : "";
+    url = types !== "" ? (name ? url + `&type=${types}` : url + `?type=${types}`) : url;
     return axios.get(url);
-    //return Promise.resolve(deepCopy(forums));
   }
 
   get1Lm(id) {
@@ -84,6 +87,8 @@ class lm_manage_Api {
   deleteLM (id) {
     return axios.delete(`${apiUrl}/${id}`)
   }
+
+  
 
 //   getForumDetail(id) {
 //     return axios.get(`${apiUrl}/${id}`);

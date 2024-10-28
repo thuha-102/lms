@@ -3,6 +3,7 @@ import { IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'clas
 import { connectManyRelation, connectRelation } from 'src/shared/prisma.helper';
 
 export class Lesson {
+  time: number;
   title: string;
   fileId: number;
 }
@@ -14,6 +15,14 @@ export class CourseCreateREQ {
   @IsOptional()
   @IsBoolean()
   visibility: boolean = false;
+
+  @IsOptional()
+  @IsNumber()
+  price: number;
+
+  @IsOptional()
+  @IsNumber()
+  salePercent: number;
 
   @IsOptional()
   @IsString()
@@ -45,9 +54,11 @@ export class CourseCreateREQ {
       name: body.name,
       labels: body.labels,
       description: body.description,
+      price: body.price,
+      salePercent: body.salePercent ? body.salePercent : 0,
       level: body.level,
       avatarId: body.avatarId,
-      passPercent: body.passPercent
+      passPercent: body.passPercent,
     };
   }
 }

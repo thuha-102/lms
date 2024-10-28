@@ -14,7 +14,7 @@ const CourseCreate = () => {
     <>
       <Head>
         <title>
-        Dashboard: Topic Create
+        Tạo khóa học mới
         </title>
       </Head>
       <Box

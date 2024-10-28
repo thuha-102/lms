@@ -1,4 +1,5 @@
 import { LevelType, Prisma } from '@prisma/client';
+import { LargeNumberLike } from 'crypto';
 import { TopicDTO } from 'src/domains/topics/dto/topics.dto';
 
 export class CourseDTO {
@@ -6,9 +7,11 @@ export class CourseDTO {
   createdAt: Date;
   updatedAt: Date;
   name: string;
+  visibility: boolean;
+  salePercent: number;
   description: string;
   level: LevelType;
-  price: string;
+  price: number;
   amountOfTime: number;
   avatarId: number;
   topics: TopicDTO[];
@@ -22,8 +25,11 @@ export class CourseDTO {
       description: true,
       price: true,
       avatarId: true,
+      visibility: true,
+      salePercent: true,
       level: true,
       amountOfTime: true,
+      passPercent: true,
       Topic: {
         select: {
           id: true,
@@ -40,7 +46,9 @@ export class CourseDTO {
       updatedAt: entity.updatedAt,
       level: entity.level,
       name: entity.name,
+      visibility: entity.visibility,
       description: entity.description,
+      salePercent: entity.salePercent,
       price: entity.price,
       avatarId: entity.avatarId,
       amountOfTime: entity.amountOfTime,
@@ -57,8 +65,10 @@ export class CourseListDTO {
   description: string;
   level: LevelType;
   avatarId: number;
-  price: string;
+  price: number;
   amountOfTime: number;
+  salePercent: number;
+  visibility: boolean;
 
   static selectFields(): Prisma.CourseSelect {
     return {
@@ -68,9 +78,11 @@ export class CourseListDTO {
       name: true,
       level: true,
       description: true,
+      salePercent: true,
       price: true,
       avatarId: true,
       amountOfTime: true,
+      visibility: true,
     };
   }
 
@@ -83,8 +95,10 @@ export class CourseListDTO {
       updatedAt: entity.updatedAt,
       description: entity.description,
       avatarId: entity.avatarId,
+      salePercent: entity.salePercent,
       price: entity.price,
       amountOfTime: entity.amountOfTime,
+      visibility: entity.visibility,
     };
   }
 }

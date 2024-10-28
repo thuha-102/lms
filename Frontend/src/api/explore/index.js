@@ -12,8 +12,16 @@ class ExploreApi {
     return axios.post(`${apiUrl}/courses`, request)
   }
 
-  createLesson(request) {
+  updateCourse(courseId, request) {
+    return axios.patch(`${apiUrl}/courses/${courseId}`, request);
+  }
+
+  createTopic(request) {
     return axios.post(`${apiUrl}/topics`, request)
+  }
+
+  updateLesson(lessonId, request){
+    return axios.patch(`${apiUrl}/lessons/${lessonId}`, request)
   }
 
   detailCourse(id, userId) {
@@ -25,13 +33,33 @@ class ExploreApi {
     return axios.get(`${apiUrl}/topics/${id}`);
   }
 
+  updateTopic(topicId, request) {
+    return axios.patch(`${apiUrl}/topics/${topicId}`, request);
+  }
+
   getListCourse(keyword){
     if (keyword) return axios.get(`${apiUrl}/courses?keyword=${keyword}`)
     return axios.get(`${apiUrl}/courses`);
   }
 
+  deleteTopic(id) {
+    return axios.delete(`${apiUrl}/topics/${id}`);
+  }
+
   deleteLesson(id) {
     return axios.delete(`${apiUrl}/lessons/${id}`);
+  }
+
+  deleteCourse(id){
+    return axios.delete(`${apiUrl}/courses/${id}`);
+  }
+
+  getLM(id){
+    return axios.get(`${apiUrl}/files/${id}`);
+  }
+
+  getLesson(id){
+    return axios.get(`${apiUrl}/lessons/${id}`);
   }
 //   getForumDetail(id) {
 //     return axios.get(`${apiUrl}/${id}`);

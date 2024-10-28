@@ -4,27 +4,34 @@ import { connectRelation } from 'src/shared/prisma.helper';
 
 export class QuizDTO {
   type: string;
+  minutes: number;
   questions: string[];
   choices: string[][];
   correctAnswers: number[];
+  coverIds: number[];
 
-  static fromEntity(e: Prisma.QuizGetPayload<unknown>[]): QuizDTO {
+  static fromEntity(e: Prisma.QuizGetPayload<unknown>[], time: number): QuizDTO {
     const type = 'QUIZ';
+    const minutes = time;
     let questions: string[] = [];
     let choices: string[][] = [];
     let correctAnswers: number[] = [];
+    let coverIds: number[] = [];
 
     for (let i = 0; i < e.length; i++) {
       questions.push(e[i].question);
       choices.push(e[i].answers);
       correctAnswers.push(e[i].correctAnswer);
+      coverIds.push(e[i].coverId);
     }
 
     return {
+      minutes,
       type,
       questions,
       choices,
       correctAnswers,
+      coverIds,
     };
   }
 

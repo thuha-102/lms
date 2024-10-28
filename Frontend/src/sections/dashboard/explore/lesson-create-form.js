@@ -121,7 +121,7 @@ export const LessonCreateForm = (props) => {
       try {
         // NOTE: Make API request
         // console.log(formik.values);
-        await exploreApi.createLesson({
+        await exploreApi.createTopic({
           title: values.name,
           idCourse: parseInt(courseid, 10),
           idLearningMaterial: idLMList,

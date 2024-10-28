@@ -39,28 +39,6 @@ const BackgroundKnowledgeType = [
     value: 'EXPERT'
   }
 ];
-const categoryOptions = [
-  {
-    label: 'Video',
-    value: 'video'
-  },
-  {
-    label: 'PDF',
-    value: 'pdf'
-  },
-  {
-    label: 'Quiz',
-    value: 'quiz'
-  },
-  {
-    label: 'Podcast',
-    value: 'podcast'
-  },
-  {
-    label: 'Khác',
-    value: 'somethingelse'
-  },
-];
 
 const initialValues = {
   level: '',
@@ -68,6 +46,10 @@ const initialValues = {
   amountOfTime : 0,
   visibility: false,
   description: '',
+  price: 0,
+  salePercent: 0,
+  passPercent: 80,
+  free: false
 };
 
 const validationSchema = Yup.object({
@@ -106,11 +88,13 @@ export const CourseCreateForm = (props) => {
           name: values.name,
           description: values.description ,
           avatarId: fileIds[0],
+          price: values.free ? 0 : values.price,
+          salePercent: values.salePercent/100,
           // idInstructor: parseInt(localStorage.getItem("id"), 10),
-          // visibility: visibilityChecked,
+          visibility: visibilityChecked,
           level: values.level,
           labels: [],
-          // amountOfTime: values.amountOfTime ,
+          amountOfTime: values.amountOfTime ,
           topicNames: [],
           lessons: [],
       })
@@ -325,29 +309,35 @@ export const CourseCreateForm = (props) => {
                   >
                       <Stack spacing={3}>
                       <TextField
-                          error={!!(formik.touched.regularPrice && formik.errors.regularPrice)}
+                          error={!!(formik.touched.price && formik.errors.price)}
                           fullWidth
                           label="Giá thông thường"
-                          name="regularPrice"
+                          name="price"
                           onBlur={formik.handleBlur}
                           onChange={formik.handleChange}
                           type="number"
-                          value={formik.values.regularPrice}
+                          disabled={formik.values.free}
+                          value={formik.values.free ? 0 : formik.values.price}
                       />
                       <TextField
-                          error={!!(formik.touched.discountedPrice && formik.errors.discountedPrice)}
+                          error={!!(formik.touched.salePercent && formik.errors.salePercent)}
                           fullWidth
-                          label="Giá sau giảm"
-                          name="discountedPrice"
+                          label="Phần trăm giảm (0-100)"
+                          InputProps={{ inputProps: { min: 0, max: 100 } }}
+                          name="salePercent"
                           onBlur={formik.handleBlur}
                           onChange={formik.handleChange}
                           type="number"
-                          value={formik.values.discountedPrice}
+                          disabled={formik.values.free}
+                          value={formik.values.free ? 0 : formik.values.salePercent}
                       />
                       <div>
                           <FormControlLabel
-                          control={<Switch defaultChecked />}
-                          label="Đây là khoá học miễn phí"
+                            control={<Switch defaultChecked />}
+                            onChange={formik.handleChange}
+                            label="Đây là khoá học miễn phí"
+                            name="free"
+                            value={formik.values.free}
                           />
                       </div>
                       </Stack>
@@ -382,8 +372,8 @@ export const CourseCreateForm = (props) => {
                   md={8}
               >
                   <FileDropzoneVn
-                  accept={{ '*//*': [] }}
-                  caption="(PDF, SVG, JPG, PNG, or gif maximum 900x400, ...)"
+                  accept={{ 'image/*': [] }}
+                  caption="(JPG, PNG maximum 700x430)"
                   files={files}
                   disabled={disabled}
                   onDrop={handleFilesDrop}

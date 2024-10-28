@@ -296,19 +296,7 @@ function Row(props) {
         <TableCell component="th" scope="row">
           {row.name}
         </TableCell>
-        {
-          accountType !== "LEARNER"  &&
-          <TableCell align="right">
-              <IconButton
-                  onClick={handleMenuOpen}
-                  ref={menuRef}
-              >
-                <SvgIcon fontSize="small">
-                    <DotsVerticalIcon />
-                </SvgIcon>
-              </IconButton>
-          </TableCell>
-        }
+        <TableCell/>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -364,9 +352,7 @@ export default function CollapsibleTable({accountType, rows, registered}) {
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
-            <TableCell />
-            <TableCell>Danh sách bài học</TableCell>
-            <TableCell />
+              <TableCell colSpan={3} align='center'>Danh sách bài học</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

@@ -20,7 +20,7 @@ export const GroupCreateDialog = ({initialGroupName, openGroupCreateDialog, setO
     //       try {
     //         // NOTE: Make API request
     //         // console.log(formik.values);
-    //         await exploreApi.createLesson({
+    //         await exploreApi.createTopic({
     //           title: values.name,
     //           idCourse: parseInt(courseId, 10),
     //       })
@@ -70,7 +70,7 @@ export const GroupCreateDialog = ({initialGroupName, openGroupCreateDialog, setO
             try {
             //     // NOTE: Make API request
                 // console.log(formik.values);
-            //     await exploreApi.createLesson({
+            //     await exploreApi.createTopic({
             //       title: course_name,
             //       idCourse: parseInt(courseId, 10),
               // })

@@ -115,7 +115,7 @@ export const AuthProvider = (props) => {
     []);
 
   const signIn = useCallback(async (username, password) => {
-    const { accessToken, id, accountType, registerCourseIds } = (await authApi.signIn({ username, password })).data;
+    const { accessToken, id, accountType, registerCourseIds, inCart } = (await authApi.signIn({ username, password })).data;
     // const user = await authApi.me(id);
 
     localStorage.setItem(STORAGE_KEY, accessToken);
@@ -128,7 +128,8 @@ export const AuthProvider = (props) => {
           id,
           accountType,
           accessToken,
-          registerCourseIds
+          registerCourseIds,
+          inCart
         }
       }
     });
@@ -136,7 +137,7 @@ export const AuthProvider = (props) => {
 
   const signUp = useCallback(async (request) => {
     await authApi.signUp(request);
-    const { accessToken, id, accountType, registerCourseIds } = (await authApi.signIn(request)).data;
+    const { accessToken, id, accountType, registerCourseIds, inCart } = (await authApi.signIn(request)).data;
     // const user = await authApi.me(id)
 
     localStorage.setItem(STORAGE_KEY, accessToken);
@@ -149,7 +150,8 @@ export const AuthProvider = (props) => {
           id,
           accountType,
           accessToken,
-          registerCourseIds
+          registerCourseIds,
+          inCart
         }
       }
     });
