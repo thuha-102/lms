@@ -18,6 +18,7 @@ import { HttpExceptionFilter } from './shared/http-exception.filter';
 import { PaymentModule } from './domains/payment/payment.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksService } from './services/cronjob/tasks-cronjob';
+import { RatingModule } from './domains/rating/rating.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { TasksService } from './services/cronjob/tasks-cronjob';
     IntroQuestionModule,
     SequenceCoursesModule,
     TypeLearnerModule,
+    RatingModule,
     ScheduleModule.forRoot(),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),

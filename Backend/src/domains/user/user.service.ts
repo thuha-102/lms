@@ -111,10 +111,10 @@ export class UserService {
   async studiedLesson(learnerId: number, lessonId: number) {
     return await this.prismaService.$transaction(async (tx) => {
       try {
-        const lesson = await tx.lesson.findFirst({ where: { id: lessonId }, select: { topicId: true } });
+        const lesson = await tx.lesson.findFirst({ where: { id: lessonId }, select: { topicId: true, order: true } });
         const course = await tx.course.findFirst({
           where: { Topic: { some: { id: lesson.topicId } } },
-          select: { id: true, totalLessons: true, passPercent: true },
+          select: { name: true, description: true, id: true, totalLessons: true, passPercent: true, Topic: { select: { id: true, totalLessons: true }, orderBy: { order: 'desc' } } },
         });
         const registerCourse = await tx.registerCourse.findFirst({
           where: { learnerId: learnerId, courseId: course.id },
@@ -138,6 +138,19 @@ export class UserService {
           where: { id: learnerId },
           select: { typeLearnerId: true },
         });
+
+        // Check end of course
+        const result = { ratingCourse: null, ratingSequenceCourse: null};
+        if (lesson.topicId === course.Topic[0].id && lesson.order === course.Topic[0].totalLessons-1) {
+          result.ratingCourse = {
+            ratingCourse: {
+              id: course.id,
+              title: course.name,
+              description: course.description
+            }
+          }
+        }
+
         // register next course in sequence course if pass previous course
         const sequenceCourse = await tx.sequenceCourse.findMany({
           orderBy: { order: 'asc' },
@@ -147,14 +160,14 @@ export class UserService {
 
         if (sequenceCourse.length !== 0 && updatePercent - course.passPercent >= 0) {
           let nextCourseId = -1;
-          for (let i = 1; i < sequenceCourse.length; i++) {
+          for (let i = 1; i < sequenceCourse.length + 1; i++) {
             if (sequenceCourse[i - 1].courseId === course.id) {
               nextCourseId = sequenceCourse[i].courseId;
               break;
             }
           }
 
-          if (nextCourseId !== -1) {
+          if (nextCourseId !== -1 && nextCourseId !== sequenceCourse.length) {
             const exsitRegister = await tx.registerCourse.findFirst({ where: { learnerId: learnerId, courseId: nextCourseId } });
             if (!exsitRegister) await tx.registerCourse.create({ data: { learnerId: learnerId, courseId: nextCourseId } });
 
@@ -163,7 +176,18 @@ export class UserService {
               data: { LatestCourseInSequenceCourses: connectRelation(nextCourseId) },
             });
           }
+
+          if (result.ratingCourse) {
+            // Check end of sequenceCourse
+            if (nextCourseId === sequenceCourse.length) {
+              result.ratingSequenceCourse = {
+                typeLearnerId: learner.typeLearnerId,
+              }
+            }
+          }
         }
+
+        return result;
       } catch (e) {
         return e;
       }
@@ -227,5 +251,37 @@ export class UserService {
 
   async deleteCart(id: number, courseIds: number[]) {
     return await this.prismaService.cart.deleteMany({ where: { learnerId: id, courseId: { in: courseIds } } });
+  }
+
+  async updateRatingSequenceCourse(id: number, rating: number, comment: string | undefined) {
+    return await this.prismaService.learner.update( {
+      where: { id: id },
+      data: {
+        sequenceCourseRating: rating,
+        sequenceCourseComment: comment,
+        sequenceCourseRatingAt: new Date()
+      }
+    })
+  }
+
+  async updateRatingChatbot(id: number, rating: number) {
+    const learner = await this.prismaService.learner.findFirst({where: {id: id}, select: { chatbotRatingNumber: true, averageChatbotRating: true}})
+
+    return await this.prismaService.learner.update( {
+      where: { id: id },
+      data: {
+        chatbotRatingNumber: learner.chatbotRatingNumber + 1,
+        averageChatbotRating: learner.averageChatbotRating ? rating : (learner.averageChatbotRating * learner.chatbotRatingNumber + rating) / (learner.chatbotRatingNumber + 1)
+      }
+    })
+  }
+
+  async updateRatingCourse(userId: number, courseId: number, data) {
+    return await this.prismaService.registerCourse.update({
+      where: {
+        learnerId_courseId: { learnerId: userId, courseId: courseId}
+      },
+      data: data
+    })
   }
 }

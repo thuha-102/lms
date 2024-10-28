@@ -1,15 +1,14 @@
 import PropTypes from 'prop-types';
 import TextField from '@mui/material/TextField';
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
+  Button,
   Card,
   CardContent,
   CardHeader,
   Divider,
   Rating,
-  Tab,
-  Tabs,
   Typography
 } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
@@ -18,6 +17,16 @@ import SentimentDissatisfiedIcon from '@mui/icons-material/SentimentDissatisfied
 import SentimentSatisfiedIcon from '@mui/icons-material/SentimentSatisfied';
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAltOutlined';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import { styled } from '@mui/material/styles';
+
+const StyledRating = styled(Rating)(({ theme }) => ({
+  '& .MuiRating-iconFilled': {
+    color: theme.palette.primary.main,
+  },
+  '& .MuiRating-iconHover': {
+    color: theme.palette.primary.main,
+  },
+}));
 
 const labels = {
     1: 'Rất tệ',
@@ -53,39 +62,24 @@ const customIcons = {
     return `${value} Star${value !== 1 ? 's' : ''}, ${labels[value]}`;
   }
   
-
-
-export const CourseRating = (props) => {
-  const { chapter } = props;
-  const [value, setValue] = React.useState(2);
-  const [hover, setHover] = React.useState(2);
-//   const [valueIcon, setValue]
+export const FinalRating = (props) => {
+  const { title, description, onSubmit } = props;
+  const [value, setValue] = React.useState(null);
+  const [hover, setHover] = React.useState(null);
 
   return (
     <Box
       sx={{
         position: 'relative',
-        pb: 6
+        pb: 6,
+        mb: 2
       }}
     >
       <Card>
         <CardHeader
-          title={chapter.title}
-          subheader={chapter.description}
+          title={title}
+          subheader={description}
         />
-        <Tabs
-          value="lesson"
-          sx={{ px: 3 }}
-        >
-          <Tab
-            label="Lesson"
-            value="lesson"
-          />
-          <Tab
-            label="Resources"
-            value="resources"
-          />
-        </Tabs>
         <Divider />
         <CardContent sx={{ textAlign: 'center' }}>
           {/* <CourseLesson content={chapter.lesson || ''} /> */}
@@ -100,9 +94,9 @@ export const CourseRating = (props) => {
                 }
                 </div>
             )}
-            <Rating
+            <StyledRating
                 name="hover-feedback"
-                value={5}
+                value={value}
                 precision={1}
                 getLabelText={getLabelText}
                 onChange={(_, newValue) => {
@@ -118,17 +112,22 @@ export const CourseRating = (props) => {
             )}
             <TextField 
                 id="outlined-basic" 
-                label="Để lại một vài góp ý giúp chúng tôi cải thiện hệ thống nhé..." 
-                variant="outlined" 
+                placeholder="Để lại nhận xét..." 
+                variant="outlined"
                 sx = {{ width: '100%', mt: 2 }}
             />
+            <Button sx={{ mt: 2  }} variant="contained" disabled={value === null} onClick={onSubmit}>
+              Hoàn thành
+            </Button>
         </CardContent>
       </Card>
     </Box>
   );
 };
 
-CourseRating.propTypes = {
+FinalRating.propTypes = {
   // @ts-ignore
-  chapter: PropTypes.object.isRequired
+  title: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };

@@ -40,6 +40,12 @@ model Learner {
 
   LatestCourseInSequenceCourses Course? @relation(fields: [latestCourseInSequenceId], references: [id])
   latestCourseInSequenceId      Int?    @map("latest_course_in_sequence_id")
+  sequenceCourseRating          Int?    @map("sequence_course_rating")
+  sequenceCourseComment         String? @map("sequence_course_comment")
+  sequenceCourseRatingAt       DateTime?
+
+  averageChatbotRating          Float?  @map("average_chatbot_rating")
+  chatbotRatingNumber           Int     @map("chatbot_rating_number") @default(0)
 
   RegisterCourses      RegisterCourse[]
   HistoryStudiedCourse HistoryStudiedCourse[]
@@ -193,6 +199,10 @@ model RegisterCourse {
   Course   Course? @relation(fields: [courseId], references: [id], onUpdate: Cascade)
   courseId Int?    @map("course_id")
 
+  rating   Int?
+  comment  String?
+  ratingAt DateTime? 
+
   percentOfStudying Float @default(0) @map("percent_of_studying")
 
   @@unique([learnerId, courseId])
@@ -206,7 +216,7 @@ model HistoryStudiedCourse {
   Learner   Learner @relation(fields: [learnerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   learnerId Int     @map("learner_id")
 
-  Lesson   Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Lesson   Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   lessonId Int
 
   @@unique([lessonId, learnerId])
@@ -265,6 +275,12 @@ model IntroQuestion {
   order    Int
 
   @@map("intro_question")
+}
+
+model ChatbotQuestion {
+  id        Int      @id @default(autoincrement())
+  question  String
+  createdAt DateTime @default(now()) @map("created_at")
 }
 
 enum LearningMaterialType {

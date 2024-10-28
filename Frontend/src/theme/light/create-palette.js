@@ -32,6 +32,11 @@ export const createPalette = (config) => {
       disabled: alpha(neutral[900], 0.38),
       caution: '#CC0000',
     },
+    scrollbar: {
+      background: '#f1f1f1',
+      thumb: '#888',
+      thumbHover: '#555'
+    },
     warning
   };
 };
