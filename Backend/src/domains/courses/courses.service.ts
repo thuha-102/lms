@@ -61,7 +61,7 @@ export class CourseService {
 
       const topics = await this.prismaService.topic.findMany({
         orderBy: { order: 'asc' },
-        where: { courseId: course.id },
+        where: { courseId: id },
         select: TopicDTO.selectTopicField(),
       });
       let topcicDTOs: TopicDTO[] = [];
@@ -82,11 +82,30 @@ export class CourseService {
       }
 
       if (userId) {
-        const registered = await this.prismaService.registerCourse.findFirst({ where: { learnerId: userId, courseId: id } });
-        const inCart = await this.prismaService.cart.findFirst({ where: { learnerId: userId, courseId: id } });
+        const [registered, inCart, learner] = await Promise.all([
+            this.prismaService.registerCourse.findFirst({ where: { learnerId: userId, courseId: id } }),
+            this.prismaService.cart.findFirst({ where: { learnerId: userId, courseId: id } }),
+            this.prismaService.learner.findFirst({ where: { id: userId }, select: { typeLearnerId: true } })
+        ]);
+
+        const sequenceCourse = await this.prismaService.sequenceCourse.findMany({orderBy: {order: 'asc'}, where: {typeLearnerId: learner.typeLearnerId ? learner.typeLearnerId : -1}, select: {courseId: true, order: true}})
+
+        let nextCourseId: number = null;
+        for (let index = 0; index < sequenceCourse.length - 1; index++)
+          if (sequenceCourse[index].courseId === id){
+            nextCourseId =sequenceCourse[index + 1].courseId
+            break;
+          }
+
         return {
           ...CourseDTO.fromEnTity(course as any, topcicDTOs),
           registered: registered ? true : false,
+          studied: !registered ? null : {
+            pass: course.passPercent <= registered.percentOfStudying,
+            nextCourseId: nextCourseId,
+            inSequenceCourse: sequenceCourse ? true : false,
+            lastCourse: sequenceCourse ? sequenceCourse.at(-1).courseId === id : null
+          },
           inCart: inCart ? true : false,
         };
       }
@@ -94,6 +113,7 @@ export class CourseService {
       return CourseDTO.fromEnTity(course as any, topcicDTOs);
     } catch (e) {
       console.log(e);
+      return e
     }
   }
 

@@ -32,7 +32,7 @@ model BankAccount {
 }
 
 model Learner {
-  id   Int  @id
+  id   Int  @id @default(0)
   User User @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   TypeLearner   TypeLearner? @relation(fields: [typeLearnerId], references: [id])
@@ -123,12 +123,12 @@ model Cart {
 }
 
 model Topic {
-  id           Int    @id @default(autoincrement())
-  Course       Course @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  courseId     Int    @map("course_id")
-  name         String
-  order        Int
-  totalLessons Int    @default(0) @map("total_lessons")
+  id           Int     @id @default(autoincrement())
+  Course       Course? @relation(fields: [courseId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  courseId     Int?    @map("course_id")
+  name         String  @default("")
+  order        Int     @default(0)
+  totalLessons Int     @default(0) @map("total_lessons")
 
   Lessons Lesson[]
 
@@ -139,7 +139,7 @@ model Topic {
 model Lesson {
   id        Int      @id @default(autoincrement())
   title     String
-  order     Int
+  order     Int      @default(0)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
   time      Int?     @default(0) //minutes
@@ -147,8 +147,8 @@ model Lesson {
   LearningMaterial   LearningMaterial? @relation(fields: [learningMaterialId], references: [id])
   learningMaterialId Int?              @map("learning_material_id")
 
-  Topic                Topic                  @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  topicId              Int                    @map("topic_id")
+  Topic                Topic?                 @relation(fields: [topicId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  topicId              Int?                   @map("topic_id")
   HistoryStudiedCourse HistoryStudiedCourse[]
 
   @@unique([topicId, title])
@@ -177,9 +177,9 @@ model Quiz {
   id            Int
   coverId       Int?     @map("cover_id")
   index         Int      @default(0)
-  question      String
+  question      String   @default("")
   answers       String[]
-  correctAnswer Int      @map("correct_answer")
+  correctAnswer Int      @default(-1) @map("correct_answer")
 
   LearningMaterial     LearningMaterial       @relation(fields: [id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   ResultOfStudyingQuiz ResultOfStudyingQuiz[]

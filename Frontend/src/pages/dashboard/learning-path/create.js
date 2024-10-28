@@ -80,7 +80,7 @@ const Page = () => {
                 href={paths.dashboard.index}
                 variant="subtitle2"
               >
-                Dashboard
+                Trang chủ
               </Link>
               <Typography
                 color="text.secondary"

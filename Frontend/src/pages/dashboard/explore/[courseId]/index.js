@@ -5,6 +5,7 @@ import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout';
 import EditIcon from '@mui/icons-material/Edit';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import {
   Alert,
   Box,
@@ -157,21 +158,25 @@ const LessonList = () => {
   const [courseDescription, setCourseDescription] = useState("");
   const [level, setLevel] = useState("");
   const [rating, setRating] = useState("");
+  const [studied, setStudied] = useState("")
   const [updatedAt, setUpdated] = useState("");
   const [avatarId, setAvatarId] = useState(null);
   const [openCreateLessonDialog, setOpenCreateLessonDialog] = useState(false)
   const [openDeleteDialog, setDeleteDialog] = useState(false)
   const [openUpdateDialog, setUpdateDialog] = useState(false)
 
-  useEffect(() => {(async () => {
+  const getCourse = useCallback(async () => {
     try {
       const response = await exploreApi.detailCourse(courseId, user.id);
+      console.log(response.data)
+
       setAvatarId(response.data.avatarId)
       setTopicList(response.data.topics)
       setCourseTitle(response.data.name)
       setCourseDescription(response.data.description)
       setPrice(response.data.price)
       setSalePercent(response.data.salePercent)
+      setStudied(response.data.studied)
       setLevel(response.data.level)
       setUpdated(response.data.updatedAt.slice(8, 10) + '-' + response.data.updatedAt.slice(5, 7) + '-' + response.data.updatedAt.slice(0, 4))
       setRegistered(response.data.registered)
@@ -179,9 +184,17 @@ const LessonList = () => {
     } catch (err) {
       console.error(err);
     }
-  })()}, [registered, inCart]);
+  }, [courseId])
+
+  useEffect(() => {
+    getCourse();
+  }, []);
 
   usePageView();
+
+  useEffect(() => {
+    console.log(price)
+  }, [price])
 
   const handleFiltersChange = useCallback((filters) => {
     updateSearch((prevState) => ({
@@ -243,6 +256,10 @@ const LessonList = () => {
       orderLessonIds: orderLessonIds
     }
   }, [topicList])
+
+  const handleUpdateNextCourse = useCallback(async () => {
+    if (studied) await userApi.updateLastedCourseInSequence(user.id, {nextCourseId: studied.nextCourseId})
+  }, [user, studied])
 
   return (
     <>
@@ -327,7 +344,21 @@ const LessonList = () => {
                   </Stack>
                 }
                 {
-                  user?.accountType === 'LEARNER' && !registered && !inCart && <Button
+                  user?.accountType === 'LEARNER' && !registered && price === 0 && 
+                  <Button
+                    onClick={handleRegisterCourse}
+                    startIcon={(
+                      <SvgIcon>
+                        <PlusIcon />
+                      </SvgIcon>
+                    )}
+                    variant="contained"
+                  >
+                    Đăng kí khóa học
+                  </Button>
+                }
+                {
+                  user?.accountType === 'LEARNER' && !registered && !inCart && price !== 0 && <Button
                     onClick={handleAddCart}                    
                     startIcon={(
                       <SvgIcon>
@@ -360,7 +391,7 @@ const LessonList = () => {
                   </Alert>
                 }
                 {
-                  !registered && user?.accountType === 'LEARNER' && (
+                  !registered && user?.accountType === 'LEARNER' && price !== 0 &&  (
                     salePercent === 0 ? 
                     <Stack direction={'row'} spacing={2} alignItems={'center'} padding={1} borderRadius={2} border={'1px solid'}>
                       <Typography variant='h5' color={'red'}>{`-${salePercent*100}%`}</Typography>
@@ -371,7 +402,7 @@ const LessonList = () => {
                     </Stack>
                     :
                     <Stack padding={1} borderRadius={2} border={'1px solid'}>
-                      <Typography variant='h2'>{`${price.toLocaleString('en-DE')} ₫`}</Typography>
+                      <Typography variant='h2'>{`${price.toLocaleString('en-DE')}₫`}</Typography>
                     </Stack>
                   )
                 }
@@ -390,7 +421,7 @@ const LessonList = () => {
                       <Typography variant='h5'>
                         Trình độ: {level}
                       </Typography>
-                      <Button
+                      { user.accountType === 'ADMIN' && <Button
                         component={NextLink}
                         href={`${paths.dashboard.explore}/${courseId}/edit`}
                         variant='outlined'
@@ -401,7 +432,7 @@ const LessonList = () => {
                         }
                       >
                         Cập nhật thông tin chung
-                      </Button>
+                      </Button>}
                     </Stack>
                     <Typography variant='h5'>
                       Cập nhật: {updatedAt}
@@ -411,6 +442,24 @@ const LessonList = () => {
                 </Stack>
               </Grid>
             </Grid>
+            {
+              studied && studied.pass && studied.nextCourseId && 
+              <Stack direction={'row'} spacing={2} alignItems={'center'}>
+                <Typography variant='h5'>Bạn đã đủ điều kiện để chuyển sang khóa học tiếp theo trong lộ trình học.</Typography>
+                <Button
+                  variant='outlined'
+                  onClick={handleUpdateNextCourse}
+                  href={`${paths.dashboard.explore}/${studied.nextCourseId}`}
+                  endIcon={(
+                    <SvgIcon>
+                      <ArrowForwardIcon />
+                    </SvgIcon>
+                  )}
+                >
+                  Học khóa học kế tiếp
+                </Button>
+              </Stack>
+            }
             <Card>
               {
                 user?.accountType !== 'ADMIN' ?

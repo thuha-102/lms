@@ -22,6 +22,10 @@ export class UserService {
     return learners.map((learner) => LearnerListREPS.fromEntity(learner as any));
   }
 
+  async delete(id: number){
+    await this.prismaService.user.delete({where: {id}})
+  }
+
   async detail(id: number) {
     const user = await this.prismaService.user.findUnique({
       where: { id },
@@ -36,6 +40,7 @@ export class UserService {
 
     return UserInfoDTO.fromEntity(user as any, registerCourseIds, _count as any);
   }
+
 
   async update(id: number, body: UserUpdateREQ) {
     if (body.username) {
@@ -100,6 +105,9 @@ export class UserService {
         await tx.resultOfStudyingQuiz.create({ data });
       }
 
+      const lesson = await this.prismaService.lesson.findFirst({where: {learningMaterialId: quizAnswers.quizId}, select: {id: true}})
+      this.studiedLesson(learnerId, lesson.id)
+      
       await tx.historyStudiedQuiz.update({
         where: { id: historyQuizId },
         data: { score: trueAnswer, totalQuestion: question.length },
@@ -116,15 +124,15 @@ export class UserService {
           where: { Topic: { some: { id: lesson.topicId } } },
           select: { name: true, description: true, id: true, totalLessons: true, passPercent: true, Topic: { select: { id: true, totalLessons: true }, orderBy: { order: 'desc' } } },
         });
+
         const registerCourse = await tx.registerCourse.findFirst({
           where: { learnerId: learnerId, courseId: course.id },
           select: { id: true, percentOfStudying: true },
         });
         if (!registerCourse) throw new NotFoundException("Learner didn't regiter this course");
+
         const historyStudied = await tx.historyStudiedCourse.findFirst({ where: { lessonId, learnerId } });
-        let newHis;
-        if (!historyStudied)
-          newHis = await tx.historyStudiedCourse.create({ data: { learnerId, lessonId }, select: { id: true } });
+        if (!historyStudied) await tx.historyStudiedCourse.create({ data: { learnerId, lessonId }, select: { id: true } });
 
         const updatePercent = historyStudied
           ? registerCourse.percentOfStudying
@@ -151,7 +159,6 @@ export class UserService {
           }
         }
 
-        // register next course in sequence course if pass previous course
         const sequenceCourse = await tx.sequenceCourse.findMany({
           orderBy: { order: 'asc' },
           where: { typeLearnerId: learner.typeLearnerId ? learner.typeLearnerId : -1 },
@@ -165,16 +172,6 @@ export class UserService {
               nextCourseId = sequenceCourse[i].courseId;
               break;
             }
-          }
-
-          if (nextCourseId !== -1 && nextCourseId !== sequenceCourse.length) {
-            const exsitRegister = await tx.registerCourse.findFirst({ where: { learnerId: learnerId, courseId: nextCourseId } });
-            if (!exsitRegister) await tx.registerCourse.create({ data: { learnerId: learnerId, courseId: nextCourseId } });
-
-            await tx.learner.update({
-              where: { id: learnerId },
-              data: { LatestCourseInSequenceCourses: connectRelation(nextCourseId) },
-            });
           }
 
           if (result.ratingCourse) {
@@ -251,6 +248,10 @@ export class UserService {
 
   async deleteCart(id: number, courseIds: number[]) {
     return await this.prismaService.cart.deleteMany({ where: { learnerId: id, courseId: { in: courseIds } } });
+  }
+
+  async updateLastedCourseInSequence(id: number, courseId: number){
+    return await this.prismaService.learner.update({where: {id}, data: {latestCourseInSequenceId: courseId} })
   }
 
   async updateRatingSequenceCourse(id: number, rating: number, comment: string | undefined) {
