@@ -9,7 +9,6 @@ import { UserService } from '../user/user.service';
 export class PaymentService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly eventEmitter: EventEmitter2,
     private readonly userService: UserService,
   ) {}
 
@@ -53,5 +52,17 @@ export class PaymentService {
     return {
       isPayment: receipt.isPayment,
     };
+  }
+
+  async createBankAccount(bankAccount: string, bankName: string){
+    try{
+      const bank = await this.prismaService.bankAccount.findFirst({where: {id: 1}})
+      if (bank) return;
+  
+      await this.prismaService.bankAccount.create({data: {id: 1, bankAccount: bankAccount, bankName: bankName}});
+    }
+    catch(error){
+      return error
+    }
   }
 }

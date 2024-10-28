@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import Camera01Icon from '@untitled-ui/icons-react/build/esm/Camera01';
 import User01Icon from '@untitled-ui/icons-react/build/esm/User01';
+import AddIcon from '@mui/icons-material/Add';
 import {
     Avatar,
     Box,
@@ -27,12 +28,14 @@ import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../../../hooks/use-auth';
 import { AccountDeleteDialog } from './account-delete-dialog';
+import toast from 'react-hot-toast';
+import { paymentApi } from '../../../api/payment';
 
 const bankOptions = ["NONE", "OCB"]
 
 export const BankSettings = (props) => {
     const {user} = useAuth()
-    const { bank, updateInfor} = props;
+    const { bank, updateInfor, setBankInfor} = props;
     const [bankAccount, setBankAccount] = useState("")
     const [bankName, setBankName] = useState("")
     const [showBankAccount, setShowBankAccount] = useState(false);
@@ -48,25 +51,41 @@ export const BankSettings = (props) => {
         event.preventDefault();
     };
 
-    const handeBankNameClick = useCallback(() => {
+    const handleBankNameClick = useCallback(() => {
         updateInfor({
             bankName
         })
     }, [bankName])
 
-    const handeBankAccountClick = useCallback(() => {
+    const handleBankAccountClick = useCallback(() => {
         updateInfor({
             bankAccount
         })
     }, [bankAccount])
 
-    const handeBankNameChange = (event) => {
+    const handleBankNameChange = (event) => {
         setBankName(event.target.value)
     }
 
-    const handeBankAccountChange = (event) => {
+    const handleBankAccountChange = (event) => {
         setBankAccount(event.target.value)
     }
+
+    const handleCreateBankAccount = useCallback(async() => {
+        try{
+            if (bankAccount === "" || bankName === "") throw Error()
+            
+            await paymentApi.createBankAccount({bankAccount: bankAccount, bankName: bankName})
+            setBankInfor({
+                bankAccount,
+                bankName
+            })
+            toast.success("Tạo tài khoản ngân hàng thanh công")
+        }
+        catch(err){
+            toast.error("Xảy ra lỗi")
+        }
+    }, [bankAccount, bankName])
 
     useEffect(()=>{
         setBankAccount(bank.bankAccount)
@@ -89,15 +108,30 @@ export const BankSettings = (props) => {
                     xs={12}
                     md={4}
                     >
-                    <Typography variant="h6">
-                        Thông tin ngân hàng
-                    </Typography>
+                        <Typography variant="h6">
+                            Thông tin ngân hàng
+                        </Typography>
                     </Grid>
                     <Grid
                     xs={12}
                     md={8}
                     >
                     <Stack spacing={3}>
+                        { 
+                            !bank && <Stack direction={'row'} justifyContent={'flex-end'}>
+                                <Button
+                                    variant='contained'
+                                    onClick={handleCreateBankAccount}
+                                    startIcon={
+                                        <SvgIcon>
+                                            <AddIcon/>
+                                        </SvgIcon>
+                                    }
+                                >
+                                    Thêm tài khoản mới
+                                </Button>
+                            </Stack>
+                        }
                         <Stack
                             alignItems="center"
                             direction="row"
@@ -117,7 +151,8 @@ export const BankSettings = (props) => {
                                 id="filled-adornment-bankAccount"
                                 value={bankAccount}
                                 type={showBankAccount ? 'text' : 'password'}
-                                onChange={handeBankAccountChange}
+                                required
+                                onChange={handleBankAccountChange}
                                 endAdornment={
                                     <InputAdornment position="end">
                                     <IconButton
@@ -136,7 +171,8 @@ export const BankSettings = (props) => {
                         <Button
                             color="inherit"
                             size="small"
-                            onClick={handeBankAccountClick}
+                            disabled={!bank}
+                            onClick={handleBankAccountClick}
                         >
                             Lưu
                         </Button>
@@ -151,7 +187,7 @@ export const BankSettings = (props) => {
                             label="Ngân hàng"
                             select
                             SelectProps={{ native: true }}
-                            onChange={handeBankNameChange}
+                            onChange={handleBankNameChange}
                             sx={{
                             flexGrow: 1,
                             '& .MuiOutlinedInput-notchedOutline': {
@@ -171,14 +207,16 @@ export const BankSettings = (props) => {
                         </TextField> */}
                         <TextField
                             fullWidth
+                            required
                             label="Ngân hàng"
                             value={bankName}
-                            onChange={handeBankNameChange}
+                            onChange={handleBankNameChange}
                         />
                         <Button
                             color="inherit"
+                            disabled={!bank}
                             size="small"
-                            onClick={handeBankNameClick}
+                            onClick={handleBankNameClick}
                         >
                             Lưu
                         </Button>

@@ -17,7 +17,7 @@ const Page = () => {
   const isMounted = useMounted();
   const [currentTab, setCurrentTab] = useState('general');
   const [userInfor, setUserInfor] = useState(null)
-  const [bankInfor, setBankInfor] = useState(null)
+  const [bankInfor, setBankInfor] = useState(true)
 
   const getUser = useCallback(async () => {
     const response = await userApi.getUser(user?.id)
@@ -81,8 +81,9 @@ const Page = () => {
             />
             }
             {
-              bankInfor && <BankSettings
+              <BankSettings
                 bank = {bankInfor}
+                setBankInfor = {setBankInfor}
                 updateInfor = {handleBankChangeInfor}
               />
             }

@@ -11,6 +11,12 @@ export class PaymentController {
     private readonly paymentSocket: PaymentGateway,
   ) {}
 
+  @Post('bank-account')
+  async createBankAccount(@Body() body: {bankName: string, bankAccount: string}){
+    console.log(body)
+    return await this.paymentService.createBankAccount(body.bankAccount, body.bankName);
+  }
+
   @Post()
   async paymentConfirm(@Body() body: PaymentConfirmREQ) {
     const receiptInfor = await this.paymentService.paymentConfirm(body.code);

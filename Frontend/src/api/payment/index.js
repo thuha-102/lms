@@ -3,6 +3,10 @@ import axios from 'axios';
 const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/payment`;
 
 class PaymentApi {
+    async createBankAccount(request){
+        return axios.post(`${apiUrl}/bank-account`, request)
+    }
+
     async getAccountBank() {
         return axios.get(`${apiUrl}/bank-account`)
     }
