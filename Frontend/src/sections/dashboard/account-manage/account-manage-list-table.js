@@ -7,6 +7,7 @@ import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
 import PersonIcon from '@mui/icons-material/Person';
 import Image01Icon from '@untitled-ui/icons-react/build/esm/Image01';
+import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import {
   Avatar,
   Box,
@@ -39,6 +40,7 @@ import { FileIcon } from '../../../components/file-icon';
 import { useRouter } from 'next/navigation';
 import { lm_manageApi } from '../../../api/lm-manage';
 import { paths } from '../../../paths';
+import { AccountManageVisualize } from '../account-manage/account-manage-visualize'
 
 const categoryOptions = [
   // {
@@ -78,11 +80,27 @@ export const AccountManageListTable = (props) => {
     ...other
   } = props;
   const [currentAccount, setCurrentAccount] = useState(null);
+  const [openAccountDetail, setOpenAccountDetail] = useState(false);
+  const [openVisualization, setOpenVisualization] = useState(false);
   // const [account, setAccount] = useState();
   const router = useRouter()
   const [state, setState] = useState(false);
 
-  const handleAccountToggle = useCallback((Account) => {
+  const handleAccountToggle = useCallback((Account, accountDetailState, visualizationState) => {
+    setOpenAccountDetail((prevAccount) => {
+      if (prevAccount === Account) {
+        return false;
+      }
+
+      return accountDetailState;
+    });
+    setOpenVisualization((prevAccount) => {
+      if (prevAccount === Account) {
+        return false;
+      }
+
+      return visualizationState;
+    });
     setCurrentAccount((prevAccount) => {
       if (prevAccount === Account) {
         return null;
@@ -129,7 +147,9 @@ export const AccountManageListTable = (props) => {
         <Table sx={{ minWidth: 1200 }}>
           <TableHead>
             <TableRow>
-              <TableCell>
+              <TableCell width="5%" align='center'>
+              </TableCell>
+              <TableCell width="5%" align='center'>
                 ID
               </TableCell>
               <TableCell width="25%">
@@ -137,6 +157,12 @@ export const AccountManageListTable = (props) => {
               </TableCell>
               <TableCell>
                 Ngày tạo
+              </TableCell>
+              <TableCell>
+                Điểm trung bình
+              </TableCell>
+              <TableCell>
+                Tiến độ
               </TableCell>
               {/* <TableCell>
                 Trạng thái
@@ -164,10 +190,29 @@ export const AccountManageListTable = (props) => {
                     hover
                     key={Account.id}
                   >
-                    <TableCell>
+                    <TableCell width="5%" align='center'>
+                      <IconButton 
+                        aria-label="edit"   
+                        // onClick={() => {
+                        //   // Chuyển đổi mảng các đối tượng thành chuỗi JSON trước khi lưu vào localStorage
+                        //   /* localStorage.setItem('updateSequenceCourseIds', JSON.stringify(TypeLearner.courses.map((course) => ({
+                        //   //   id: course.id,
+                        //   //   name: course.name
+                        //   // }))));
+                        //   */
+                          
+                        //   // Điều hướng đến trang khác
+                        //   // router.push(`${paths.dashboard.learning_path_manage}/updated/${TypeLearner.typeLearnerId}`);
+                        // }} 
+                        onClick={() => handleAccountToggle(Account, false, true)}
+                      >
+                        <NavigateNextRoundedIcon />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell width="5%" align='center'>
                       {Account.id}
                     </TableCell>
-                    <TableCell width="40%">
+                    <TableCell width="25%">
                       <Box
                         sx={{
                           alignItems: 'center',
@@ -289,6 +334,12 @@ export const AccountManageListTable = (props) => {
                         </Typography>
                       </Stack> */}
                     </TableCell>
+                    <TableCell>
+                      
+                    </TableCell>
+                    <TableCell>
+                      
+                    </TableCell>
                     {/* <TableCell>
                       <SeverityPill color={statusColor}>
                         {Account.state ? "ACTIVE": "INACTIVE"}
@@ -301,7 +352,7 @@ export const AccountManageListTable = (props) => {
                       </Typography>
                     </TableCell>  */}
                     <TableCell align="right">
-                      <IconButton onClick={() => handleAccountToggle(Account)}   >
+                      <IconButton onClick={() => handleAccountToggle(Account, true, false)}   >
                         <SvgIcon>
                           <DotsHorizontalIcon />
                         </SvgIcon>
@@ -310,7 +361,13 @@ export const AccountManageListTable = (props) => {
                   </TableRow>
                   {/* {isCurrent && (() => setVisibilityChecked(Account.state))()}
                   {console.log(visibilityChecked)} */}
-                  {currentAccount && Account.id === currentAccount.id && (
+                  {openVisualization && currentAccount && Account.id === currentAccount.id && <AccountManageVisualize 
+                                                                                                Account={Account}
+                                                                                                handleAccountClose={handleAccountClose}
+                                                                                                handleAccountUpdate={handleAccountUpdate}
+                                                                                                handleAccountDelete={handleAccountDelete}
+                                                                                              />}
+                  {openAccountDetail && currentAccount && Account.id === currentAccount.id && (
                     <TableRow>
                       <TableCell
                         colSpan={7}

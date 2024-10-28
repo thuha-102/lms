@@ -12,7 +12,7 @@ export const CourseLock = (props) => {
     time,
     lessonsCount,
     score,
-    coverId,
+    avatarId,
     ...other
   } = props;
 
@@ -22,7 +22,7 @@ export const CourseLock = (props) => {
     <Card {...other} sx={{border:"3px solid", borderColor: "action.disabledBackground"}}>
       <CardMedia
         aria-disabled
-        image={coverId?`${process.env.NEXT_PUBLIC_SERVER_API}/files/${coverId}`:initialCover}
+        image={avatarId?`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`:initialCover}
         sx={{ height: 150 }}
       />
       <CardContent>
@@ -56,5 +56,5 @@ CourseLock.propTypes = {
   time: PropTypes.number.isRequired,
   lessonsCount: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
-  coverId: PropTypes.string,
+  avatarId: PropTypes.string,
 };

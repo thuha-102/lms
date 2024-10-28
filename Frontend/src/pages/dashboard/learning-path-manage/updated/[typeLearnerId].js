@@ -11,10 +11,27 @@ import { learningPathApi } from '../../../../api/learning-path';
 import { LearningPathUpdateForm } from '../../../../sections/dashboard/learning-path-manage/learning-path-manage-update-form';
 // import { TopicGraph } from '../../../../sections/dashboard/topic-manage/topic-graph';
 
+const BackgroundKnowledgeType = [
+  {
+    label: 'Cơ bản',
+    value: 'BEGINNER'
+  },
+  {
+    label: 'Trung cấp',
+    value: 'INTERMEDIAN'
+  },
+  {
+    label: 'Chuyên gia',
+    value: 'EXPERT'
+  }
+];
+
 const useTopics = (typeLearnerId) => {
   const isMounted = useMounted();
   const [state, setState] = useState({
     typeLearnerName: '',
+    typeLearnerStartScore: 0,
+    // level: '',
     isLoading: true // Thêm trạng thái loading
   });
 
@@ -25,6 +42,8 @@ const useTopics = (typeLearnerId) => {
       if (isMounted()) {
         setState({
           typeLearnerName: response.data.typeLearnerName,
+          typeLearnerStartScore: response.data.typeLearnerStartScore,
+          // level: response.data.level,
           isLoading: false // Đặt isLoading thành false sau khi dữ liệu đã được lấy
         });
       }
@@ -56,7 +75,7 @@ const LearningPathUpdate = () => {
     }
   }, []);
 
-  const { typeLearnerName, isLoading } = useTopics(typeLearnerId);
+  const { typeLearnerName, typeLearnerStartScore, isLoading } = useTopics(typeLearnerId);
   
   usePageView();
 
@@ -117,6 +136,7 @@ const LearningPathUpdate = () => {
             <LearningPathUpdateForm 
               typeLearnerId={typeLearnerId}
               typeLearnerName={typeLearnerName}
+              typeLearnerStartScore={typeLearnerStartScore}
             />
           </Stack>
         </Container>

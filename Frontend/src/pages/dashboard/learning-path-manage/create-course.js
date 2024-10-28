@@ -121,7 +121,7 @@ const LearningPathCreate = () => {
                 </Typography>
               </Breadcrumbs>
             </Stack>
-            <TopicGraph topics={Topics}/>
+            {/* <TopicGraph topics={Topics}/> */}
             <CourseCreateForm />
           </Stack>
         </Container>

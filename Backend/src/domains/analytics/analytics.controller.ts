@@ -29,4 +29,14 @@ export class AnalyticsController {
   // async getHistoryRegisterCourse(@Query() query: { userId: number }) {
   //   return this.analyticsService.getHistoryRegisterCourse(Number(query.userId));
   // }
+
+  @Get('group-rate')
+  async getGroupRate(){
+    return this.analyticsService.getGroupRate();
+  }
+
+  @Get('group-progress')
+  async getGroupProgress(){
+    return this.analyticsService.getGroupProgress();
+  }
 }

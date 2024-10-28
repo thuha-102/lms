@@ -101,7 +101,7 @@ const validationSchema = Yup.object({
   // description: Yup.string().max(5000),
   // images: Yup.array(),
   group_name: Yup.string().max(255).required(),
-  subject: Yup.string().max(255).required(),
+  // subject: Yup.string().max(255).required(),
   // preCourseId: Yup.number().min(0),
   // postCourseId: Yup.number().min(0),
   score : Yup.number().min(0).required(),
@@ -110,10 +110,10 @@ const validationSchema = Yup.object({
   // oldPrice: Yup.number().min(0),
 });
 
-export const LearningPathUpdateForm = ({typeLearnerId, typeLearnerName}) => {
+export const LearningPathUpdateForm = ({typeLearnerId, typeLearnerName, typeLearnerStartScore}) => {
   const initialValues = {
     group_name: typeLearnerName,
-    score : 0,
+    score : typeLearnerStartScore,
     courseIds: [],
   };
   const isMounted = useMounted();
@@ -151,7 +151,7 @@ export const LearningPathUpdateForm = ({typeLearnerId, typeLearnerName}) => {
         const courseIdsFromLocalStorage = localStorageData ? JSON.parse(localStorageData) : [];
         console.log(courseIdsFromLocalStorage)
 
-        await learningPathApi.createSequenceCoures({
+        await learningPathApi.updateSequenceCoures(typeLearnerId, {
           courseIds: courseIdsFromLocalStorage.map(courseId => courseId.id),
           typeLearnerName: values.group_name,
           typeLearnerStartScore: values.score,
@@ -288,7 +288,7 @@ export const LearningPathUpdateForm = ({typeLearnerId, typeLearnerName}) => {
                       openGroupCreateDialog={openGroupCreateDialog}
                       setOpenGroupCreateDialog={setOpenGroupCreateDialog}
                   /> */}
-                  <TextField
+                  {/* <TextField
                     error={!!(formik.touched.subject && formik.errors.subject)}
                     fullWidth
                     label="Phân loại mục tiêu"
@@ -307,7 +307,7 @@ export const LearningPathUpdateForm = ({typeLearnerId, typeLearnerName}) => {
                         {option.label}
                       </MenuItem>
                     ))}
-                  </TextField>
+                  </TextField> */}
                   <TextField
                     error={!!(formik.touched.score && formik.errors.score)}
                     fullWidth

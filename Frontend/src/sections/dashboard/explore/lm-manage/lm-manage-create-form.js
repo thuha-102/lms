@@ -42,18 +42,6 @@ const typeOptions = [
   {
     label: 'QUIZ',
     value: 'QUIZ'
-  },
-  {
-    label: 'WORD',
-    value: 'WORD'
-  },
-  // {
-  //   label: 'CODE',
-  //   value: 'CODE'
-  // },
-  {
-    label: 'PPT',
-    value: 'PPT'
   }
 ];
 
@@ -323,14 +311,14 @@ export const LMCreateForm = (props) => {
                   <TextField
                     error={!!(formik.touched.percentOfPass && formik.errors.percentOfPass)}
                     fullWidth
-                    label="Chuẩn đầu ra (%)"
+                    label="Chuẩn tối thiểu để qua tài liệu mới(%)"
                     name="percentOfPass"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     type="number"
                     value={formik.values.percentOfPass}
                   />
-                  <TextField
+                  {/* <TextField
                     error={!!(formik.touched.topicId && formik.errors.topicId)}
                     fullWidth
                     label="Chủ đề học liên quan"
@@ -349,7 +337,7 @@ export const LMCreateForm = (props) => {
                         {option.title}
                       </MenuItem>
                     ))}
-                  </TextField>
+                  </TextField> */}
                   {/* <Autocomplete
                     value={newTopicId}
                     onChange={(event, newValue) => {

@@ -17,6 +17,11 @@ class LearningPathApi {
     return axios.post(apiUrl, request)
     //return Promise.resolve(deepCopy(learningSequenceCourseInfo));
   }
+
+  updateSequenceCoures(typeLearnerId, request) {
+    return axios.put(`${apiUrl}/:${typeLearnerId}`, request)
+    //return Promise.resolve(deepCopy(learningSequenceCourseInfo));
+  }
 }
 
 export const learningPathApi = new LearningPathApi();

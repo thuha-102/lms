@@ -14,7 +14,7 @@ export const CourseDone = (props) => {
     time,
     lessonsCount,
     score,
-    coverId,
+    avatarId,
     ...other
   } = props;
 
@@ -25,7 +25,7 @@ export const CourseDone = (props) => {
       <CardMedia
         component={NextLink}
         href={`${paths.dashboard.explore}/${id}`}
-        image={coverId?`${process.env.NEXT_PUBLIC_SERVER_API}/files/${coverId}`:initialCover}
+        image={avatarId?`${process.env.NEXT_PUBLIC_SERVER_API}/files/${avatarId}`:initialCover}
         sx={{ height: 150 }}
       />
       <CardContent>
@@ -68,5 +68,5 @@ CourseDone.propTypes = {
   time: PropTypes.number.isRequired,
   lessonsCount: PropTypes.number.isRequired,
   score: PropTypes.number.isRequired,
-  coverId: PropTypes.string,
+  avatarId: PropTypes.string,
 };

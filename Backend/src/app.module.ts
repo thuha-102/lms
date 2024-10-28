@@ -15,11 +15,13 @@ import { join } from 'path';
 import { TopicModule } from './domains/topics/topics.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/http-exception.filter';
+import { AnalyticsModule } from './domains/analytics/analytics.module';
 
 @Module({
   imports: [
     PrismaModule,
     AuthModule,
+    AnalyticsModule,
     UserModule,
     CourseModule,
     TopicModule,

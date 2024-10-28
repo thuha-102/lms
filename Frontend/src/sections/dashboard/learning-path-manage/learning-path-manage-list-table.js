@@ -157,7 +157,7 @@ export const LearningPathManageListTable = (props) => {
               const isCurrent = TypeLearner.typeLearnerId === currentTypeLearner;
               // const price = numeral(TypeLearner.price).format(`${TypeLearner.currency}0,0.00`);
               // const quantityColor = TypeLearner.quantity >= 10 ? 'success' : 'error';
-              const statusColor = TypeLearner.status === 'published' ? 'success' : 'info';
+              // const statusColor = TypeLearner.status === 'published' ? 'success' : 'info';
               const hasManyVariants = TypeLearner.variants > 1;
               // const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
@@ -203,7 +203,7 @@ export const LearningPathManageListTable = (props) => {
                         variant="body2"
                         textAlign={"center"}
                       >
-                        {"Chưa có"}
+                        {TypeLearner.typeLearnerStartScore}
                       </Typography>
                     </TableCell>
                     <TableCell>
@@ -281,7 +281,20 @@ export const LearningPathManageListTable = (props) => {
                                 </Grid>
                                 <Grid
                                   item
-                                  md={10}
+                                  md={3}
+                                  xs={12}
+                                >
+                                  <TextField
+                                    defaultValue={TypeLearner.typeLearnerStartScore}
+                                    fullWidth
+                                    disabled
+                                    label="Điểm khảo sát"
+                                    name="Score"
+                                  />
+                                </Grid>
+                                <Grid
+                                  item
+                                  md={7}
                                   xs={12}
                                 >
                                   <TextField

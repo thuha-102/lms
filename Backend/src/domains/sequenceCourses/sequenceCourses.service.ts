@@ -17,7 +17,7 @@ export class SequenceCoursesService {
       where: criteria,
       select: {
         Course: {
-          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true},
+          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true, avatarId: true},
         },
       },
       orderBy: orderBy,
@@ -33,10 +33,11 @@ export class SequenceCoursesService {
             createdAt: true,
             updatedAt: true,
             name: true,
+            startScore: true,
           }
         },
         Course: {
-          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true},
+          select: { id: true, name: true, createdAt: true, updatedAt: true, description: true, totalLessons: true, amountOfTime: true, avatarId: true},
         },
       },
       orderBy: [

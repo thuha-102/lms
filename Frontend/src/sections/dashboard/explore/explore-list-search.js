@@ -17,18 +17,6 @@ const typeOptions = [
   {
     label: 'QUIZ',
     value: 'QUIZ'
-  },
-  {
-    label: 'WORD',
-    value: 'WORD'
-  },
-  {
-    label: 'CODE',
-    value: 'CODE'
-  },
-  {
-    label: 'PPT',
-    value: 'PPT'
   }
 ];
 

@@ -64,6 +64,7 @@ export class SequenceCoursesController {
           courses: sequenceCourses.map((course) => course.Course),
           typeLearnerId: typeLearner.id,
           typeLearnerName: typeLearner.name,
+          typeLearnerStartScore: typeLearner.startScore,
           createdAt: DatetimeService.formatVNTime(typeLearner.createdAt),
           updatedAt: DatetimeService.formatVNTime(typeLearner.updatedAt),
         });
@@ -89,7 +90,8 @@ export class SequenceCoursesController {
               description: c.Course.description,
               lessonsCount: c.Course.totalLessons,
               time: c.Course.amountOfTime,
-              score: i === -1 ? 0 : sequenceCoursesStudiedHistory[i].percentOfStudying * 100
+              score: i === -1 ? 0 : sequenceCoursesStudiedHistory[i].percentOfStudying * 100,
+              avatarId: c.Course.avatarId
           }
         });
         return JSON.stringify({
@@ -102,6 +104,7 @@ export class SequenceCoursesController {
       let result = [{
         typeLearnerId: sequenceCourses[0].typeLearnerId,
         typeLearnerName: sequenceCourses[0].TypeLearner.name,
+        typeLearnerStartScore: sequenceCourses[0].TypeLearner.startScore,
         createdAt: sequenceCourses[0].TypeLearner.createdAt,
         updatedAt: sequenceCourses[0].TypeLearner.updatedAt,
         courses: []
@@ -113,6 +116,7 @@ export class SequenceCoursesController {
           result = [...result, {
             typeLearnerId: c.typeLearnerId,
             typeLearnerName: c.TypeLearner.name,
+            typeLearnerStartScore: c.TypeLearner.startScore,
             createdAt: c.TypeLearner.createdAt,
             updatedAt: c.TypeLearner.updatedAt,
             courses: [c.Course]

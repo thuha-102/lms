@@ -115,7 +115,7 @@ const validationSchema = Yup.object({
   // description: Yup.string().max(5000),
   // images: Yup.array(),
   group_name: Yup.string().max(255).required(),
-  subject: Yup.string().max(255).required(),
+  // subject: Yup.string().max(255).required(),
   // preCourseId: Yup.number().min(0),
   // postCourseId: Yup.number().min(0),
   score : Yup.number().min(0).required(),
@@ -289,7 +289,7 @@ export const LearningPathCreateForm = (props) => {
                       openGroupCreateDialog={openGroupCreateDialog}
                       setOpenGroupCreateDialog={setOpenGroupCreateDialog}
                   /> */}
-                  <TextField
+                  {/* <TextField
                     error={!!(formik.touched.subject && formik.errors.subject)}
                     fullWidth
                     label="Phân loại mục tiêu"
@@ -308,7 +308,7 @@ export const LearningPathCreateForm = (props) => {
                         {option.label}
                       </MenuItem>
                     ))}
-                  </TextField>
+                  </TextField> */}
                   <TextField
                     error={!!(formik.touched.score && formik.errors.score)}
                     fullWidth
