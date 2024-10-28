@@ -58,7 +58,7 @@ export class FileService {
 
     if (file.type !== 'QUIZ') return FileDTO.fromEntity(file as any);
     else {
-      const lesson = await this.prismaService.lesson.findFirst({ where: { id: file.id }, select: { time: true } });
+      const lesson = await this.prismaService.lesson.findFirst({ where: { learningMaterialId: file.id }, select: { time: true } });
       const quiz = await this.prismaService.quiz.findMany({
         where: { id: file.id },
         select: {

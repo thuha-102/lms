@@ -151,7 +151,7 @@ const Page = () => {
                     </div>
                   </>
                 </Stack>
-                <CourseSearch isInstructor={user.accountType!=="LEARNER"} onFilter={handleFilter} />
+                <CourseSearch isInstructor={user?.accountType!=="LEARNER"} onFilter={handleFilter} />
               </Grid>
               { 
                 user.accountType === "LEARNER" && courses.length !== 0 && courses
