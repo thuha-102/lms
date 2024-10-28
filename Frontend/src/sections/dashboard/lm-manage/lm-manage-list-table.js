@@ -6,6 +6,7 @@ import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
 import Image01Icon from '@untitled-ui/icons-react/build/esm/Image01';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   Box,
   Button,
@@ -35,6 +36,7 @@ import { FileIcon } from '../../../components/file-icon';
 import { useRouter } from 'next/navigation';
 import { lm_manageApi } from '../../../api/lm-manage';
 import { paths } from '../../../paths';
+import { LearningMaterialDeleteDialog } from '../academy/learning-material-delete-dialog';
 
 const categoryOptions = [
   {
@@ -71,13 +73,14 @@ export const LMManageListTable = (props) => {
     LMs,
     LMsCount,
     rowsPerPage,
+    onDelete,
     ...other
   } = props;
   const [currentLM, setCurrentLM] = useState(null);
   const router = useRouter()
   const [state, setState] = useState(false);
 
-  const handleLMToggle = useCallback((LmId) => {
+  const handleDeleteLM = useCallback((LmId) => {
     setCurrentLM((prevLmId) => {
       if (prevLmId === LmId) {
         return null;
@@ -98,7 +101,7 @@ export const LMManageListTable = (props) => {
 
   const handleLMDelete = useCallback(async (id) => {
     try {
-      const response = await lm_manageApi.deleteLM(id);
+      // const response = await lm_manageApi.deleteLM(id);
       console.log(response)
     } catch (err){
       console.error(err);
@@ -112,6 +115,9 @@ export const LMManageListTable = (props) => {
 
   return (
     <div {...other}>
+    {
+      currentLM !== null && <LearningMaterialDeleteDialog open={currentLM} lmId={currentLM} setDeleteDialog={setCurrentLM} reloadData={onDelete}/>
+    }
       <Scrollbar>
         <Table sx={{ minWidth: 1200 }}>
           <TableHead>
@@ -121,6 +127,9 @@ export const LMManageListTable = (props) => {
               </TableCell>
               <TableCell>
                 Mô tả
+              </TableCell>
+              <TableCell>
+                Tình trạng sử dụng
               </TableCell>
               {/* <TableCell width="25%">
                 Đánh giá
@@ -228,7 +237,7 @@ export const LMManageListTable = (props) => {
                       </Typography> */}
                       <Stack space={3}>
                         <Typography variant="subtitle2">
-                          Loại hình: {LM.type} 
+                          {LM.type} 
                         </Typography>
                         {/* <Typography variant="subtitle2">
                           Thời gian: {LM.time} phút
@@ -250,185 +259,22 @@ export const LMManageListTable = (props) => {
                         {LM.rating}
                       </Typography>
                     </TableCell> */}
+                    <TableCell>
+                      <Typography>
+                        {LM.usedCount === 0 ? "Không được sử dụng" : "Đang được sử dụng"}
+                      </Typography>
+                    </TableCell>
                     <TableCell align="right">
-                      <IconButton onClick={() => handleLMToggle(LM.id)}   >
-                        <SvgIcon>
-                          <DotsHorizontalIcon />
+                      <IconButton onClick={() => setCurrentLM(LM.id)} disabled={LM.usedCount !== 0}>
+                        <SvgIcon
+                          color={LM.usedCount !== 0 ? 'disabled' :'error'}
+                        >
+                          <DeleteIcon />
                         </SvgIcon>
                       </IconButton>
                     </TableCell>
                   </TableRow>
-                  {isCurrent && (
-                    <TableRow>
-                      <TableCell
-                        colSpan={7}
-                        sx={{
-                          p: 0,
-                          position: 'relative',
-                          '&:after': {
-                            position: 'absolute',
-                            content: '" "',
-                            top: 0,
-                            left: 0,
-                            backgroundColor: 'primary.main',
-                            width: 3,
-                            height: 'calc(100% + 1px)'
-                          }
-                        }}
-                      >
-                        <CardContent>
-                          <Grid
-                            container
-                            spacing={3}
-                          >
-                            <Grid
-                              item
-                              md={3}
-                              xs={12}
-                            >
-                              <Typography variant="h6">
-                                Thông tin cơ bản
-                              </Typography>
-                              <Divider sx={{ my: 2 }} />
-                              <Grid
-                                container
-                                spacing={3}
-                              >
-                                <Grid
-                                  item
-                                  md={12}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    defaultValue={LM.name}
-                                    fullWidth
-                                    label="Tên tài liệu học"
-                                    name="name"
-                                  />
-                                </Grid>
-                                {/* <Grid
-                                  item
-                                  md={6}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    defaultValue={LM.category}
-                                    fullWidth
-                                    label="Loại hình"
-                                    select
-                                  >
-                                    {categoryOptions.map((option) => (
-                                      <MenuItem
-                                        key={option.value}
-                                        value={option.value}
-                                        >
-                                        {option.label}
-                                      </MenuItem>
-                                    ))}
-                                  </TextField>
-                                </Grid> */}
-                              </Grid>
-                            </Grid>
-                            <Grid
-                              item
-                              md={9}
-                              xs={12}
-                            >
-                              <Typography variant="h6">
-                                Mô tả
-                              </Typography>
-                              <Divider sx={{ my: 2 }} />
-                              <Grid
-                                container
-                                spacing={3}
-                              >
-                                <Grid
-                                  item
-                                  md={4}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    defaultValue={LM.type}
-                                    fullWidth
-                                    label="Loại hình"
-                                    name="type"
-                                    select
-                                  >
-                                    {categoryOptions.map((option) => (
-                                      <MenuItem
-                                        key={option.value}
-                                        value={option.value}
-                                        >
-                                        {option.label}
-                                      </MenuItem>
-                                    ))}
-                                  </TextField>
-                                </Grid>
-                                <Grid
-                                  item
-                                  md={4}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    defaultValue={LM.time}
-                                    fullWidth
-                                    label="Thời gian"
-                                    name="time"
-                                    disabled
-                                    InputProps={{
-                                      startAdornment: (
-                                        <InputAdornment position="start">
-                                          {LM.time}
-                                        </InputAdornment>
-                                      )
-                                    }}
-                                    type="number"
-                                  />
-                                </Grid>
-                              </Grid>
-                            </Grid>
-                          </Grid>
-                        </CardContent>
-                        <Divider />
-                        <Stack
-                          alignItems="center"
-                          direction="row"
-                          justifyContent="space-between"
-                          sx={{ p: 2 }}
-                        >
-                          <Stack
-                            alignItems="center"
-                            direction="row"
-                            spacing={2}
-                          >
-                            <Button
-                              onClick={handleLMUpdate}
-                              type="submit"
-                              variant="contained"
-                            >
-                              Cập nhật
-                            </Button>
-                            <Button
-                              color="inherit"
-                              onClick={handleLMClose}
-                            >
-                              Đóng
-                            </Button>
-                          </Stack>
-                          <div>
-                            <Button
-                              onClick={() => handleLMDelete(LM.id)}
-                              color="error"
-                              type="submit"
-                              variant="contained"
-                            >
-                              Xoá vĩnh viễn
-                            </Button>
-                          </div>
-                        </Stack>
-                      </TableCell>
-                    </TableRow>
-                  )}
+                  
                 </Fragment>
               );
             })}

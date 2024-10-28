@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
   HttpCode,
@@ -128,8 +129,14 @@ export class FileController {
   }
 
   @Get('')
-  async getAll(@Query() query?: { name: string; type: string }) {
+  async getAll(@Query() query?: { name: string; type: string; used: string}) {
     return this.fileService.getAll(query);
+  }
+
+  @Delete(":id")
+  @HttpCode(204)
+  async detele(@Param('id', ParseIntPipe) id: number){
+    return this.fileService.delete(id)
   }
 
   @Get('no-used')

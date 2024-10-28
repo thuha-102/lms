@@ -34,13 +34,17 @@ const typeOptions = [
 
 const statusOptions = [
   {
-    label: 'Được sử dụng',
+    label: 'Cả hai',
+    value: 'all'
+  },
+  {
+    label: 'Đang được sử dụng',
     value: 'inUsed'
   },
   {
     label: 'Không được sử dụng',
     value: 'noUsed'
-  }
+  },
 ];
 
 const stockOptions = [
@@ -69,6 +73,7 @@ export const LMManageListSearch = (props) => {
       name: undefined,
       type: [],
       topicId: [],
+      used: undefined,
       inStock: undefined
     };
 
@@ -84,6 +89,9 @@ export const LMManageListSearch = (props) => {
           break;
         case 'topicId':
           filters.topicId.push(chip.value);
+          break;
+        case 'used':
+          filters.used = chip.value;
           break;
         case 'inStock':
           // The value can be "available" or "outOfStock" and we transform it to a boolean
@@ -137,6 +145,8 @@ export const LMManageListSearch = (props) => {
         return found;
       });
 
+      console.log("newChip", newChips)
+
       // Nothing changed
       if (values.length === valuesFound.length) {
         return newChips;
@@ -148,7 +158,7 @@ export const LMManageListSearch = (props) => {
 
           newChips.push({
             // label: 'Type',
-            // field: 'type',
+            field: 'type',
             value,
             displayValue: option.label
           });
@@ -161,40 +171,28 @@ export const LMManageListSearch = (props) => {
 
   const handleStatusChange = useCallback((values) => {
     setChips((prevChips) => {
-      const valuesFound = [];
-
       // First cleanup the previous chips
-      const newChips = prevChips.filter((chip) => {
-        if (chip.field !== 'topicId') {
-          return true;
-        }
+      const newChips = prevChips.filter((chip) => chip.field !== 'used');
+      const latestValue = values[values.length - 1];
 
-        const found = values.includes(chip.value);
-
-        if (found) {
-          valuesFound.push(chip.value);
-        }
-
-        return found;
-      });
-
-      // Nothing changed
-      if (values.length === valuesFound.length) {
-        return newChips;
-      }
-
-      values.forEach((value) => {
-        if (!valuesFound.includes(value)) {
-          const option = statusOptions.find((option) => option.value === value);
-
+      switch (latestValue) {
+        case 'inUsed':
           newChips.push({
-            // label: 'Usage',
-            // field: 'topicId',
-            value,
-            displayValue: option.label
+            field: 'used',
+            value: 'inUsed',
+            displayValue: 'Đang được sử dụng'
           });
-        }
-      });
+          break;
+        case 'noUsed':
+          newChips.push({
+            field: 'used',
+            value: 'noUsed',
+            displayValue: 'Không được sử dụng'
+          });
+          break;
+        default:
+          break;
+      }
 
       return newChips;
     });
@@ -237,13 +235,24 @@ export const LMManageListSearch = (props) => {
   }, []);
 
   // We memoize this part to prevent re-render issues
-  const typeValues = useMemo(() => chips
+  const typeValues = useMemo(() => {
+    const values = chips
     .filter((chip) => chip.field === 'type')
-    .map((chip) => chip.value), [chips]);
+    .map((chip) => chip.value)
+    return values
+  }, [chips]);
 
-  const statusValues = useMemo(() => chips
-    .filter((chip) => chip.field === 'topicId')
-    .map((chip) => chip.value), [chips]);
+  const statusValues = useMemo(() => {
+    const values = chips
+    .filter((chip) => chip.field === 'used')
+    .map((chip) => chip.value)
+
+    if (values.length === 0) {
+      values.unshift('all');
+    }
+
+    return values;
+  }, [chips]);
 
   const stockValues = useMemo(() => {
     const values = chips
@@ -306,11 +315,6 @@ export const LMManageListSearch = (props) => {
                     }}
                   >
                     <>
-                        {/* <span>
-                          {chip.label}
-                        </span>
-                      :
-                      {' '} */}
                       {chip.displayValue || chip.value}
                     </>
                   </Box>
@@ -345,12 +349,12 @@ export const LMManageListSearch = (props) => {
           options={typeOptions}
           value={typeValues}
         />
-        {/* <MultiSelect
+        <MultiSelect
           label="Tình trạng sử dụng"
           onChange={handleStatusChange}
           options={statusOptions}
           value={statusValues}
-        /> */}
+        />
         {/* <MultiSelect
           label="Stock"
           onChange={handleStockChange}

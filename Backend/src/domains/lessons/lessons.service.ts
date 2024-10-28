@@ -43,7 +43,7 @@ export class LessonService {
     return await this.prismaService.$transaction(async (tx) => {
       const lesson = await tx.lesson.findFirst({ where: { id }, select: { title: true } });
       const lm = await tx.learningMaterial.create({
-        data: { Lesson: connectRelation(id), name: lesson.title, type: 'QUIZ' },
+        data: { Lesson: connectRelation(id), name: lesson.title, type: 'QUIZ', usedCount: 1 },
         select: { id: true },
       });
 

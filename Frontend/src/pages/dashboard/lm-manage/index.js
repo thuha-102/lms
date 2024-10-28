@@ -28,6 +28,7 @@ const useSearch = () => {
     filters: {
       name: undefined,
       type: [],
+      used: 'all'
     },
     page: 0,
     rowsPerPage: 5
@@ -38,7 +39,7 @@ const useSearch = () => {
     updateSearch: setSearch
   };
 };
-const useLMs = (search) => {
+const useLMs = (search, deleteSucess) => {
   const isMounted = useMounted();
   const [state, setState] = useState({
     LMs: [],
@@ -49,52 +50,8 @@ const useLMs = (search) => {
     try {
       // const response = await lm_manageApi.getLMs(search);
       console.log(search)
-      const response = await lm_manageApi.getLMs(search.name, search.filters.type);
+      const response = await lm_manageApi.getLMs(search.name, search.filters.type, search.filters.used);
       let data = response.data;
-      // if (typeof search.filters !== 'undefined') {
-      //   data = data.filter((lm) => {
-      //     if (typeof search.name !== 'undefined' && search.name !== '') {
-      //       const nameMatched = lm.name.toLowerCase().includes(search.name.toLowerCase());
-  
-      //       if (!nameMatched) {
-      //         return false;
-      //       }
-      //     }
-  
-      //     // It is possible to select multiple type options
-      //     if (typeof search.filters.type !== 'undefined' && search.filters.type.length > 0) {
-      //       const categoryMatched = search.filters.type.includes(lm.type);
-  
-      //       if (!categoryMatched) {
-      //         return false;
-      //       }
-      //     }
-  
-      //     // It is possible to select multiple topicId options
-      //     if (typeof search.filters.topicId !== 'undefined' && search.filters.topicId.length > 0) {
-      //       const statusMatched = search.filters.topicId.includes(lm.topicId);
-  
-      //       if (!statusMatched) {
-      //         return false;
-      //       }
-      //     }
-  
-      //     // Present only if filter required
-      //     if (typeof search.filters.inStock !== 'undefined') {
-      //       const stockMatched = lm.inStock === search.filters.inStock;
-  
-      //       if (!stockMatched) {
-      //         return false;
-      //       }
-      //     }
-  
-      //     return true;
-      //   });
-      // }
-  
-      // if (typeof search.page !== 'undefined' && typeof search.rowsPerPage !== 'undefined') {
-      //   data = applyPagination(data, search.page, search.rowsPerPage);
-      // }
 
       if (isMounted()) {
         setState({
@@ -111,14 +68,15 @@ const useLMs = (search) => {
       getLMs();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [search]);
+    [search, deleteSucess]);
 
   return state;
 };
 
 const LMList = () => {
   const { search, updateSearch } = useSearch();
-  const { LMs, LMsCount } = useLMs(search);
+  const [deleteSucess, setDeleteSuccess] = useState(false)
+  const { LMs, LMsCount } = useLMs(search, deleteSucess);
 
   usePageView();
 
@@ -151,6 +109,10 @@ const LMList = () => {
       rowsPerPage: parseInt(event.target.value, 10)
     }));
   }, [updateSearch]);
+
+  const handleDeleteLM = useCallback((lmId) => {
+    setDeleteSuccess(lmId)
+  }, [])
 
   return (
     <>
@@ -196,7 +158,7 @@ const LMList = () => {
                   </Link>
                 </Breadcrumbs>
               </Stack>
-              <Stack
+              {/* <Stack
                 alignItems="center"
                 direction="row"
                 spacing={3}
@@ -214,13 +176,14 @@ const LMList = () => {
                 >
                   Thêm tài liệu học tập
                 </Button>
-              </Stack>
+              </Stack> */}
             </Stack>
             <Card>
               <LMManageListSearch onFiltersChange={handleFiltersChange} onSearchChange={handleSearchChange}/>
               <LMManageListTable
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
+                onDelete={handleDeleteLM}
                 page={search.page}
                 LMs={LMs}
                 LMsCount={LMsCount}
