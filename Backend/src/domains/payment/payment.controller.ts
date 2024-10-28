@@ -13,7 +13,6 @@ export class PaymentController {
 
   @Post('bank-account')
   async createBankAccount(@Body() body: {bankName: string, bankAccount: string}){
-    console.log(body)
     return await this.paymentService.createBankAccount(body.bankAccount, body.bankName);
   }
 
