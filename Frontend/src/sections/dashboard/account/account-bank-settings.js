@@ -118,7 +118,11 @@ export const BankSettings = (props) => {
                     >
                     <Stack spacing={3}>
                         { 
-                            !bank && <Stack direction={'row'} justifyContent={'flex-end'}>
+                            !bank && 
+                            <Stack direction={'row'} justifyContent={'space-between'}>
+                                <Typography variant='subtitle2'>
+                                    Tài khoản thêm vào là tài khoản ảo được cung cấp bởi SePay
+                                </Typography>
                                 <Button
                                     variant='contained'
                                     onClick={handleCreateBankAccount}
