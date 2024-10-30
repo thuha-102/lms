@@ -54,6 +54,18 @@ class UserApi {
   deleteUser(userId){
     return axios.delete(`${apiUrl}/${userId}`)
   }
+
+  rateCourse(userId, request) {
+    return axios.put(`${apiUrl}/${userId}/rating-course`, request);
+  }
+
+  rateSequenceCourse(userId, request) {
+    return axios.put(`${apiUrl}/${userId}/rating-sequence-course`, request);
+  }
+  
+  rateChatbot(userId, request) {
+    return axios.put(`${apiUrl}/${userId}/rating-chatbot`, request);
+  }
 }
 
 export const userApi = new UserApi();

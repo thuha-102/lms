@@ -8,6 +8,7 @@ import { useAuth } from "../../hooks/use-auth"
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import { FinalRating } from "./final-rating";
 import { styled } from '@mui/material/styles';
+import { userApi } from "../../api/user";
 
 const StyledRating = styled(Rating)(({ theme }) => ({
   '& .MuiRating-iconFilled': {
@@ -121,8 +122,31 @@ export const ChatbotDrawer = (props) => {
   }, [onUpdate]);
 
   const HandelSubmitRating = useCallback(async (data) => {
-    
-  }, []);
+    try {
+      switch (data.type) {
+        case "course":
+          await userApi.rateCourse(user.id, {
+            courseid: data.courseid,
+            rating: data.rating,
+            comment: data.comment !== "" ? data.comment : undefined,
+          })
+          handleFieldUpdate("chatContent", [...values.chatContent.slice(0, data.i), ...values.chatContent.slice(data.i+1)]);
+        case "sequenceCourse":
+          await userApi.rateSequenceCourse(user.id, {
+            rating: data.rating,
+            comment: data.comment !== "" ? data.comment : undefined,
+          })
+          handleFieldUpdate("chatContent", [...values.chatContent.slice(0, data.i), ...values.chatContent.slice(data.i+1)]);
+        case "chatbot":
+          await userApi.rateChatbot(user.id, {
+            rating: data.rating
+          })
+          handleFieldUpdate("chatContent", [...values.chatContent.slice(0, data.i), {...data.mess, rating: undefined}, ...values.chatContent.slice(data.i+1)]);
+      }
+    } catch (e) {
+      console.error(e);
+    };
+  }, [values.chatContent]);
 
   return (
     <Drawer
@@ -255,7 +279,7 @@ export const ChatbotDrawer = (props) => {
             >
               {values.chatContent.map((mess, i) => 
                 mess.content === "rating" 
-                ? <FinalRating title={mess.title} description={mess.description} onSubmit={() => HandelSubmitRating(mess)}/>
+                ? <FinalRating title={mess.title} description={mess.description} courseId={mess.courseId} i={i} onSubmit={HandelSubmitRating}/>
                 : <Stack key={i}>
                   {mess.bot_id && <Typography variant="body1" fontSize={14} color="primary.main">Chatbot</Typography>}
                   <Stack 
@@ -276,7 +300,12 @@ export const ChatbotDrawer = (props) => {
                   {mess.rating !== undefined && <StyledRating
                     value={mess.rating}
                     onChange={(_, newValue) => {
-                      handleFieldUpdate("chatContent", [...values.chatContent.slice(0, i), {...mess, rating: newValue}, ...values.chatContent.slice(i+1)]);
+                      HandelSubmitRating({
+                        type: "chatbot",
+                        rating: newValue,
+                        i: i,
+                        mess: mess
+                      })
                     }}
                     precision={1}
                     sx={{mb:2}}

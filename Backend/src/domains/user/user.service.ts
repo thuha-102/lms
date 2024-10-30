@@ -165,21 +165,11 @@ export class UserService {
           select: { courseId: true, order: true },
         });
 
-        if (sequenceCourse.length !== 0 && updatePercent - course.passPercent >= 0) {
-          let nextCourseId = -1;
-          for (let i = 1; i < sequenceCourse.length + 1; i++) {
-            if (sequenceCourse[i - 1].courseId === course.id) {
-              nextCourseId = sequenceCourse[i].courseId;
-              break;
-            }
-          }
-
-          if (result.ratingCourse) {
-            // Check end of sequenceCourse
-            if (nextCourseId === sequenceCourse.length) {
-              result.ratingSequenceCourse = {
-                typeLearnerId: learner.typeLearnerId,
-              }
+        if (result.ratingCourse) {
+          // Check end of sequenceCourse
+          if (course.id === sequenceCourse[sequenceCourse.length - 1].courseId) {
+            result.ratingSequenceCourse = {
+              typeLearnerId: learner.typeLearnerId,
             }
           }
         }

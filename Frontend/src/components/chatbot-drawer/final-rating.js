@@ -63,9 +63,10 @@ const customIcons = {
   }
   
 export const FinalRating = (props) => {
-  const { title, description, onSubmit } = props;
+  const { title, description, onSubmit, courseId, i } = props;
   const [value, setValue] = React.useState(null);
   const [hover, setHover] = React.useState(null);
+  const [comment, setComment] = React.useState("");
 
   return (
     <Box
@@ -100,7 +101,7 @@ export const FinalRating = (props) => {
                 precision={1}
                 getLabelText={getLabelText}
                 onChange={(_, newValue) => {
-                    setValue(newValue);
+                  setValue(newValue);
                 }}
                 onChangeActive={(_, newHover) => {
                     setHover(newHover);
@@ -115,8 +116,16 @@ export const FinalRating = (props) => {
                 placeholder="Để lại nhận xét..." 
                 variant="outlined"
                 sx = {{ width: '100%', mt: 2 }}
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
             />
-            <Button sx={{ mt: 2  }} variant="contained" disabled={value === null} onClick={onSubmit}>
+            <Button sx={{ mt: 2  }} variant="contained" disabled={value === null} onClick={() => onSubmit({
+              type: courseId === undefined ? 'sequenceCourse' : 'course',
+              rating: value,
+              comment: comment,
+              courseId: courseId, 
+              i: i
+            })}>
               Hoàn thành
             </Button>
         </CardContent>
@@ -129,5 +138,6 @@ FinalRating.propTypes = {
   // @ts-ignore
   title: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func,
+  courseId: PropTypes.number
 };
