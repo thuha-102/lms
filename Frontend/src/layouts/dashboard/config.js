@@ -10,6 +10,7 @@ import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import CodeOutlinedIcon from '@mui/icons-material/CodeOutlined';
 import ModelTrainingOutlinedIcon from '@mui/icons-material/ModelTrainingOutlined';
+import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import QuizOutlinedIcon from '@mui/icons-material/QuizOutlined';
@@ -170,6 +171,15 @@ export const getSections = (t, accountType) => [
   accountType === "ADMIN" && {
     subheader: t(tokens.nav.admin),
     items: [
+      {
+        title: t(tokens.nav.receipt_manage),
+        path: paths.dashboard.receipt_manage,
+        icon: (
+          <SvgIcon fontSize="small">
+            <ReceiptLongIcon />
+          </SvgIcon>
+        )
+      },
       {
         title: t(tokens.nav.lm_manage),
         path: paths.dashboard.lm_manage,

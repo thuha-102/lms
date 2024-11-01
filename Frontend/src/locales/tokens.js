@@ -73,6 +73,7 @@ export const tokens = {
     socialMedia: 'nav.socialMedia',
     verifyCode: 'nav.verifyCode',
     lm_manage: 'nav.lm_manage',
+    receipt_manage: 'nav.receipt_manage',
     topic_manage: 'nav.topic_manage',
     learning_path_manage: 'nav.learning_path_manage',
     account_manage: 'nav.account_manage',

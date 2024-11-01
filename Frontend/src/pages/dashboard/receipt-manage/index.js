@@ -13,22 +13,20 @@ import {
   SvgIcon,
   Typography
 } from '@mui/material';
-import { lm_manageApi } from '../../../api/lm-manage';
 import { BreadcrumbsSeparator } from '../../../components/breadcrumbs-separator';
 import { useMounted } from '../../../hooks/use-mounted';
 import { usePageView } from '../../../hooks/use-page-view';
 import { Layout as DashboardLayout } from '../../../layouts/dashboard';
 import { paths } from '../../../paths';
-import { LMManageListSearch } from '../../../sections/dashboard/lm-manage/lm-manage-list-search';
-import { LMManageListTable } from '../../../sections/dashboard/lm-manage/lm-manage-list-table';
-import { applyPagination } from '../../../utils/apply-pagination';
+import { ReceiptManageListSearch } from '../../../sections/dashboard/receipt-manage/receipt-manage-list-search';
+import { ReceiptManageListTable } from '../../../sections/dashboard/receipt-manage/receipt-manage-list-table';
+import { paymentApi } from '../../../api/payment';
 
 const useSearch = () => {
   const [search, setSearch] = useState({
     filters: {
-      name: undefined,
-      type: [],
-      used: undefined,
+      learnerName: undefined,
+      isPayment: undefined,
     },
     page: 0,
     rowsPerPage: 5
@@ -39,44 +37,41 @@ const useSearch = () => {
     updateSearch: setSearch
   };
 };
-const useLMs = (search, deleteSucess) => {
+
+const useReceipts = (search, reload) => {
   const isMounted = useMounted();
   const [state, setState] = useState({
-    LMs: [],
-    LMsCount: 0
+    Receipts: [],
+    ReceiptsCount: 0
   });
 
-  const getLMs = useCallback(async () => {
+  const getReceipts = useCallback(async () => {
     try {
-      // const response = await lm_manageApi.getLMs(search);
-      console.log(search)
-      const response = await lm_manageApi.getLMs(search.name, search.filters.type, search.filters.used);
-      let data = response.data;
-
-      if (isMounted()) {
+        const response = await paymentApi.getReceipts(search.learnerName, search.filters.isPayment?.length !== 0 ? search.filters.isPayment : undefined);
+        
+        if (isMounted()) {
         setState({
-          LMs: data,
-          LMsCount: data.length
+            Receipts: response.data,
+            ReceiptsCount: response.data.length
         });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [search, isMounted]);
+        }
+        } catch (err) {
+            console.error(err);
+        }
+    }, [search, isMounted]);
 
-  useEffect(() => {
-      getLMs();
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [search, deleteSucess]);
+    useEffect(() => {
+        getReceipts();
+        },
+    [search, reload]);
 
-  return state;
+    return state;
 };
 
-const LMList = () => {
+const ReceiptList = () => {
   const { search, updateSearch } = useSearch();
-  const [deleteSucess, setDeleteSuccess] = useState(false)
-  const { LMs, LMsCount } = useLMs(search, deleteSucess);
+  const [ reload, setReload] = useState(false);
+  const { Receipts, ReceiptsCount } = useReceipts(search, reload);
 
   usePageView();
 
@@ -87,13 +82,13 @@ const LMList = () => {
     }));
   }, [updateSearch]);
 
-  const handleSearchChange = useCallback((name) => {
-    updateSearch((prevState) => {
-      return {
-        ...prevState,
-        name
+  const handleSearchChange = useCallback((learnerName) => {
+    updateSearch((prevState) => ({
+      ...prevState,
+      ...{
+        learnerName
       }
-  });
+    }));
   }, [updateSearch]);
 
   const handlePageChange = useCallback((event, page) => {
@@ -110,15 +105,11 @@ const LMList = () => {
     }));
   }, [updateSearch]);
 
-  const handleDeleteLM = useCallback((lmId) => {
-    setDeleteSuccess(lmId)
-  }, [])
-
   return (
     <>
       <Head>
         <title>
-          Quản lý tài liệu học tập
+          Quản lý đơn hàng
         </title>
       </Head>
       <Box
@@ -137,7 +128,7 @@ const LMList = () => {
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                  Quản lý tài liệu học tập
+                  Quản lý đơn hàng
                 </Typography>
                 <Breadcrumbs separator={<BreadcrumbsSeparator />}>
                   <Link
@@ -151,42 +142,23 @@ const LMList = () => {
                   <Link
                     color="text.primary"
                     component={NextLink}
-                    href={paths.dashboard.lm_manage}
+                    href={paths.dashboard.receipt_manage}
                     variant="subtitle2"
                   >
-                    Quản lý tài liệu học tập
+                    Quản lý đơn hàng
                   </Link>
                 </Breadcrumbs>
               </Stack>
-              {/* <Stack
-                alignItems="center"
-                direction="row"
-                spacing={3}
-              >
-                <Button
-                  component={NextLink}
-                  // Thay đổi đường dẫn để lưu vào db
-                  href={`${paths.dashboard.lm_manage}/create`}
-                  startIcon={(
-                    <SvgIcon>
-                      <PlusIcon />
-                    </SvgIcon>
-                  )}
-                  variant="contained"
-                >
-                  Thêm tài liệu học tập
-                </Button>
-              </Stack> */}
             </Stack>
             <Card>
-              <LMManageListSearch onFiltersChange={handleFiltersChange} onSearchChange={handleSearchChange}/>
-              <LMManageListTable
+              <ReceiptManageListSearch onFiltersChange={handleFiltersChange} onSearchChange={handleSearchChange}/>
+              <ReceiptManageListTable
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
-                onDelete={handleDeleteLM}
+                onRegisterReceipt={setReload}
                 page={search.page}
-                LMs={LMs}
-                LMsCount={LMsCount}
+                Receipts={Receipts}
+                ReceiptsCount={ReceiptsCount}
                 rowsPerPage={search.rowsPerPage}
               />
             </Card>
@@ -197,10 +169,10 @@ const LMList = () => {
   );
 };
 
-LMList.getLayout = (page) => (
+ReceiptList.getLayout = (page) => (
   <DashboardLayout>
     {page}
   </DashboardLayout>
 );
 
-export default LMList;
+export default ReceiptList;

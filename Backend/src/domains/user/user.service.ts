@@ -275,4 +275,18 @@ export class UserService {
       data: data
     })
   }
+
+  async registerAdmin(receiptId: number){
+    await this.prismaService.$transaction(async (tx) => {
+      const receipt = await tx.receipt.findFirst({where: {id: receiptId}, select: {learnerId: true, Course: {select: {id: true}}}});
+      const learnerId = receipt.learnerId
+  
+      const prosmiseRegister = receipt.Course.map(course => tx.registerCourse.create({data: {Learner: connectRelation(learnerId), Course: connectRelation(course.id)}}))
+  
+      await Promise.all(prosmiseRegister)
+
+      await tx.receipt.update({where: {id: receiptId}, data: {isPayment: true}})
+    })
+    return;
+  }
 }

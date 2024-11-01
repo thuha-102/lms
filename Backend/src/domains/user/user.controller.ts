@@ -70,6 +70,11 @@ export class UserController {
     return await this.userService.update(id, body);
   }
 
+  @Post('register-admin')
+  async registerAdmin(@Body() body: {receiptId: number}){
+    return await this.userService.registerAdmin(body.receiptId);
+  }
+
   @Post(':id/register/:courseId')
   async registerCourse(@Param('id', ParseIntPipe) id: number, @Param('courseId', ParseIntPipe) courseId: number) {
     return await this.userService.registerCourse(id, courseId);

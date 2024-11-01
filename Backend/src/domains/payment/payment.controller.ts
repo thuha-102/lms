@@ -3,6 +3,7 @@ import { PaymentService } from './payment.service';
 import { ReceiptREQ } from './request/receipt.request';
 import { PaymentConfirmREQ } from './request/payment-confrim.request';
 import { PaymentGateway } from 'src/services/payment-socket';
+import { query } from 'express';
 
 @Controller('payment')
 export class PaymentController {
@@ -26,6 +27,11 @@ export class PaymentController {
   @Get('bank-account')
   async getAccountBank() {
     return await this.paymentService.getAccountBank();
+  }
+
+  @Get('receipt')
+  async getListPayments(@Query() query: {learnerName: string, isPayment: string}) {
+    return await this.paymentService.findAll((query.learnerName || query.isPayment) ? query : undefined);
   }
 
   @Get(':id')

@@ -66,6 +66,10 @@ class UserApi {
   rateChatbot(userId, request) {
     return axios.put(`${apiUrl}/${userId}/rating-chatbot`, request);
   }
+
+  registerAdmin(receiptId){
+    return axios.post(`${apiUrl}/register-admin`, {receiptId: receiptId})
+  }
 }
 
 export const userApi = new UserApi();
