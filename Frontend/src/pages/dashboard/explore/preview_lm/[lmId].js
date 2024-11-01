@@ -327,13 +327,14 @@ const PreviewLM = (props) => {
 
   const createFileLog = async (lessonId, user) => {
     try {
-      const response = await learning_logApi.createLog(user.id, {
-        // rating: valueRating,
-        // time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        // attempts: 1,
-        lessonId: lessonId,
-      });
-      console.log(response);
+      await learning_logApi.createLog(user.id, lessonId 
+        // ,{
+        // // rating: valueRating,
+        // // time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
+        // // attempts: 1,
+        
+        // }
+      );
 
     } catch (err) {
       console.error(err);
@@ -359,7 +360,7 @@ const PreviewLM = (props) => {
       }
     } catch (err) {
       console.error(err);
-    }}, [valueRating]);
+    }}, [lm]);
 
   useEffect(() => {
     try {
@@ -457,13 +458,13 @@ const PreviewLM = (props) => {
                                         user={user}/> : <></>
               }
             <Card>
-              {lm.type === "VIDEO" || lm.type === "PDF" 
+              {/* {lm.type === "VIDEO" || lm.type === "PDF" 
                 ?<LmRating 
                 value={valueRating} 
                 setValue={setValueRating} 
                 hover={hoverRating} 
                 setHover={setHoverRating}
-              /> : <></>}
+              /> : <></>} */}
             </Card>
           </Stack>
         </Container>
