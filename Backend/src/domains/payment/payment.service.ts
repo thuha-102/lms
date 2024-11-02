@@ -4,6 +4,8 @@ import { PrismaService } from 'src/services/prisma/prisma.service';
 import { leanObject } from 'src/shared/prisma.helper';
 import { ReceiptREQ } from './request/receipt.request';
 import { UserService } from '../user/user.service';
+import { Prisma } from '@prisma/client';
+import { ReceiptDTO } from './DTO/receipt.dto';
 
 @Injectable()
 export class PaymentService {
@@ -64,5 +66,16 @@ export class PaymentService {
     catch(error){
       return error
     }
+  }
+
+  async findAll(query: {learnerName: string, isPayment: string}){
+    const condition: Prisma.ReceiptFindManyArgs['where'] = query ? {isPayment: query.isPayment === 'true' ? true : false, Learner: query.learnerName ? {User: {username: query.learnerName }} : undefined} : undefined
+
+    const receipt = await this.prismaService.receipt.findMany({
+      where: condition,
+      select: ReceiptDTO.selectField()
+    })
+
+    return receipt.map(receipt => ReceiptDTO.fromEntity(receipt))
   }
 }

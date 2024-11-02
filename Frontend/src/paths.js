@@ -152,6 +152,7 @@ export const paths = {
       profile: '/dashboard/social/profile',
       feed: '/dashboard/social/feed'
     },
+    receipt_manage: '/dashboard/receipt-manage',
     topic_manage: '/dashboard/topic-manage',
     lm_manage: '/dashboard/lm-manage',
     learning_path_manage: '/dashboard/learning-path-manage',

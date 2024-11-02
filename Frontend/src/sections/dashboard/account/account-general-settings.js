@@ -98,65 +98,15 @@ export const AccountGeneralSettings = (props) => {
               md={8}
             >
               <Stack spacing={3}>
-                {/* <Stack
-                  alignItems="center"
-                  direction="row"
-                  spacing={2}
-                >
-                  <Box
-                    sx={{
-                      borderColor: 'neutral.300',
-                      borderRadius: '50%',
-                      borderStyle: 'dashed',
-                      borderWidth: 1,
-                      p: '4px'
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        borderRadius: '50%',
-                        height: '100%',
-                        width: '100%',
-                        position: 'relative'
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          alignItems: 'center',
-                          backgroundColor: (theme) => alpha(theme.palette.neutral[700], 0.5),
-                          borderRadius: '50%',
-                          color: 'common.white',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          height: '100%',
-                          justifyContent: 'center',
-                          left: 0,
-                          opacity: 0,
-                          position: 'absolute',
-                          top: 0,
-                          width: '100%',
-                          zIndex: 1,
-                          '&:hover': {
-                            opacity: 1
-                          }
-                        }}
-                      >
-                        
-                      </Box>
-                      <Avatar
-                        src={avatar}
-                        sx={{
-                          height: 100,
-                          width: 100
-                        }}
-                      >
-                        <SvgIcon>
-                          <User01Icon />
-                        </SvgIcon>
-                      </Avatar>
-                    </Box>
-                  </Box>
-                </Stack> */}
+                <Stack spacing={2} direction={'row'}>
+                  <TextField
+                    label='ID'
+                    fullWidth
+                    disabled={true}
+                    value={user.id}
+                  />
+                  <Button disabled={true}/>
+                </Stack>
                 <Stack
                   alignItems="center"
                   direction="row"

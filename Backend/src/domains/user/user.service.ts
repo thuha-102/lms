@@ -165,21 +165,11 @@ export class UserService {
           select: { courseId: true, order: true },
         });
 
-        if (sequenceCourse.length !== 0 && updatePercent - course.passPercent >= 0) {
-          let nextCourseId = -1;
-          for (let i = 1; i < sequenceCourse.length + 1; i++) {
-            if (sequenceCourse[i - 1].courseId === course.id) {
-              nextCourseId = sequenceCourse[i].courseId;
-              break;
-            }
-          }
-
-          if (result.ratingCourse) {
-            // Check end of sequenceCourse
-            if (nextCourseId === sequenceCourse.length) {
-              result.ratingSequenceCourse = {
-                typeLearnerId: learner.typeLearnerId,
-              }
+        if (result.ratingCourse) {
+          // Check end of sequenceCourse
+          if (course.id === sequenceCourse[sequenceCourse.length - 1].courseId) {
+            result.ratingSequenceCourse = {
+              typeLearnerId: learner.typeLearnerId,
             }
           }
         }
@@ -284,5 +274,19 @@ export class UserService {
       },
       data: data
     })
+  }
+
+  async registerAdmin(receiptId: number){
+    await this.prismaService.$transaction(async (tx) => {
+      const receipt = await tx.receipt.findFirst({where: {id: receiptId}, select: {learnerId: true, Course: {select: {id: true}}}});
+      const learnerId = receipt.learnerId
+  
+      const prosmiseRegister = receipt.Course.map(course => tx.registerCourse.create({data: {Learner: connectRelation(learnerId), Course: connectRelation(course.id)}}))
+  
+      await Promise.all(prosmiseRegister)
+
+      await tx.receipt.update({where: {id: receiptId}, data: {isPayment: true}})
+    })
+    return;
   }
 }

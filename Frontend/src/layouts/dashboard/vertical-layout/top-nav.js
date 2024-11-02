@@ -8,11 +8,13 @@ import { LanguageSwitch } from '../language-switch';
 import { NotificationsButton } from '../notifications-button';
 import { SearchButton } from '../search-button';
 import { CartButton } from '../cart-button';
+import { useAuth } from '../../../hooks/use-auth';
 
 const TOP_NAV_HEIGHT = 64;
 const SIDE_NAV_WIDTH = 280;
 
 export const TopNav = (props) => {
+  const {user} = useAuth();
   const { onMobileNavOpen, ...other } = props;
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
 
@@ -63,9 +65,9 @@ export const TopNav = (props) => {
           spacing={2}
         >
           <LanguageSwitch />
-          <CartButton />
+          {user?.accountType === 'LEARNER' && <CartButton />}
           {/* <NotificationsButton />
-          <ContactsButton /> */}
+          <ContactsButton /> */}  
           <AccountButton />
         </Stack>
       </Stack>

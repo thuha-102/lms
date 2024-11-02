@@ -1,6 +1,5 @@
 import { Controller, Get, Body, Post, Query } from '@nestjs/common';
 import { ChatbotQuesService } from './chatbotQues.service';
-import { DatetimeService } from 'src/services/datetime/datetime.service';
 
 //import { AuthGuard } from '../auth/auth.guard';
 
@@ -10,7 +9,7 @@ export class ChatbotQuesController {
   constructor(private readonly chatbotQuesService: ChatbotQuesService) {}
 
   @Post()
-  async getCourseChatbotQues(@Body() body: { question: string }) {
+  async createChatbotQues(@Body() body: { question: string }) {
     try {
       const result = await this.chatbotQuesService.create(body.question);
       return JSON.stringify(result);

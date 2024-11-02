@@ -11,7 +11,6 @@ export class TasksService {
   async statisticsLearningMaterial() {
     const learningMaterials = await this.prismaService.learningMaterial.findMany({ select: { id: true, Lesson: true } });
     const updatePromises = learningMaterials.map((lesson): Promise<any> => {
-      console.log(lesson.id, lesson.Lesson.length);
       return this.prismaService.learningMaterial.update({ where: { id: lesson.id }, data: { usedCount: lesson.Lesson.length } });
     });
     await Promise.all(updatePromises);
