@@ -136,6 +136,7 @@ export const CartInvoices = (props) => {
           loading ?
             <CardContent component="section" align='center'>
               <img src={`https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAccount}&amount=${totalPrice}&des=DH00${1}`}/>
+              {/* <img src={`https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAccount}&amount=${totalPrice}&des=TKPSEP`}/> */}
             </CardContent>
           :
             <Link

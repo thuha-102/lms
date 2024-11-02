@@ -12,9 +12,6 @@ import {
   CardHeader,
   CardContent
 } from '@mui/material';
-import { PieChart } from '@mui/x-charts/PieChart';
-import { BarChart } from '@mui/x-charts/BarChart';
-import { LineChart } from '@mui/x-charts/LineChart';
 import { usePageView } from '../../hooks/use-page-view';
 import { useSettings } from '../../hooks/use-settings';
 import { Layout as DashboardLayout } from '../../layouts/dashboard';
@@ -95,41 +92,53 @@ export const DashboardAdmin = () => {
     const [historyMonthLog, setHistoryMonthLog] = useState(null)
     // const [historyForum, setHistoryForum] = useState(null)
     const [historyForum, setHistoryForum] = useState(["A", "B", "C"])
+    const [groupRateLog, setGroupRateLog] = useState(null)
+    const [groupProgressAndScoreLog, setGroupProgressAndScoreLog] = useState(null)
+    const [loading, setLoading] = useState(true);
+
     const [filter, setFilter] = useState(null);
     const learner = useLearner(user?.id, user?.accountType, filter);
     const handleFilter = useCallback((filterBy) => setFilter(filterBy), [])
 
     const series = [
-        { type: 'line', dataKey: 'min', color: theme.palette.secondary.main, label: 'Điểm trung bình', valueFormatter:valueFormatterBarChart },
-        { type: 'line', dataKey: 'max', color: '#fe5f55', label: 'max temperature', valueFormatter:valueFormatterBarChart},
-        { type: 'bar', dataKey: 'precip', color: theme.palette.primary.main, yAxisId: 'rightAxis', label: 'Tiến độ', valueFormatter:valueFormatterBarChart},
+        { type: 'line', dataKey: 'avg_score', color: theme.palette.secondary.main, label: 'Điểm trung bình', valueFormatter:valueFormatterBarChart },
+        // { type: 'line', dataKey: 'max', color: '#fe5f55', label: 'max temperature', valueFormatter:valueFormatterBarChart},
+        { type: 'bar', dataKey: 'sequence_progress', color: theme.palette.primary.main, yAxisId: 'rightAxis', label: 'Tiến độ', valueFormatter:valueFormatterBarChart},
       ];
 
     const getApi = useCallback(async () => {
         try {
-            const weekUser = await analyticsApi.getHistoryUser("week")
-            const monthUser = await analyticsApi.getHistoryUser("month")
-            const weekLog = await analyticsApi.getHistoryLog("week")
-            const monthLog = await analyticsApi.getHistoryLog("month")
-            const reponse = await analyticsApi.getHistoryForum()
+            const groupRate = await analyticsApi.getGroupRate()
+            const groupProgressAndScore = await analyticsApi.getGroupProgressAndScore()
+            // const weekUser = await analyticsApi.getHistoryUser("week")
+            // const monthUser = await analyticsApi.getHistoryUser("month")
+            // const weekLog = await analyticsApi.getHistoryLog("week")
+            // const monthLog = await analyticsApi.getHistoryLog("month")
+            // const reponse = await analyticsApi.getHistoryForum()
             
-            const forum = reponse.data.thisMonthLearnerForum.map(item => ({ x: item.forum_id, y: Number(item.total_access_time) }))
+            // const forum = reponse.data.thisMonthLearnerForum.map(item => ({ x: item.forum_id, y: Number(item.total_access_time) }))
 
-            if (isMounted()) {
-                setHistoryWeekUser(String(weekUser.data.todayLogin));
-                setHistoryMonthUser(String(monthUser.data.todayLogin));
-                setHistoryWeekLog(String(weekLog.data.todayLearnerLog));
-                setHistoryMonthLog(String(monthLog.data.todayLearnerLog));
-                setHistoryForum(forum);
+            // setHistoryWeekUser(String(weekUser.data.todayLogin));
+            // setHistoryMonthUser(String(monthUser.data.todayLogin));
+            // setHistoryWeekLog(String(weekLog.data.todayLearnerLog));
+            // setHistoryMonthLog(String(monthLog.data.todayLearnerLog));
+            if(isMounted()) {
+                console.log(groupRate.data)
+                setGroupRateLog(groupRate.data);
+                setGroupProgressAndScoreLog(groupProgressAndScore.data);
             }
+            // console.log(groupRate.data)
+            // setHistoryForum(forum);
         } catch (err) {
             console.error(err);
+        } finally {
+            setLoading(false); // Kết thúc quá trình tải dữ liệu
         }
-    }, [])
+    }, [isMounted])
 
     useEffect(() => {
-        getApi()
-    }, [])
+        getApi();
+    }, [getApi])
 
     const getLast7Days = () => {
         const days = [];
@@ -146,6 +155,10 @@ export const DashboardAdmin = () => {
       
     const xAxisData = getLast7Days();
 
+    if (loading) {
+        return <div>Đang tải dữ liệu...</div>;
+    }
+
     return (
         <>
             <Box
@@ -159,55 +172,82 @@ export const DashboardAdmin = () => {
                         lg: 4
                     }}
                 >
+                    <Grid
+                        container
+                        spacing={{
+                            xs: 3,
+                            lg: 4
+                        }}
+                    >
                     {/* <Grid
                         xs={12}
                         lg={12}
                     >
                         <CourseSearch isInstructor={user.accountType!=="LEARNER"} onFilter={handleFilter} />
                     </Grid> */}
-                    <Grid
-                        xs={12}
-                        md={3}
-                    >
-                        <AnalyticsStats title="Tổng lượt truy cập trong tuần" value = {historyWeekUser}/>
-                    </Grid>
-                    <Grid
-                        xs={12}
-                        md={3}
-                    >
-                        <AnalyticsStats title="Tổng lượt truy cập trong tháng" value = {historyMonthUser}/>
-                    </Grid>
-                    <Grid
-                        xs={12}
-                        md={3}
-                    >
-                        <AnalyticsStats title="Tổng ghi nhận lịch sử học trong tuần" value = {historyWeekLog}/>
-                    </Grid>
-                    <Grid
-                        xs={12}
-                        md={3}
-                    >
-                        <AnalyticsStats title="Tổng ghi nhận lịch sử học trong tháng" value = {historyMonthLog}/>
-                    </Grid>
-                    <Grid
-                        xs={12}
-                        md={6}
-                    >
-                        <AnalyticsGroupRate
-                            data={desktopOS}
-                            valueFormatter={valueFormatter}
-                            title={"Tỷ lệ học viên ở mỗi nhóm"}
-                        />
-                    </Grid>
-                    <Grid
-                        xs={12}
-                        md={6}
-                    >
-                        <AnalyticsScoreAndProcess 
-                            series={series}
-                            dataset={datasett}
-                            title={"Điểm trung bình và tiến độ của học viên ở mỗi nhóm"}
-                        />
+                        <Grid
+                            xs={12}
+                            lg={3}
+                            container
+                            spacing={{
+                                xs: 3,
+                                lg: 4
+                            }}
+                        >
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <AnalyticsStats title="Tổng lượt truy cập trong tuần" value = {historyWeekUser}/>
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <AnalyticsStats title="Tổng lượt truy cập trong tháng" value = {historyMonthUser}/>
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <AnalyticsStats title="Tổng ghi nhận lịch sử học trong tuần" value = {historyWeekLog}/>
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                <AnalyticsStats title="Tổng ghi nhận lịch sử học trong tháng" value = {historyMonthLog}/>
+                            </Grid>
+                        </Grid>
+                        <Grid
+                            xs={12}
+                            lg={9}
+                            container
+                            spacing={{
+                                xs: 3,
+                                lg: 4
+                            }}>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                {groupRateLog && <AnalyticsGroupRate
+                                    data={groupRateLog.group_rates}
+                                    valueFormatter={valueFormatter}
+                                    title={"Tỷ lệ học viên ở mỗi nhóm"}
+                                />}
+                            </Grid>
+                            <Grid
+                                xs={12}
+                                md={12}
+                            >
+                                {groupProgressAndScoreLog && <AnalyticsScoreAndProcess 
+                                    series={series}
+                                    dataset={groupProgressAndScoreLog}
+                                    title={"Điểm trung bình và tiến độ của học viên ở mỗi nhóm"}
+                                />}
+                            </Grid>
+                        </Grid>
                     </Grid>
                     {/* <Grid
                         xs={12}

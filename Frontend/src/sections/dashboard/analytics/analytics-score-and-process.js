@@ -45,7 +45,7 @@ export const AnalyticsScoreAndProcess = (props) => {
               xAxis={[
                   {
                   scaleType: 'band',
-                  dataKey: 'typeLearner',
+                  dataKey: 'name',
                   label: 'Phân loại',
                   },
               ]}

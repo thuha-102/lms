@@ -75,7 +75,7 @@ export class AnalyticsService {
             t.type_learner_id, 
             t.num_of_learners 
         FROM type_learners tl
-        JOIN (
+        LEFT JOIN (
             SELECT 
                 COUNT(id) AS num_of_learners, 
                 type_learner_id 
@@ -92,8 +92,8 @@ export class AnalyticsService {
     // console.log(total_num_of_learners)
 
     const result = group_rate.map((t) => ({
-        name: t.name,
-        percent_of_group: Number(t.num_of_learners)/total_num_of_learners || 0 
+        label: t.name,
+        value: (Number(t.num_of_learners)*100/total_num_of_learners).toFixed(2) || 0 
     }));
 
     return {
@@ -102,11 +102,11 @@ export class AnalyticsService {
     };
 }
 
-  async getGroupProgress() {
-    const group_progress: {sequence_progress: number, type_learner_id: number, name: string }[] = await this.prismaService.$queryRawUnsafe(`
+  async getGroupProgressAndScore() {
+    const group_progress: {sequence_progress: string, type_learner_id: number, name: string }[] = await this.prismaService.$queryRawUnsafe(`
       SELECT 
           ROUND(AVG(COALESCE(ex.avg_progress, 0))::numeric, 2) AS sequence_progress, 
-          ex.type_learner_id,
+          type_learners.id AS type_learner_id,
           type_learners.name
       FROM (
           SELECT 
@@ -150,12 +150,42 @@ export class AnalyticsService {
               sc.order, 
               sc.course_id
       ) AS ex
-      JOIN type_learners
+      RIGHT JOIN type_learners
       ON ex.type_learner_id = type_learners.id
       GROUP BY 
-          ex.type_learner_id, type_learners.name;
+          type_learners.id, type_learners.name
+      ORDER BY
+          type_learners.id;
     `);
     // console.log(group_progress)
-    return group_progress;
+    const group_score: {type_learner_id: number, avg_score: string, name: string }[] = await this.prismaService.$queryRawUnsafe(`
+      SELECT tl.id as type_learner_id , ROUND(AVG(COALESCE(hsq.score, 0))::numeric, 2) AS avg_score , tl.name
+        FROM 
+            history_studied_quiz hsq
+        JOIN
+          lessons ON lessons.learning_material_id = hsq.learning_material_id 
+        JOIN 
+            topics t ON lessons.topic_id = t.id
+        RIGHT JOIN
+          sequence_course sc ON sc.course_id = t.course_id
+        RIGHT JOIN
+          type_learners tl ON tl.id = sc.type_learner_id
+        GROUP BY 
+          tl.id, tl.name  ;
+    `)
+    console.log(group_progress);
+    const result = group_progress.map((t) => {
+      
+      const scoreData = group_score.find(score => score.type_learner_id === t.type_learner_id);
+    
+      return {
+        type_learner_id: t.type_learner_id,
+        name: t.name,
+        sequence_progress: parseFloat(t.sequence_progress),
+        avg_score: parseFloat(scoreData.avg_score)
+      };
+    });
+    return result;
   }
+
 }

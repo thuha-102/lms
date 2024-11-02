@@ -40,7 +40,7 @@ const useSearch = () => {
     updateSearch: setSearch
   };
 };
-const useAccounts = (search) => {
+const useAccounts = (search, deleteAccount) => {
   const isMounted = useMounted();
   const [state, setState] = useState({
     Accounts: [],
@@ -51,51 +51,8 @@ const useAccounts = (search) => {
     try {
       // const response = await lm_manageApi.getAccounts(search);
       const response = await userApi.getAllUser(search.name);
+      console.log("hejhejhejh")
       let data = response.data;
-      // if (typeof search.filters !== 'undefined') {
-      //   data = data.filter((lm) => {
-      //     if (typeof search.name !== 'undefined' && search.name !== '') {
-      //       const nameMatched = lm.name.toLowerCase().includes(search.name.toLowerCase());
-  
-      //       if (!nameMatched) {
-      //         return false;
-      //       }
-      //     }
-  
-      //     // It is possible to select multiple type options
-      //     if (typeof search.filters.type !== 'undefined' && search.filters.type.length > 0) {
-      //       const categoryMatched = search.filters.type.includes(lm.type);
-  
-      //       if (!categoryMatched) {
-      //         return false;
-      //       }
-      //     }
-  
-      //     // It is possible to select multiple topicId options
-      //     if (typeof search.filters.topicId !== 'undefined' && search.filters.topicId.length > 0) {
-      //       const statusMatched = search.filters.topicId.includes(lm.topicId);
-  
-      //       if (!statusMatched) {
-      //         return false;
-      //       }
-      //     }
-  
-      //     // Present only if filter required
-      //     if (typeof search.filters.inStock !== 'undefined') {
-      //       const stockMatched = lm.inStock === search.filters.inStock;
-  
-      //       if (!stockMatched) {
-      //         return false;
-      //       }
-      //     }
-  
-      //     return true;
-      //   });
-      // }
-  
-      // if (typeof search.page !== 'undefined' && typeof search.rowsPerPage !== 'undefined') {
-      //   data = applyPagination(data, search.page, search.rowsPerPage);
-      // }
 
       if (isMounted()) {
         setState({
@@ -111,15 +68,15 @@ const useAccounts = (search) => {
   useEffect(() => {
       getAccounts();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [search]);
+    [search, deleteAccount]);
 
   return state;
 };
 
 const AccountList = () => {
   const { search, updateSearch } = useSearch();
-  const { Accounts, AccountsCount } = useAccounts(search);
+  const [deleteAccount, setDeleteAccount] = useState(null)
+  const { Accounts, AccountsCount } = useAccounts(search, deleteAccount);
 
   usePageView();
 
@@ -152,6 +109,10 @@ const AccountList = () => {
       rowsPerPage: parseInt(event.target.value, 10)
     }));
   }, [updateSearch]);
+
+  const handleDeleteAccount = useCallback((accountId) => {
+    if (accountId) setDeleteAccount(accountId)
+  }, [])
 
   return (
     <>
@@ -222,6 +183,7 @@ const AccountList = () => {
               <AccountManageListTable
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
+                onDeleteAccount={handleDeleteAccount}
                 page={search.page}
                 Accounts={Accounts}
                 AccountsCount={AccountsCount}

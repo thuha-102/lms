@@ -93,22 +93,21 @@ export const AnalyticsGroupRate = (props) => {
           </Tooltip>
         )}
       />
-      <CardContent>
+      <CardContent sx={{ display: 'flex', justifyContent: 'flex-start' }}> {/* Căn trái */}
         <PieChart
           title="Tỷ lệ học viên của mỗi nhóm"
           series={[
-              {
+            {
               data: data,
               highlightScope: { fade: 'global', highlight: 'item' },
               faded: { innerRadius: 80, additionalRadius: -80, color: 'gray' },
               innerRadius: 80,
               valueFormatter,
-              },
+            },
           ]}
-          height={400}
-          width={600} // Thêm chiều rộng
-          sx={{margin:2}}
-      />
+          height={300}
+          sx={{ margin: 1 }} // Giữ margin như cũ
+        />
       </CardContent>
     </Card>
   );

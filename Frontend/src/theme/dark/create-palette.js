@@ -31,6 +31,11 @@ export const createPalette = (config) => {
       disabled: 'rgba(255, 255, 255, 0.48)',
       caution: '#E6B800',
     },
+    scrollbar: {
+      background: '#555',
+      thumb: '#b3b3b3',
+      thumbHover: '#f1f1f1'
+    },
     warning
   };
 };

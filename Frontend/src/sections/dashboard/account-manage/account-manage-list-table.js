@@ -6,6 +6,7 @@ import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
 import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
 import PersonIcon from '@mui/icons-material/Person';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Image01Icon from '@untitled-ui/icons-react/build/esm/Image01';
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import {
@@ -40,7 +41,7 @@ import { FileIcon } from '../../../components/file-icon';
 import { useRouter } from 'next/navigation';
 import { lm_manageApi } from '../../../api/lm-manage';
 import { paths } from '../../../paths';
-import { AccountManageVisualize } from '../account-manage/account-manage-visualize'
+import { AccountDeleteDialogAdmin } from './account-delete-dialog-admin';
 
 const categoryOptions = [
   // {
@@ -76,6 +77,7 @@ export const AccountManageListTable = (props) => {
     page,
     Accounts,
     AccountsCount,
+    onDeleteAccount,
     rowsPerPage,
     ...other
   } = props;
@@ -143,6 +145,9 @@ export const AccountManageListTable = (props) => {
 
   return (
     <div {...other}>
+      {
+        currentAccount !== null && <AccountDeleteDialogAdmin open={currentAccount !== null} setDeleteDialog={setCurrentAccount} successDelete={onDeleteAccount} account={currentAccount}/>
+      }
       <Scrollbar>
         <Table sx={{ minWidth: 1200 }}>
           <TableHead>
@@ -154,6 +159,9 @@ export const AccountManageListTable = (props) => {
               </TableCell>
               <TableCell width="25%">
                 Người dùng
+              </TableCell>
+              <TableCell>
+                Nhóm người dùng
               </TableCell>
               <TableCell>
                 Ngày tạo

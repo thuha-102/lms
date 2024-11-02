@@ -71,8 +71,13 @@ class lm_manage_Api {
 
   getLMs(name, type, usage) {
     let url = name ? `${apiUrl}?name=${name}` : apiUrl;
-    let types = type ? type.join(',') : "";
+    const types = type ? type.join(',') : "";
+    const used = usage ? (usage === 'inUsed' ? 'true' : 'false') : "";
     url = types !== "" ? (name ? url + `&type=${types}` : url + `?type=${types}`) : url;
+    if (used === "") return axios.get(url)
+
+    if (url.includes('type') || url.includes('name')) url = url + `&used=${used}`;
+    else url = url + `?used=${used}`;
     return axios.get(url);
   }
 

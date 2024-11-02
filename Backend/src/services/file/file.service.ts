@@ -35,7 +35,7 @@ export class FileService {
   async upLoadFile(fileName: string, mimetype: string, type: LearningMaterialType) {
     return await this.prismaService.$transaction(async (tx) => {
       const file = await tx.learningMaterial.create({
-        data: { filepath: fileName, mimetype: mimetype, type: type },
+        data: { filepath: fileName, mimetype: mimetype, type: type, name: fileName.split('--')[1].split('.')[0], usedCount: 1 },
         select: { id: true },
       });
 
@@ -58,7 +58,7 @@ export class FileService {
 
     if (file.type !== 'QUIZ') return FileDTO.fromEntity(file as any);
     else {
-      const lesson = await this.prismaService.lesson.findFirst({ where: { id: file.id }, select: { time: true } });
+      const lesson = await this.prismaService.lesson.findFirst({ where: { learningMaterialId: file.id }, select: { time: true } });
       const quiz = await this.prismaService.quiz.findMany({
         where: { id: file.id },
         select: {
@@ -69,7 +69,7 @@ export class FileService {
         },
       });
 
-      return QuizDTO.fromEntity(quiz as any, lesson.time);
+      return QuizDTO.fromEntity(quiz as any, lesson ? lesson.time : 0);
     }
   }
 
@@ -91,26 +91,28 @@ export class FileService {
     return VideoDTO.fromEntity(file.mimetype, start, end, fileSize, streamableFile);
   }
 
-  async getAll(condition: { name: string; type: string }) {
-    let name: string = null, type: string[] = null;
+  async getAll(condition: { name: string; type: string, used: string}) {
+    let name: string = null, type: string[] = null, used: number = null;
 
     if (condition) {
       name = condition.name ? condition.name : null;
       type = condition.type ? condition.type.split(',') : null;
+      used = condition.used ? (condition.used === 'true' ? 1 : -1) : null; 
     }
 
     const query: Prisma.LearningMaterialWhereInput[] = [
-      name ? { filepath: { contains: name, mode: Prisma.QueryMode.insensitive } } : undefined,
+      name ? { name: { contains: name, mode: Prisma.QueryMode.insensitive } } : undefined,
       type ? { type: { in: type as LearningMaterialType[] } } : undefined,
+      used ? ( used === 1 ? {usedCount: {gt: 0}} : {usedCount: 0} ) : undefined
     ].filter(Boolean);
 
     const lms = (
       await this.prismaService.learningMaterial.findMany({
         where: query.length !== 0 ? { OR: query } : undefined,
-        select: { id: true, type: true, name: true, filepath: true },
+        select: { id: true, type: true, name: true, filepath: true, usedCount: true },
       })
     ).map((lm) => {
-      return { id: lm.id, type: lm.type, name: lm.name !== '' ? lm.name : lm.filepath?.split('--')[1] };
+      return { id: lm.id, type: lm.type, name: lm.name !== '' ? lm.name : lm.filepath?.split('--')[1].split('.')[0], usedCount: lm.usedCount };
     });
 
     return lms;
@@ -137,5 +139,9 @@ export class FileService {
     });
     
     return noUsedList;
+  }
+
+  async delete(id: number){
+    await this.prismaService.learningMaterial.delete({where: {id}})
   }
 }

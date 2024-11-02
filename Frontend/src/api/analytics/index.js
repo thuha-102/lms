@@ -22,6 +22,14 @@ class AnalyticsApi {
   getHistoryRegisterCourse(userId){
     return axios.get(`${apiUrl}/history-register-course?userId=${userId}`);
   }
+
+  getGroupRate(){
+    return axios.get(`${apiUrl}/group-rate`);
+  }
+
+  getGroupProgressAndScore(){
+    return axios.get(`${apiUrl}/group-progress-and-score`);
+  }
 }
 
 export const analyticsApi = new AnalyticsApi;

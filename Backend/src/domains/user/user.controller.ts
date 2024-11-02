@@ -19,6 +19,8 @@ import { AuthGuard } from '../auth/auth.guard';
 import { UserUpdateREQ } from './request/user-update.request';
 import { query } from 'express';
 import { QuizAnswers } from 'src/services/file/dto/file.dto';
+import * as UserRatingREQ from './request/user-rating';
+import { sequenceEqual } from 'rxjs';
 
 // @UseGuards(AuthGuard)
 @Controller('users')
@@ -103,5 +105,20 @@ export class UserController {
   @Post(':id/cart/delete-batch')
   async deleteCart(@Param('id', ParseIntPipe) id: number, @Body() body: { courseIds: number[] }) {
     return await this.userService.deleteCart(id, body.courseIds);
+  }
+
+  @Put(':id/rating-course')
+  async updateRatingCourse(@Param('id', ParseIntPipe) id: number, @Body() body: UserRatingREQ.UserRateCourseREQ) {
+    return await this.userService.updateRatingCourse(id, body.courseid, { rating: body.rating, comment: body.comment, ratingAt: new Date() })
+  }
+
+  @Put(':id/rating-sequence-course')
+  async updateRatingSequenceCourse(@Param('id', ParseIntPipe) id: number, @Body() body: UserRatingREQ.UserRateSquenceCourseREQ) {
+    return await this.userService.updateRatingSequenceCourse(id, body.rating, body.comment)
+  }
+
+  @Put(':id/rating-chatbot')
+  async updateRatingChatbot(@Param('id', ParseIntPipe) id: number, @Body() body: UserRatingREQ.UserRateChatbotREQ) {
+    return await this.userService.updateRatingChatbot(id, body.rating)
   }
 }

@@ -35,8 +35,8 @@ export class AnalyticsController {
     return this.analyticsService.getGroupRate();
   }
 
-  @Get('group-progress')
+  @Get('group-progress-and-score')
   async getGroupProgress(){
-    return this.analyticsService.getGroupProgress();
+    return this.analyticsService.getGroupProgressAndScore();
   }
 }
