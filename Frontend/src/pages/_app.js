@@ -109,6 +109,7 @@ const App = (props) => {
                                           <SettingsButton onClick={settings.handleDrawerOpen} />
                                           <ChatbotDrawer
                                             onClose={chatbot.handleDrawerClose}
+                                            onOpen={chatbot.handleDrawerOpen}
                                             onUpdate={chatbot.handleUpdate}
                                             open={chatbot.openDrawer}
                                             values={{

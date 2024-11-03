@@ -12,6 +12,7 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DotsVerticalIcon from '@untitled-ui/icons-react/build/esm/DotsVertical';
+import { useChatbot } from '../../../hooks/use-chatbot';
 import {
     Avatar,
     AvatarGroup,
@@ -36,9 +37,6 @@ import { learning_logApi } from '../../../api/learning-log';
 import { ItemMenu } from './item-menu';
 import { paths } from '../../../paths';
 import { useAuth } from '../../../hooks/use-auth';
-
-
-
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -176,6 +174,7 @@ function Row(props) {
 });
   const [fileGet, setFileGet] = useState("")
   const [openDialog, setOpenDialog] = useState(false)
+  const chatbot = useChatbot(); 
   const getLesson = useCallback(async (id) => {
     try {
       // const response = await exploreApi.getTopic(id);
@@ -204,14 +203,36 @@ function Row(props) {
 
   const createFileLog = async (lessonId, user) => {
     try {
-      const response = await learning_logApi.createLog(user.id, lessonId, null
+      const result = await learning_logApi.createLog(user.id, lessonId
         // {
         //   rating: 3,
         //   time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
         //   attempts: 1,
         //   lessonId: lessonId,
         // }
-    );
+    );   
+
+    if (result.data.ratingCourse !== undefined && result.data.ratingCourse !== null) {
+      chatbot.handleUpdate({
+        chatContent: [...chatbot.chatContent, {
+          content: "rating",
+          title: result.data.ratingCourse.title,
+          description: result.data.ratingCourse.description,
+          id: result.data.ratingCourse.id
+        }]
+      })
+    }
+    
+    if (result.data.ratingSequenceCourse !== undefined && result.data.ratingSequenceCourse !== null) {
+      chatbot.handleUpdate({
+        chatContent: [...chatbot.chatContent, {
+          content: "rating",
+          title: "Lộ trình học",
+          description: "Độ phù hợp",
+          typeLearnerId: result.data.ratingSequenceCourse.typeLearnerId,
+        }]
+      })
+    }
 
     } catch (err) {
       console.error(err);

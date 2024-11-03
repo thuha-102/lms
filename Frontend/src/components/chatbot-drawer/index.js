@@ -20,13 +20,14 @@ const StyledRating = styled(Rating)(({ theme }) => ({
 }));
 
 export const ChatbotDrawer = (props) => {
-  const { onClose, onUpdate, open, values = {}, ...other } = props;
+  const { onClose, onOpen, onUpdate, open, values = {}, ...other } = props;
 
   const chatBoxRef = useRef();
   const [chatMess, setChatMess] = useState("");
   const { user } = useAuth()
 
   useEffect(() => {
+    onOpen();
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
@@ -122,11 +123,12 @@ export const ChatbotDrawer = (props) => {
   }, [onUpdate]);
 
   const HandelSubmitRating = useCallback(async (data) => {
+    console.log(data);
     try {
       switch (data.type) {
         case "course":
           await userApi.rateCourse(user.id, {
-            courseid: data.courseid,
+            courseId: data.courseId,
             rating: data.rating,
             comment: data.comment !== "" ? data.comment : undefined,
           })
@@ -279,7 +281,7 @@ export const ChatbotDrawer = (props) => {
             >
               {values.chatContent.map((mess, i) => 
                 mess.content === "rating" 
-                ? <FinalRating title={mess.title} description={mess.description} courseId={mess.courseId} i={i} onSubmit={HandelSubmitRating}/>
+                ? <FinalRating key={i} title={mess.title} description={mess.description} courseId={mess.id} i={i} onSubmit={HandelSubmitRating}/>
                 : <Stack key={i}>
                   {mess.bot_id && <Typography variant="body1" fontSize={14} color="primary.main">Chatbot</Typography>}
                   <Stack 

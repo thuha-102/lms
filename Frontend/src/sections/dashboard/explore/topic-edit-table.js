@@ -48,6 +48,7 @@ import { Scrollbar } from '../../../components/scrollbar';
 import { useTheme } from '@mui/material/styles';
 import { LessonDeleteDialog } from '../academy/lesson-delete-dialog';
 import { LessonEditDialog } from '../academy/lesson-edit-dialog';
+import { useChatbot } from '../../../hooks/use-chatbot';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -85,6 +86,7 @@ function Row(props) {
 });
     const [fileGet, setFileGet] = useState("")
     const [editLessonTitle, setEditLessonTitle] = useState("")
+    const chatbot = useChatbot();
     const [currentLessonType, setCurrentLessonType] = useState("")
 
     // const getLesson = useCallback(async (id) => {
@@ -115,7 +117,7 @@ function Row(props) {
 
     const createFileLog = async (lessonId, user) => {
         try {
-        const response = await learning_logApi.createLog(user.id, lessonId, null
+        const result = await learning_logApi.createLog(user.id, lessonId
             // {
             //   rating: 3,
             //   time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
@@ -123,6 +125,28 @@ function Row(props) {
             //   lessonId: lessonId,
             // }
         );
+    
+        if (result.data.ratingCourse !== undefined && result.data.ratingCourse !== null) {
+            chatbot.handleUpdate({
+              chatContent: [...chatbot.chatContent, {
+                content: "rating",
+                title: result.data.ratingCourse.title,
+                description: result.data.ratingCourse.description,
+                id: result.data.ratingCourse.id
+              }]
+            })
+          }
+          
+          if (result.data.ratingSequenceCourse !== undefined && result.data.ratingSequenceCourse !== null) {
+            chatbot.handleUpdate({
+              chatContent: [...chatbot.chatContent, {
+                content: "rating",
+                title: "Lộ trình học",
+                description: "Độ phù hợp",
+                typeLearnerId: result.data.ratingSequenceCourse.typeLearnerId,
+              }]
+            })
+          }
 
         } catch (err) {
         console.error(err);

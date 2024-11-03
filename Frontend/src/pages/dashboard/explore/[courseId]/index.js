@@ -171,7 +171,7 @@ const LessonList = () => {
       console.log(response.data)
 
       setAvatarId(response.data.avatarId)
-      setTopicList(response.data.topics)
+      setTopicList(response.data.topics === undefined ? [] : response.data.topics)
       setCourseTitle(response.data.name)
       setCourseDescription(response.data.description)
       setPrice(response.data.price)
@@ -402,7 +402,7 @@ const LessonList = () => {
                     </Stack>
                     :
                     <Stack padding={1} borderRadius={2} border={'1px solid'}>
-                      <Typography variant='h2'>{`${price.toLocaleString('en-DE')}₫`}</Typography>
+                      <Typography variant='h2'>{`${price?.toLocaleString('en-DE')}₫`}</Typography>
                     </Stack>
                   )
                 }
