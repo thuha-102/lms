@@ -165,6 +165,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import PlusIcon from '@untitled-ui/icons-react/build/esm/Plus';
+import { useChatbot } from '../../../../hooks/use-chatbot';
 
 import {
   Box,
@@ -303,6 +304,7 @@ const PreviewLM = (props) => {
   const { LMs, LMsCount } = useLMs(search);
   const isMounted = useMounted();
   const {user} = useAuth();
+  const chatbot = useChatbot();
 
   const [lm, setLm] = useState("")
   // const [lessonList, setLessonList] = useState([]);
@@ -327,7 +329,7 @@ const PreviewLM = (props) => {
 
   const createFileLog = async (lessonId, user) => {
     try {
-      await learning_logApi.createLog(user.id, lessonId 
+      const result = await learning_logApi.createLog(user.id, lessonId 
         // ,{
         // // rating: valueRating,
         // // time: 120, //chỗ này cần phải lấy time của lm sau đó gắn vào
@@ -335,6 +337,28 @@ const PreviewLM = (props) => {
         
         // }
       );
+    
+      if (result.data.ratingCourse !== undefined && result.data.ratingCourse !== null) {
+        chatbot.handleUpdate({
+          chatContent: [...chatbot.chatContent, {
+            content: "rating",
+            title: result.data.ratingCourse.title,
+            description: result.data.ratingCourse.description,
+            id: result.data.ratingCourse.id
+          }]
+        })
+      }
+      
+      if (result.data.ratingSequenceCourse !== undefined && result.data.ratingSequenceCourse !== null) {
+        chatbot.handleUpdate({
+          chatContent: [...chatbot.chatContent, {
+            content: "rating",
+            title: "Lộ trình học",
+            description: "Độ phù hợp",
+            typeLearnerId: result.data.ratingSequenceCourse.typeLearnerId,
+          }]
+        })
+      }
 
     } catch (err) {
       console.error(err);

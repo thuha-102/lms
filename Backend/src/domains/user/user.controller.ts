@@ -82,7 +82,9 @@ export class UserController {
 
   @Post(':id/lesson/:lessonId')
   async studiedLesson(@Param('id', ParseIntPipe) id: number, @Param('lessonId', ParseIntPipe) lessonId: number) {
-    return await this.userService.studiedLesson(id, lessonId);
+    const res = await this.userService.studiedLesson(id, lessonId);
+    console.log(res);
+    return res;
   }
 
   
@@ -114,7 +116,7 @@ export class UserController {
 
   @Put(':id/rating-course')
   async updateRatingCourse(@Param('id', ParseIntPipe) id: number, @Body() body: UserRatingREQ.UserRateCourseREQ) {
-    return await this.userService.updateRatingCourse(id, body.courseid, { rating: body.rating, comment: body.comment, ratingAt: new Date() })
+    return await this.userService.updateRatingCourse(id, body.courseId, { rating: body.rating, comment: body.comment, ratingAt: new Date() })
   }
 
   @Put(':id/rating-sequence-course')

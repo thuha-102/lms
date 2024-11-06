@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString, ArrayNotEmpty, IsNumber } from 'class-validator';
 
 class UserRateCourseREQ {
   @IsNumber()
-  courseid: number;
+  courseId: number;
 
   @IsNumber()
   rating: number;

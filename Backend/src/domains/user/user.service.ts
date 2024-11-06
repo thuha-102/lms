@@ -182,18 +182,16 @@ export class UserService {
 
         const learner = await tx.learner.findFirst({
           where: { id: learnerId },
-          select: { typeLearnerId: true },
+          select: { typeLearnerId: true, latestCourseInSequenceId: true },
         });
 
         // Check end of course
         const result = { ratingCourse: null, ratingSequenceCourse: null};
-        if (lesson.topicId === course.Topic[0].id && lesson.order === course.Topic[0].totalLessons-1) {
+        if (updatePercent == 1) {
           result.ratingCourse = {
-            ratingCourse: {
-              id: course.id,
-              title: course.name,
-              description: course.description
-            }
+            id: course.id,
+            title: course.name,
+            description: course.description
           }
         }
 
@@ -203,9 +201,9 @@ export class UserService {
           select: { courseId: true, order: true },
         });
 
-        if (result.ratingCourse) {
+        if (sequenceCourse.length > 0 && result.ratingCourse) {
           // Check end of sequenceCourse
-          if (course.id === sequenceCourse[sequenceCourse.length - 1].courseId) {
+          if (learner.latestCourseInSequenceId === sequenceCourse[sequenceCourse.length - 1].courseId) {
             result.ratingSequenceCourse = {
               typeLearnerId: learner.typeLearnerId,
             }

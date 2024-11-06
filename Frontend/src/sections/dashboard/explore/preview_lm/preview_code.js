@@ -43,6 +43,7 @@ import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import { learning_logApi } from '../../../../api/learning-log';
 import { CourseLesson } from './code/preview-code-lesson';
 import { LmRating } from './lm_rating'
+import { useChatbot } from '../../../../hooks/use-chatbot';
 
 const PreviewCode = ({lmId, value, setValue, hover, setHover}) => {
   const [title, setTitle] = useState('');
@@ -55,7 +56,8 @@ const PreviewCode = ({lmId, value, setValue, hover, setHover}) => {
   const [lm, setLm] = useState();
   const [score, setScore] = useState([0,0]) //[score, maxScore]
   const { user } = useAuth();
-  const router = useRouter();
+  const router = useRouter();  
+  const chatbot = useChatbot(); 
   
   usePageView();
 
@@ -73,15 +75,32 @@ const PreviewCode = ({lmId, value, setValue, hover, setHover}) => {
   // This function takes responsibility to submit this code and create Log
   const createCodeLog = async (lmId, user) => {
     try {
-      const response = await learning_logApi.createLog(user.id, {
-        // rating: 3,
-        // learnerAnswer: content[0].code,
-        // time: 1200, //chỗ này cần phải lấy time của lm sau đó gắn vào
-        // attempts: 1,
-        lessonId: lmId,
-      });
-      console.log(response);
-      setScore([response.data.score, response.data.maxScore])
+      const result = await learning_logApi.createLog(user.id,lmId
+      );
+      console.log(result);
+      setScore([result.data.score, result.data.maxScore])   
+
+      if (result.data.ratingCourse !== undefined && result.data.ratingCourse !== null) {
+        chatbot.handleUpdate({
+          chatContent: [...chatbot.chatContent, {
+            content: "rating",
+            title: result.data.ratingCourse.title,
+            description: result.data.ratingCourse.description,
+            id: result.data.ratingCourse.id
+          }]
+        })
+      }
+      
+      if (result.data.ratingSequenceCourse !== undefined && result.data.ratingSequenceCourse !== null) {
+        chatbot.handleUpdate({
+          chatContent: [...chatbot.chatContent, {
+            content: "rating",
+            title: "Lộ trình học",
+            description: "Độ phù hợp",
+            typeLearnerId: result.data.ratingSequenceCourse.typeLearnerId,
+          }]
+        })
+      }
 
     } catch (err) {
       console.error(err);
