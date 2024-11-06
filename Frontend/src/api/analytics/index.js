@@ -3,12 +3,12 @@ import axios from 'axios';
 const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/analytics`;
 
 class AnalyticsApi {
-  getHistoryUser(field){
-    return axios.get(`${apiUrl}/history-user?field=${field}`);
+  getAnnuallyCreateUser(field){
+    return axios.get(`${apiUrl}/annually-create-user?field=${field}`);
   }
 
-  getHistoryLog(field){
-    return axios.get(`${apiUrl}/history-log?field=${field}`);
+  getAnnuallyPurchaseCourse(field){
+    return axios.get(`${apiUrl}/annually-purchase-course?field=${field}`);
   }
 
   getHistoryForum(){

@@ -188,4 +188,22 @@ export class AnalyticsService {
     return result;
   }
 
+
+  async getCreatedUser(field: 'month' | 'week') {
+    const result = await this.prismaService.$queryRawUnsafe(
+      `SELECT count(*) AS count
+      FROM users
+      WHERE DATE_TRUNC('${field}', created_at) = DATE_TRUNC('${field}', CURRENT_DATE) AND account_type <> 'ADMIN';`,
+    );
+    return { numOfCreateUser: Number((result as any)[0].count) };
+  }
+
+  async getPurchasedCourse(field: 'month' | 'week') {
+    const result = await this.prismaService.$queryRawUnsafe(`
+      SELECT count(*) AS count
+      FROM receipts
+      WHERE DATE_TRUNC('${field}', created_at) = DATE_TRUNC('${field}', CURRENT_DATE) AND is_payment = TRUE;
+    `);
+    return { numOfPurchaseCourse: Number((result as any)[0].count) };
+  }
 }

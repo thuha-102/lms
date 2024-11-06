@@ -35,15 +35,6 @@ import { analyticsApi, desktopOS, valueFormatter, dataset, valueFormatterBarChar
 import { margin } from '@mui/system';
 import { AnalyticsSatisfaction } from '../../sections/dashboard/analytics/analytics-satisfaction';
 
-const datasett = [
-  { min: 12, max: 20, precip: 79, typeLearner: 'Nhóm 1' },
-  { min: 13, max: 20, precip: 66, typeLearner: 'Nhóm 2' },
-  { min: 14, max: 20, precip: 76, typeLearner: 'Nhóm 3' },
-  { min: 15, max: 20, precip: 106, typeLearner: 'Nhóm 4' },
-  { min: 16, max: 20, precip: 105, typeLearner: 'Nhóm 5' },
-];
-const historyForum = ["A", "B", "C"];
-
 const useLearner = (id, accountType, filter) => {
     const isMounted = useMounted();
     const [listCourses, setListCourses] = useState([{
@@ -86,10 +77,10 @@ export const DashboardAdmin = () => {
     const settings = useSettings()
     const isMounted = useMounted();
     const {user} = useAuth()
-    const [historyWeekUser, setHistoryWeekUser] = useState(null)
-    const [historyMonthUser, setHistoryMonthUser] = useState(null)
-    const [historyWeekLog, setHistoryWeekLog] = useState(null)
-    const [historyMonthLog, setHistoryMonthLog] = useState(null)
+    const [weeklyCreateUser, setWeeklyCreateUser] = useState(null)
+    const [monthlyCreateUser, setMonthlyCreateUser] = useState(null)
+    const [weeklyPurchaseCourse, setWeeklyPurchaseCourse] = useState(null)
+    const [monthlyPurchaseCourse, setMonthlyPurchaseCourse] = useState(null)
     // const [historyForum, setHistoryForum] = useState(null)
     const [historyForum, setHistoryForum] = useState(["A", "B", "C"])
     const [groupRateLog, setGroupRateLog] = useState(null)
@@ -110,10 +101,10 @@ export const DashboardAdmin = () => {
         try {
             const groupRate = await analyticsApi.getGroupRate()
             const groupProgressAndScore = await analyticsApi.getGroupProgressAndScore()
-            // const weekUser = await analyticsApi.getHistoryUser("week")
-            // const monthUser = await analyticsApi.getHistoryUser("month")
-            // const weekLog = await analyticsApi.getHistoryLog("week")
-            // const monthLog = await analyticsApi.getHistoryLog("month")
+            const weeklyCreateUser = await analyticsApi.getAnnuallyCreateUser("week")
+            const monthlyCreateUser = await analyticsApi.getAnnuallyCreateUser("month")
+            const weeklyPurchaseCourse = await analyticsApi.getAnnuallyPurchaseCourse("week")
+            const monthlyPurchaseCourse = await analyticsApi.getAnnuallyPurchaseCourse("month")
             // const reponse = await analyticsApi.getHistoryForum()
             
             // const forum = reponse.data.thisMonthLearnerForum.map(item => ({ x: item.forum_id, y: Number(item.total_access_time) }))
@@ -126,6 +117,10 @@ export const DashboardAdmin = () => {
                 console.log(groupRate.data)
                 setGroupRateLog(groupRate.data);
                 setGroupProgressAndScoreLog(groupProgressAndScore.data);
+                setWeeklyCreateUser(weeklyCreateUser.data.numOfCreateUser);
+                setMonthlyCreateUser(monthlyCreateUser.data.numOfCreateUser);
+                setWeeklyPurchaseCourse(weeklyPurchaseCourse.data.numOfPurchaseCourse);
+                setMonthlyPurchaseCourse(monthlyPurchaseCourse.data.numOfPurchaseCourse);
             }
             // console.log(groupRate.data)
             // setHistoryForum(forum);
@@ -198,25 +193,25 @@ export const DashboardAdmin = () => {
                                 xs={12}
                                 md={12}
                             >
-                                <AnalyticsStats title="Tổng lượt truy cập trong tuần" value = {historyWeekUser}/>
+                                <AnalyticsStats title="Số người dùng đăng ký mới trong tuần" value = {weeklyCreateUser}/>
                             </Grid>
                             <Grid
                                 xs={12}
                                 md={12}
                             >
-                                <AnalyticsStats title="Tổng lượt truy cập trong tháng" value = {historyMonthUser}/>
+                                <AnalyticsStats title="Số người dùng đăng ký mới trong tháng" value = {monthlyCreateUser}/>
                             </Grid>
                             <Grid
                                 xs={12}
                                 md={12}
                             >
-                                <AnalyticsStats title="Tổng ghi nhận lịch sử học trong tuần" value = {historyWeekLog}/>
+                                <AnalyticsStats title="Số khoá học đăng ký mới trong tuần" value = {weeklyPurchaseCourse}/>
                             </Grid>
                             <Grid
                                 xs={12}
                                 md={12}
                             >
-                                <AnalyticsStats title="Tổng ghi nhận lịch sử học trong tháng" value = {historyMonthLog}/>
+                                <AnalyticsStats title="Số khoá học đăng ký mới trong tháng" value = {monthlyPurchaseCourse}/>
                             </Grid>
                         </Grid>
                         <Grid

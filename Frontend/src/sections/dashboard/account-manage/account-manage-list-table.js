@@ -42,6 +42,7 @@ import { useRouter } from 'next/navigation';
 import { lm_manageApi } from '../../../api/lm-manage';
 import { paths } from '../../../paths';
 import { AccountDeleteDialogAdmin } from './account-delete-dialog-admin';
+import { AccountManageVisualize } from './account-manage-visualize';
 
 const categoryOptions = [
   // {
@@ -84,6 +85,8 @@ export const AccountManageListTable = (props) => {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [openAccountDetail, setOpenAccountDetail] = useState(false);
   const [openVisualization, setOpenVisualization] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
   // const [account, setAccount] = useState();
   const router = useRouter()
   const [state, setState] = useState(false);
@@ -122,13 +125,14 @@ export const AccountManageListTable = (props) => {
   }, []);
 
   const handleAccountDelete = useCallback(async (id) => {
-    try {
-      const response = await lm_manageApi.deleteAccount(id);
-      console.log(response)
-    } catch (err){
-      console.error(err);
-    }
-    toast.error('Tài liệu đã được xoá');
+    // try {
+    //   const response = await lm_manageApi.deleteAccount(id);
+    //   console.log(response)
+    // } catch (err){
+    //   console.error(err);
+    // }
+    setOpenDeleteDialog(true);
+    // toast.error('Tài liệu đã được xoá');
   }, []);
 
   const handleToggle = ({target}) => {
@@ -146,7 +150,13 @@ export const AccountManageListTable = (props) => {
   return (
     <div {...other}>
       {
-        currentAccount !== null && <AccountDeleteDialogAdmin open={currentAccount !== null} setDeleteDialog={setCurrentAccount} successDelete={onDeleteAccount} account={currentAccount}/>
+        openDeleteDialog && <AccountDeleteDialogAdmin 
+                              open={openDeleteDialog} 
+                              setDeleteDialog={setCurrentAccount}
+                              setOpenDeleteDialog={setOpenDeleteDialog} 
+                              successDelete={onDeleteAccount} 
+                              account={currentAccount}
+                            />
       }
       <Scrollbar>
         <Table sx={{ minWidth: 1200 }}>
@@ -157,14 +167,11 @@ export const AccountManageListTable = (props) => {
               <TableCell width="5%" align='center'>
                 ID
               </TableCell>
-              <TableCell width="25%">
+              <TableCell>
                 Người dùng
               </TableCell>
               <TableCell>
-                Nhóm người dùng
-              </TableCell>
-              <TableCell>
-                Ngày tạo
+                Ngày tạo - Nhóm người dùng
               </TableCell>
               <TableCell>
                 Điểm trung bình
@@ -299,7 +306,10 @@ export const AccountManageListTable = (props) => {
                         </Box>
                       </Box>
                     </TableCell>
-                    <TableCell>
+                    <TableCell
+                      // sx={{justifyContent: 'center', alignItems: 'center'}}
+                      // align='center'
+                    >
                       <Typography variant="subtitle2">
                         {Account.createdAt}
                       </Typography>
@@ -343,11 +353,14 @@ export const AccountManageListTable = (props) => {
                       </Stack> */}
                     </TableCell>
                     <TableCell>
-                      
+                      {Account.avg_score}
                     </TableCell>
                     <TableCell>
                       
                     </TableCell>
+                    {/* <TableCell>
+                      
+                    </TableCell> */}
                     {/* <TableCell>
                       <SeverityPill color={statusColor}>
                         {Account.state ? "ACTIVE": "INACTIVE"}
@@ -603,7 +616,7 @@ export const AccountManageListTable = (props) => {
                               Đóng
                             </Button>
                           </Stack>
-                          <div>
+                          {/* <div> */}
                             <Button
                               onClick={() => handleAccountDelete(Account.id)}
                               color="error"
@@ -612,7 +625,7 @@ export const AccountManageListTable = (props) => {
                             >
                               Xoá vĩnh viễn
                             </Button>
-                          </div>
+                          {/* </div> */}
                         </Stack>
                       </TableCell>
                     </TableRow>

@@ -39,4 +39,14 @@ export class AnalyticsController {
   async getGroupProgress(){
     return this.analyticsService.getGroupProgressAndScore();
   }
+
+  @Get('annually-create-user')
+  async getAnnuallyCreateUser(@Query() query: { field: 'month' | 'week' }){
+    return this.analyticsService.getCreatedUser(query.field);
+  }
+
+  @Get('annually-purchase-course')
+  async getAnnuallyPurchaseCourse(@Query() query: { field: 'month' | 'week' }){
+    return this.analyticsService.getPurchasedCourse(query.field);
+  }
 }

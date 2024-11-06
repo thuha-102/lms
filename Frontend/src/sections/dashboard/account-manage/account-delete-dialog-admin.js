@@ -7,7 +7,7 @@ import { paths } from "../../../paths"
 import toast from "react-hot-toast"
 
 export const AccountDeleteDialogAdmin = (props) => {
-    const {open, account, setDeleteDialog, successDelete} =props
+    const {open, account, setDeleteDialog, setOpenDeleteDialog, successDelete} =props
     const [confirmText, setConfirmText] = useState("")
 
     const handleDeleteUser = useCallback(async () => {
@@ -27,7 +27,7 @@ export const AccountDeleteDialogAdmin = (props) => {
     return (
         <Dialog
             open={open}
-            onClose={() => setDeleteDialog(null)}
+            onClose={()=>{setOpenDeleteDialog(false)}}
         >
             <DialogTitle id="alert-dialog-title">
                 {"Xoá tài khoản"}
@@ -48,8 +48,8 @@ export const AccountDeleteDialogAdmin = (props) => {
                 />
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => setDeleteDialog(null)}>Huỷ bỏ</Button>
-                <Button onClick={handleDeleteUser}>
+                <Button onClick={()=>setOpenDeleteDialog(false)}>Huỷ bỏ</Button>
+                <Button color="error" onClick={handleDeleteUser}>
                     Xoá
                 </Button>
             </DialogActions>

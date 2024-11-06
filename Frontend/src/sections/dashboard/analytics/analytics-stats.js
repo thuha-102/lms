@@ -87,9 +87,10 @@ export const AnalyticsStats = (props) => {
           >
             {title}
           </Typography>
+          <Divider />
           <Typography
-            sx={{ mt: 1 }}
-            variant="h5"
+            sx={{ mt: 1, textAlign:'center' }}
+            variant="h2"
           >
             {value}
           </Typography>
@@ -104,9 +105,9 @@ export const AnalyticsStats = (props) => {
         </Box> */}
       </Stack>
       <Divider />
-      <CardActions>
+      {/* <CardActions>
         {action}
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 };

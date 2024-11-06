@@ -8,6 +8,7 @@ import { LearnerListREPS } from './reponse/learner-list.reponse';
 import { UserInfoDTO } from './dto/user-infomation.dto';
 import { QuizAnswers } from 'src/services/file/dto/file.dto';
 import { CartInforDTO } from './dto/cart-information.dto';
+import { groupBy } from 'rxjs';
 
 @Injectable()
 export class UserService {
@@ -15,12 +16,49 @@ export class UserService {
 
   async getAll(username?: string) {
     const learners = await this.prismaService.learner.findMany({
-      where: { User: { username: { contains: username ? username : '' } } },
-      select: { id: true, User: { select: { username: true, createdAt: true } }, TypeLearner: { select: { name: true } } },
+      where: {
+        User: {
+          username: {
+            contains: username ? username : '',
+            mode: 'insensitive', // Nếu bạn muốn tìm kiếm không phân biệt chữ hoa chữ thường
+          },
+        },
+      },
+      select: {
+        id: true,
+        User: {
+          select: {
+            username: true,
+            createdAt: true,
+          },
+        },
+        TypeLearner: {
+          select: {
+            name: true,
+          },
+        },
+        HistoryStudiedQuiz: {
+          select: {
+            score: true,
+          },
+        },
+      },
     });
-
+  
+    // Tính toán điểm trung bình cho mỗi learner
+    // const learnersWithAvgScore = learners.map((learner) => {
+    //   const totalScore = learner.HistoryStudiedQuiz.reduce((sum, quiz) => sum + (quiz.score || 0), 0);
+    //   const avgScore = totalScore / (learner.HistoryStudiedQuiz.length || 1); // Tránh chia cho 0
+    //   console.log(totalScore)
+    //   return {
+    //     ...learner,
+    //     avgScore: avgScore,
+    //   };
+    // });
+  
     return learners.map((learner) => LearnerListREPS.fromEntity(learner as any));
   }
+  
 
   async delete(id: number){
     await this.prismaService.user.delete({where: {id}})
