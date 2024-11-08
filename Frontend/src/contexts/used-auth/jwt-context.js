@@ -5,6 +5,7 @@ import { Issuer } from '../../utils/auth';
 
 const STORAGE_KEY = 'accessToken';
 const ID = 'id';
+const STORAGE_CHATBOT = 'app.chatbot';
 
 var ActionType;
 (function (ActionType) {
@@ -160,6 +161,7 @@ export const AuthProvider = (props) => {
   const signOut = useCallback(async () => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(ID);
+    localStorage.removeItem(STORAGE_CHATBOT);
     dispatch({ type: ActionType.SIGN_OUT });
   }, [dispatch]);
 
