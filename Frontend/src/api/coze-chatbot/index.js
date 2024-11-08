@@ -49,6 +49,17 @@ class CozeChatbotApi {
             }
         )
     }
+
+    GetCommonQues() {
+        return axios.Get(
+            `${apiUrl}/common-ques`, 
+            {
+                params: {
+                    limit: 5
+                }
+            }
+        );
+    }
 }
 
 export const cozeChatbotApi = new CozeChatbotApi();

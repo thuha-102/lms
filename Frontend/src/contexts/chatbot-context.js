@@ -1,5 +1,6 @@
 import { createContext, useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { cozeChatbotApi } from '../api/coze-chatbot';
 
 const STORAGE_KEY = 'app.chatbot';
 
@@ -16,8 +17,6 @@ const restoreChatbot = () => {
     }
   } catch (err) {
     console.error(err);
-    // If stored data is not a strigified JSON this will fail,
-    // that's why we catch the error
   }
 
   return value;
@@ -27,11 +26,20 @@ const storeChatbot = (value) => {
   storage.setItem(STORAGE_KEY, JSON.stringify(value));
 };
 
-const initialChatbot = {
-  conversationId: '',
-  chatContent: [],
-  recommendQues: ["Xin chào", "Tài liệu AI", "Ngủ quên", "Học hiệu quả", "Mệt v~"],
+const initializeChatbot = async () => {
+  try {
+    const commonQuestions = await cozeChatbotApi.GetCommonQues();
+    return {
+      conversationId: '',
+      chatContent: [],
+      recommendQues: commonQuestions.map(q => q.question),
+    };
+  } catch (e) {
+    console.error(e);
+  }
 };
+
+const initialChatbot = initializeChatbot();
 
 const initialState = {
   ...initialChatbot,
