@@ -11,7 +11,7 @@ import { useAuth } from '../../hooks/use-auth';
 const useTranslatedSections = () => {
   const { t } = useTranslation();
   const { user } = useAuth()
-  return useMemo(() => getSections(t, user.accountType), [t]);  
+  return useMemo(() => getSections(t, user?.accountType), [t]);  
 };
 
 export const Layout = withAuthGuard((props) => {

@@ -34,7 +34,7 @@ const initial_stack = [
 ];
 
 export const AnalyticsTrafficKeyword = (props) => {
-  const { data, type, score } = props;
+  const { keywords } = props;
   const [stackSeries, setStackSeries] = useState(initial_stack)
   const [options, setOptions] = useState(null)
   const [forumPath, setForumPath] = useState(null)
@@ -130,15 +130,16 @@ export const AnalyticsTrafficKeyword = (props) => {
   // }, [forumPath])
 
   return (
-    <Card>
+    <Card
+    >
       <CardHeader
         sx={{ pb: 0 }}
         title={`Top từ khoá quan tâm trong tuần`}
       />
       <CardContent 
-        sx={{ pt: 0 }}
+        sx={{ pt: 0, height:'300px' }}
       >
-        {stackSeries?.map((i) =>  <>
+        {keywords?.map((i) =>  <>
           <Typography
           color="text.secondary"
           sx={{
@@ -162,7 +163,7 @@ export const AnalyticsTrafficKeyword = (props) => {
             },
           }}
           variant="subtitle2"
-          dangerouslySetInnerHTML={{ __html: i.description || ' ' }}
+          dangerouslySetInnerHTML={{ __html: i.question || ' ' }}
         >
           {/* {description} */}
         </Typography>

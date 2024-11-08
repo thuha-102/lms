@@ -1,38 +1,66 @@
 import axios from 'axios';
 
-const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}/analytics`;
+const apiUrl = `${process.env.NEXT_PUBLIC_SERVER_API}`;
 
 class AnalyticsApi {
   getAnnuallyCreateUser(field){
-    return axios.get(`${apiUrl}/annually-create-user?field=${field}`);
+    return axios.get(`${apiUrl}/analytics/annually-create-user?field=${field}`);
   }
 
   getAnnuallyPurchaseCourse(field){
-    return axios.get(`${apiUrl}/annually-purchase-course?field=${field}`);
+    return axios.get(`${apiUrl}/analytics/annually-purchase-course?field=${field}`);
   }
 
   getHistoryForum(){
-    return axios.get(`${apiUrl}/history-forum`);
+    return axios.get(`${apiUrl}/analytics/history-forum`);
   }
 
   getHistoryRegister(userId, field){
-    return axios.get(`${apiUrl}/history-register?userId=${userId}&field=${field}`);
+    return axios.get(`${apiUrl}/analytics/history-register?userId=${userId}&field=${field}`);
   }
 
   getHistoryRegisterCourse(userId){
-    return axios.get(`${apiUrl}/history-register-course?userId=${userId}`);
+    return axios.get(`${apiUrl}/analytics/history-register-course?userId=${userId}`);
   }
 
   getGroupRate(){
-    return axios.get(`${apiUrl}/group-rate`);
+    return axios.get(`${apiUrl}/analytics/group-rate`);
   }
 
   getGroupProgressAndScore(){
-    return axios.get(`${apiUrl}/group-progress-and-score`);
+    return axios.get(`${apiUrl}/analytics/group-progress-and-score`);
+  }
+}
+
+class ChatbotApi {
+  getCommonQues(limit){
+    return axios.get(`${apiUrl}/chatbot-ques/common-ques?limit=${limit}`);
+  }
+
+  getChatbotUsedRate(days){
+    return axios.get(`${apiUrl}/chatbot-ques/used-rate?days=${days}`);
+  }
+
+  getCourseRatingAvg(){
+    return axios.get(`${apiUrl}/rating/course-rating-avg`)
+  }
+
+  getSequenceCourseRatingAvg(){
+    return axios.get(`${apiUrl}/rating/sequence-course-rating-avg`)
+  }
+
+  getCourseComment(limit){
+    return axios.get(`${apiUrl}/rating/course-comments?limit=${limit}`)
+  }
+
+  getSequenceCourseComment(limit){
+    return axios.get(`${apiUrl}/rating/sequence-course-comments?limit=${limit}`)
   }
 }
 
 export const analyticsApi = new AnalyticsApi;
+
+export const chatbotApi = new ChatbotApi;
 
 export const desktopOS = [
   {

@@ -79,7 +79,7 @@ const validationSchema = Yup.object({
   description: Yup.string().max(5000),
 });
 
-export const CourseCreateForm = (props) => {
+export const CourseUpdateForm = (props) => {
   const isMounted = useMounted();
   const router = useRouter();
   const [topicOptions, setTopicOptions] = useState([]);
@@ -89,7 +89,7 @@ export const CourseCreateForm = (props) => {
   };
   const [courseIds, setCourseIds] = useState(() => {
     // Khởi tạo state từ localStorage nếu có
-    const listCourseIds = localStorage.getItem("sequenceCourseIds");
+    const listCourseIds = localStorage.getItem("updateSequenceCourseIds");
     console.log(listCourseIds)
     return listCourseIds ? JSON.parse(listCourseIds) : [];
   });
@@ -129,7 +129,7 @@ export const CourseCreateForm = (props) => {
         const updatedCourseIds = [...courseIds, newCourseId];
         setCourseIds(updatedCourseIds);
         console.log(JSON.stringify(updatedCourseIds))
-        console.log(localStorage.setItem("sequenceCourseIds", JSON.stringify(updatedCourseIds)));
+        console.log(localStorage.setItem("updateSequenceCourseIds", JSON.stringify(updatedCourseIds)));
         console.log('Updated courseIds:', updatedCourseIds);
 
         // router.push(`${paths.dashboard.learning_path_manage}/create`);

@@ -131,7 +131,7 @@ export const CourseCardDelete = (props) => {
                 {"Xóa khoá học"}
             </Button>
             {
-              openDialog && <CourseDeleteDialog courseId={course.id} open={openDialog} setDeleteDialog={setOpenDialog}/>
+              openDialog && <CourseDeleteDialog courseId={course.id} open={openDialog} setDeleteDialog={setOpenDialog} isInAcademy={true}/>
             }
         </div>
         }

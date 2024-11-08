@@ -31,7 +31,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useMounted } from '../../hooks/use-mounted';
 import { useTheme } from '@mui/material/styles';
 import { useAuth } from '../../hooks/use-auth';
-import { analyticsApi, desktopOS, valueFormatter, dataset, valueFormatterBarChart } from '../../api/analytics';
+import { analyticsApi, desktopOS, valueFormatter, dataset, valueFormatterBarChart, chatbotApi } from '../../api/analytics';
 import { margin } from '@mui/system';
 import { AnalyticsSatisfaction } from '../../sections/dashboard/analytics/analytics-satisfaction';
 
@@ -85,6 +85,11 @@ export const DashboardAdmin = () => {
     const [historyForum, setHistoryForum] = useState(["A", "B", "C"])
     const [groupRateLog, setGroupRateLog] = useState(null)
     const [groupProgressAndScoreLog, setGroupProgressAndScoreLog] = useState(null)
+    const [chatbotUsedRate, setChatbotUsedRate] = useState(null)
+    const [keywordsFromChatbot, setKeywordsFromChatbot] = useState(null)
+    const [courseRatingAvg, setCourseRatingAvg] = useState(null)
+    const [sequenceRatingAvg, setSequenceRatingAvg] = useState(null)
+    const [comment, setComment] = useState(null)
     const [loading, setLoading] = useState(true);
 
     const [filter, setFilter] = useState(null);
@@ -105,6 +110,12 @@ export const DashboardAdmin = () => {
             const monthlyCreateUser = await analyticsApi.getAnnuallyCreateUser("month")
             const weeklyPurchaseCourse = await analyticsApi.getAnnuallyPurchaseCourse("week")
             const monthlyPurchaseCourse = await analyticsApi.getAnnuallyPurchaseCourse("month")
+            const chatbotUsedRate = await chatbotApi.getChatbotUsedRate(7)
+            const keywordsFromChatbot = await chatbotApi.getCommonQues(6)
+            const courseRatingAvg = await chatbotApi.getCourseRatingAvg()
+            const sequenceRatingAvg = await chatbotApi.getSequenceCourseRatingAvg()
+            const courseComment = await chatbotApi.getCourseComment(3)
+            const sequenceCouseComment = await chatbotApi.getSequenceCourseComment(3)
             // const reponse = await analyticsApi.getHistoryForum()
             
             // const forum = reponse.data.thisMonthLearnerForum.map(item => ({ x: item.forum_id, y: Number(item.total_access_time) }))
@@ -121,8 +132,12 @@ export const DashboardAdmin = () => {
                 setMonthlyCreateUser(monthlyCreateUser.data.numOfCreateUser);
                 setWeeklyPurchaseCourse(weeklyPurchaseCourse.data.numOfPurchaseCourse);
                 setMonthlyPurchaseCourse(monthlyPurchaseCourse.data.numOfPurchaseCourse);
+                setChatbotUsedRate(chatbotUsedRate.data.rate)
+                setKeywordsFromChatbot(keywordsFromChatbot.data)
+                setCourseRatingAvg(Number(courseRatingAvg.data.rating))
+                setSequenceRatingAvg(sequenceRatingAvg.data.rating)
+                setComment([...courseComment.data, ...sequenceCouseComment.data]);
             }
-            // console.log(groupRate.data)
             // setHistoryForum(forum);
         } catch (err) {
             console.error(err);
@@ -178,7 +193,7 @@ export const DashboardAdmin = () => {
                         xs={12}
                         lg={12}
                     >
-                        <CourseSearch isInstructor={user.accountType!=="LEARNER"} onFilter={handleFilter} />
+                        <CourseSearch isInstructor={user?.accountType!=="LEARNER"} onFilter={handleFilter} />
                     </Grid> */}
                         <Grid
                             xs={12}
@@ -193,13 +208,13 @@ export const DashboardAdmin = () => {
                                 xs={12}
                                 md={12}
                             >
-                                <AnalyticsStats title="Số người dùng đăng ký mới trong tuần" value = {weeklyCreateUser}/>
+                                <AnalyticsStats title="Số học viên đăng ký mới trong tuần" value = {weeklyCreateUser}/>
                             </Grid>
                             <Grid
                                 xs={12}
                                 md={12}
                             >
-                                <AnalyticsStats title="Số người dùng đăng ký mới trong tháng" value = {monthlyCreateUser}/>
+                                <AnalyticsStats title="Số học viên đăng ký mới trong tháng" value = {monthlyCreateUser}/>
                             </Grid>
                             <Grid
                                 xs={12}
@@ -273,19 +288,19 @@ export const DashboardAdmin = () => {
                             xs={12}
                             lg={12}
                         >
-                            <AnalyticsSatisfaction 
-                                value={70} 
-                                valueMax={100} 
+                            {<AnalyticsSatisfaction 
+                                value={courseRatingAvg} 
+                                valueMax={5} 
                                 title={"Tỷ lệ học viên hài lòng về khoá học"}
-                            />
+                            />}
                         </Grid>
                         <Grid
                             xs={12}
                             lg={12}
                         >
                             <AnalyticsSatisfaction 
-                                value={50} 
-                                valueMax={100} 
+                                value={sequenceRatingAvg} 
+                                valueMax={5} 
                                 title={"Tỷ lệ học viên hài lòng về lộ trình học"}
                             />
                         </Grid>
@@ -303,30 +318,34 @@ export const DashboardAdmin = () => {
                             xs={12}
                             lg={6}
                         >
-                            <AnalyticsTrafficKeyword />
+                            {keywordsFromChatbot && <AnalyticsTrafficKeyword 
+                                keywords={keywordsFromChatbot}
+                            />}
                         </Grid>
                         <Grid
                             xs={12}
                             lg={6}
                         >
                             <AnalyticsTrafficComment 
-                                sx={{ height: '100%' }}
-                                comments={[
-                                {
-                                    title: 'New fresh design.',
-                                    content: 'Your favorite template has a new trendy look, more customization options, screens & more.'
-                                },
-                                {
-                                    title: 'Tip 2.',
-                                    content: 'Tip content'
-                                },
-                                {
-                                    title: 'Tip 3.',
-                                    content: 'Tip content'
-                                }
-                                ]}
+                                sx={{ height:'100%' }}
+                                // comments={[
+                                // {
+                                //     title: 'New fresh design.',
+                                //     content: 'Your favorite template has a new trendy look, more customization options, screens & more.'
+                                // },
+                                // {
+                                //     title: 'Tip 2.',
+                                //     content: 'Tip content'
+                                // },
+                                // {
+                                //     title: 'Tip 3.',
+                                //     content: 'Tip content'
+                                // }
+                                // ]}
+                                comments={comment}
                             />
                         </Grid>
+                        {console.log(comment)}
                         <Grid
                             xs={12}
                             lg={12}
@@ -351,7 +370,7 @@ export const DashboardAdmin = () => {
                                         label: "Số lượt hài lòng",
                                         id: "satisfactionRate"
                                     },
-                                  ]}
+                                ]}
                             />
                         </Grid>
                     </Grid>

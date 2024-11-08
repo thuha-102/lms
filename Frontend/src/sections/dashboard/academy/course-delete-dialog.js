@@ -3,16 +3,18 @@ import { useCallback } from "react"
 import toast from "react-hot-toast"
 import { exploreApi } from "../../../api/explore"
 import { paths } from "../../../paths"
+import { useRouter } from "next/router"
 
 export const CourseDeleteDialog = (props) => {
-    const {courseId, open, setDeleteDialog} = props
+    const {courseId, open, setDeleteDialog, isIn} = props
+    const router = useRouter();
 
     const handleDeleteCourse = useCallback(async () => {
         try {
             await exploreApi.deleteCourse(courseId);
             setDeleteDialog(false)
             toast.success("Đã xóa thành công khóa học")
-            window.location.replace(paths.dashboard.academy.index);
+            isIn ? router.push(`${paths.dashboard.academy.index}`) : router.back();
         }
         catch (error){
             toast.error("Xảy ra lỗi")
