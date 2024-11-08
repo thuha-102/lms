@@ -24,6 +24,11 @@ export class CourseCreateREQ {
   @IsNumber()
   salePercent: number;
 
+
+  @IsOptional()
+  @IsNumber()
+  amountOfTime: number;
+
   @IsOptional()
   @IsString()
   labels: string[];
@@ -56,6 +61,7 @@ export class CourseCreateREQ {
       description: body.description,
       price: body.price,
       salePercent: body.salePercent ? body.salePercent : 0,
+      amountOfTime: body.amountOfTime,
       level: body.level,
       avatarId: body.avatarId,
       passPercent: body.passPercent,
