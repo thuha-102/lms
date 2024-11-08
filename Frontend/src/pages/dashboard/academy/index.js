@@ -154,7 +154,7 @@ const Page = () => {
                 <CourseSearch isInstructor={user?.accountType!=="LEARNER"} onFilter={handleFilter} />
               </Grid>
               { 
-                user.accountType === "LEARNER" && courses.length !== 0 && courses
+                user?.accountType === "LEARNER" && courses.length !== 0 && courses
                 .slice(page*consts.FORUMS_PER_PAGE, page*consts.FORUMS_PER_PAGE + consts.FORUMS_PER_PAGE)
                 .map((course) => (
                   <Grid
@@ -167,7 +167,7 @@ const Page = () => {
               ))
               }
               { 
-                user.accountType !== "LEARNER" && courses.length !== 0 && courses
+                user?.accountType !== "LEARNER" && courses.length !== 0 && courses
                 .slice(page*consts.FORUMS_PER_PAGE, page*consts.FORUMS_PER_PAGE + consts.FORUMS_PER_PAGE)
                 .map(( course )=> (
                   <Grid
@@ -180,10 +180,10 @@ const Page = () => {
               ))
               }
               {
-                courses.length === 0 && user.accountType === "LEARNER" && <Typography>Bạn chưa đăng kí khóa học nào, <Link href={paths.dashboard.explore}>khám phá thêm</Link></Typography>
+                courses.length === 0 && user?.accountType === "LEARNER" && <Typography>Bạn chưa đăng kí khóa học nào, <Link href={paths.dashboard.explore}>khám phá thêm</Link></Typography>
               }
               {
-                courses.length === 0 && user.accountType !== "LEARNER" && <Typography>Không có khóa học để hiển thị</Typography>
+                courses.length === 0 && user?.accountType !== "LEARNER" && <Typography>Không có khóa học để hiển thị</Typography>
               }
             </Grid>
             {

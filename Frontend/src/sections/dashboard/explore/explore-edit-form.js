@@ -425,7 +425,7 @@ export const CourseEditForm = () => {
                               preview
                             :
                               (
-                                !details?.avatarId  
+                                details?.avatarId  
                                 ? 
                                   `${process.env.NEXT_PUBLIC_SERVER_API}/files/${details?.avatarId}`
                                 :

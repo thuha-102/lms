@@ -36,6 +36,7 @@ import { useMounted } from '../../../hooks/use-mounted';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import QueueIcon from '@mui/icons-material/Queue';
 import { CreateCourseDialog } from './course-create-dialog';
+import { CourseDeleteDialog } from '../academy/course-delete-dialog';
 import { BrowserRouter } from 'react-router-dom';
 
 // import CourseUploadTips from './course-upload-tip';
@@ -125,6 +126,7 @@ export const LearningPathUpdateCourse = ({typeLearnerId}) => {
     console.log(listCourseIds)
     return listCourseIds ? JSON.parse(listCourseIds) : [];
   });
+  const [openCourseDeleteDialog, setOpenCourseDeleteDialog] = useState(false);
 
   // const handleDragEnd = (result) => {
   //   if (!result.destination) return;
@@ -241,8 +243,8 @@ export const LearningPathUpdateCourse = ({typeLearnerId}) => {
         //   preCourseIds: [values.preCourseId],
         //   postCourseIds: [values.postCourseId],
         // })
-        toast.success('Tên khoá học đã được sửa');
-        router.push(`${paths.dashboard.explore}/course/1`);
+        // toast.success('Tên khoá học đã được sửa');
+        router.push(`${paths.dashboard.explore}/${topicId}/edit`);
       } catch (err) {
         console.error(err);
         toast.error('Something went wrong!');
@@ -256,16 +258,16 @@ export const LearningPathUpdateCourse = ({typeLearnerId}) => {
 
 
   // Hàm xử lý khi click vào Delete
-  const handleDelete = (topicId) => {
-    // Xác nhận trước khi xóa
-    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa mục này không?");
-    if (confirmDelete) {
-      // Xóa topic bằng cách lọc ra khỏi mảng courseIds
-      const updatedCourseIds = courseIds.filter(topic => topic.id !== topicId);
-      setCourseIds(updatedCourseIds);
-      console.log("Deleted topic with id:", topicId);
-    }
-  };
+  // const handleDelete = (topicId) => {
+  //   // Xác nhận trước khi xóa
+  //   const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa mục này không?");
+  //   if (confirmDelete) {
+  //     // Xóa topic bằng cách lọc ra khỏi mảng courseIds
+  //     const updatedCourseIds = courseIds.filter(topic => topic.id !== topicId);
+  //     setCourseIds(updatedCourseIds);
+  //     console.log("Deleted topic with id:", topicId);
+  //   }
+  // };
 
   if(!courseIds) {
     return <Typography>Loading...</Typography>
@@ -311,10 +313,16 @@ export const LearningPathUpdateCourse = ({typeLearnerId}) => {
                         </IconButton>
                         <IconButton 
                             aria-label="delete"
-                            onClick={() => handleDelete(courseId.id)} // Gọi hàm khi click
+                            // onClick={() => handleDelete(courseId.id)} // Gọi hàm khi click
+                            onClick={()=>setOpenCourseDeleteDialog(true)}
                         >
                             <DeleteIcon />
                         </IconButton>
+                        {openCourseDeleteDialog && <CourseDeleteDialog
+                          courseId={courseId.id}
+                          open={openCourseDeleteDialog}
+                          setDeleteDialog={setOpenCourseDeleteDialog}
+                        />}
                     </Paper>
                     )}
                 </Draggable>
@@ -336,7 +344,7 @@ export const LearningPathUpdateCourse = ({typeLearnerId}) => {
     }}
     // onClick={handleAddTopic}
     // onClick={() => setOpenCreateCourseDialog(true) }
-    onClick={() => router.push(${paths.dashboard.learning_path_manage}/create-course)}
+    onClick={() => router.push(`${paths.dashboard.learning_path_manage}/create-course`)}
     >
     <QueueIcon/>
     <Typography variant="body1" sx={{px: 2, ml: 2}}>
@@ -351,7 +359,7 @@ export const LearningPathUpdateCourse = ({typeLearnerId}) => {
         <Button
           component={NextLink}
           // Thay đổi đường dẫn để lưu vào db
-          href={`${paths.dashboard.learning_path_manage}/create-course`}
+          href={`${paths.dashboard.learning_path_manage}/updated/create-course`}
           startIcon={(
             <SvgIcon>
               <QueueIcon />

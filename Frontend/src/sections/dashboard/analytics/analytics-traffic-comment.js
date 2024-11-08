@@ -25,7 +25,7 @@ export const AnalyticsTrafficComment = (props) => {
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          height: '100%'
+          height: '300px'
         }}
       >
         {/* <Box sx={{ mb: 6 }}>
@@ -42,7 +42,7 @@ export const AnalyticsTrafficComment = (props) => {
             },
             '& .slick-dots': {
               top: 'unset',
-              bottom: 50,
+              bottom: 0,
               left: 0,
               textAlign: 'center'
             }
@@ -50,7 +50,8 @@ export const AnalyticsTrafficComment = (props) => {
         >
           <Slider {...sliderSettings}>
             {comments?.map((comment) => (
-              <div key={comment.title}>
+              // <div key={comment.title}>
+              <div key={comment}>
                 <Grid
                   xs={12}
                   lg={12}
@@ -72,14 +73,16 @@ export const AnalyticsTrafficComment = (props) => {
                     xs={10}
                   >
                     <Typography variant="h6">
-                      {comment.title}
+                      {/* {comment.title} */}
+                      {comment.comment}
                     </Typography>
                     <Typography
                       color="text.secondary"
                       sx={{ mt: 0.5 }}
                       variant="body1"
                     >
-                      {comment.content}
+                      {/* {comment.content} */}
+                      {comment.createdAt}
                     </Typography>
                   </Grid>
                 </Grid>

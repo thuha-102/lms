@@ -27,6 +27,11 @@ export class RatingService {
         rating: true,
         comment: true,
         ratingAt: true
+      },
+      where:{
+        comment: {
+          not: null
+        }
       }
     });
   }
@@ -53,6 +58,11 @@ export class RatingService {
         sequenceCourseComment: true,
         sequenceCourseRatingAt: true,
         sequenceCourseRating: true
+      },
+      where:{
+        sequenceCourseComment: {
+          not: null
+        }
       }
     });
   }
@@ -76,5 +86,37 @@ export class RatingService {
     })
 
     return preferedNum/ratingNum;
+  }
+
+  async getAverageCoursePrefered() {
+    const result = await this.prismaService.registerCourse.aggregate({
+      _avg: {
+        rating: true // Tính trung bình của trường rating
+      },
+      where: {
+        rating: {
+          not: null // Bỏ qua những bản ghi có rating NULL
+        }
+      }
+    });
+  
+    // result._avg.rating sẽ trả về giá trị trung bình hoặc null nếu không có bản ghi nào phù hợp
+    return result._avg.rating ?? 0;  // Nếu không có bản ghi, trả về 0 hoặc giá trị phù hợp với bạn
+  }
+
+  async getAverageSequencePrefered() {
+    const result = await this.prismaService.learner.aggregate({
+      _avg: {
+        sequenceCourseRating: true // Tính trung bình của trường rating
+      },
+      where: {
+        sequenceCourseRating: {
+          not: null // Bỏ qua những bản ghi có rating NULL
+        }
+      }
+    });
+  
+    // result._avg.rating sẽ trả về giá trị trung bình hoặc null nếu không có bản ghi nào phù hợp
+    return result._avg.sequenceCourseRating ?? 0;  // Nếu không có bản ghi, trả về 0 hoặc giá trị phù hợp với bạn
   }
 }

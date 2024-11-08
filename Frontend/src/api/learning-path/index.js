@@ -19,7 +19,7 @@ class LearningPathApi {
   }
 
   updateSequenceCoures(typeLearnerId, request) {
-    return axios.put(`${apiUrl}/:${typeLearnerId}`, request)
+    return axios.put(`${apiUrl}/${typeLearnerId}`, request)
     //return Promise.resolve(deepCopy(learningSequenceCourseInfo));
   }
 }
