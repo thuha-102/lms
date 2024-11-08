@@ -15,7 +15,7 @@ export class RatingController {
       const { courseId } = queryParams;
       const result = await this.ratingService.getCourseRating(courseId);
       return JSON.stringify( {
-        rating: result[0]._avg.rating
+        rating: result
       });
     } catch (error) {
       console.log(error);
@@ -27,7 +27,7 @@ export class RatingController {
   async getCourseComments(@Query() queryParams) {
     try {
       const { limit } = queryParams;
-      const result = await this.ratingService.getCourseComment(limit);
+      const result = await this.ratingService.getCourseComment(Number(limit));
       return JSON.stringify(result.map(c => ({
         comment: c.comment,
         rating: c.rating,
@@ -57,7 +57,7 @@ export class RatingController {
   async getSequenceCourseComments(@Query() queryParams) {
     try {
       const { limit } = queryParams;
-      const result = await this.ratingService.getSequenceCourseComment(limit);
+      const result = await this.ratingService.getSequenceCourseComment(Number(limit));
       return JSON.stringify(result.map(c => ({
         comment: c.sequenceCourseComment,
         rating: c.sequenceCourseRating,
@@ -75,6 +75,32 @@ export class RatingController {
       const result = await this.ratingService.getAverageChatbotPrefered();
       return JSON.stringify({
         rate: result
+      });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  @Get('/course-rating-avg')
+  async getAverageCoursePrefered() {
+    try {
+      const result = await this.ratingService.getAverageCoursePrefered();
+      return JSON.stringify( {
+        rating: result
+      });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  @Get('/sequence-course-rating-avg')
+  async getAverageSequencePrefered() {
+    try {
+      const result = await this.ratingService.getAverageSequencePrefered();
+      return JSON.stringify( {
+        rating: result
       });
     } catch (error) {
       console.log(error);

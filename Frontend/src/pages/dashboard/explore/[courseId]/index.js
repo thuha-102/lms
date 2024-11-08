@@ -167,7 +167,8 @@ const LessonList = () => {
 
   const getCourse = useCallback(async () => {
     try {
-      const response = await exploreApi.detailCourse(courseId, user.id);
+      const response = user?.accountType === 'ADMIN' ? await exploreApi.detailCourse(courseId)
+                                                    : await exploreApi.detailCourse(courseId, user.id);
       console.log(response.data)
 
       setAvatarId(response.data.avatarId)
@@ -421,7 +422,7 @@ const LessonList = () => {
                       <Typography variant='h5'>
                         Trình độ: {level}
                       </Typography>
-                      { user.accountType === 'ADMIN' && <Button
+                      { user?.accountType === 'ADMIN' && <Button
                         component={NextLink}
                         href={`${paths.dashboard.explore}/${courseId}/edit`}
                         variant='outlined'

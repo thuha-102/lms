@@ -158,6 +158,7 @@ export const LearningPathUpdateForm = ({typeLearnerId, typeLearnerName, typeLear
           // subject: values.subject,
       })
         toast.success('Chủ đề học tập đã được tạo');
+        localStorage.setItem("updateSequenceCourseIds", [])
         router.push(paths.dashboard.learning_path_manage);
       } catch (err) {
         console.error(err);
@@ -166,7 +167,6 @@ export const LearningPathUpdateForm = ({typeLearnerId, typeLearnerName, typeLear
         helpers.setErrors({ submit: err.message });
         helpers.setSubmitting(false);
       }
-      localStorage.setItem("updateSequenceCourseIds", [])
     }
   });
 

@@ -80,16 +80,19 @@ export const AnalyticsSatisfaction = (props) => {
       <CardHeader
         title={title}
         action={(
-          <Tooltip title="Refresh rate is 24h">
+          <Tooltip title="Dữ liệu được lấy trong ngày">
             <SvgIcon color="action">
               <InfoCircleIcon />
             </SvgIcon>
           </Tooltip>
         )}
       />
-      <CardContent>
+      <CardContent
+        // sx={{height:'300px'}}
+      >
         <Gauge
             value={value}
+            valueMax={valueMax}
             startAngle={-110}
             endAngle={110}
             sx={{
