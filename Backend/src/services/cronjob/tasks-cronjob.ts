@@ -22,19 +22,19 @@ export class TasksService {
   @Cron(CronExpression.EVERY_12_HOURS)
   async updateStateOfReceipt() {
 
-    const [paidRecipients, unpaidReceipts] = await Promise.all([
-      this.prismaService.receipt.findMany({where: {isPayment: true}, select: {learnerId: true, Course: {select: {id: true}}}}),
+    const [registeredCourse, unpaidReceipts] = await Promise.all([
+      this.prismaService.registerCourse.findMany({select: {learnerId: true, courseId: true}}),
       this.prismaService.receipt.findMany({where: {isPayment: false}, select: {id: true, learnerId: true, Course: {select: {id: true}}}})
     ]);
 
-    if (paidRecipients.length === 0 || unpaidReceipts.length === 0) {
+    if (registeredCourse.length === 0 || unpaidReceipts.length === 0) {
       this.logger.debug('Nothing when updated state of payment');
       return;
     }
 
-    const paidLearnerRecipients: {[key: number]: number[]} = paidRecipients.reduce((acc, { learnerId, Course }) => {
+    const paidLearnerRecipients: {[key: number]: number[]} = registeredCourse.reduce((acc, { learnerId, courseId }) => {
       if (!acc[learnerId]) acc[learnerId] = [];
-      acc[learnerId].push(...Course.map(course => course.id));
+      acc[learnerId].push(courseId);
       return acc;
     }, {});
 

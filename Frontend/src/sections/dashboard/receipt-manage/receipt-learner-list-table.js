@@ -132,13 +132,13 @@ export const ReceiptLearnerListTable = (props) => {
                         variant="body2"
                         textAlign={"center"}
                       >
-                        {Receipt.isPayment === false ? "Đang chờ thanh toán" : "Đã thanh toán"}
+                        {Receipt.isPayment === false ? "Đang chờ thanh toán" : ( Receipt.note === "" ? "Đã thanh toán" : "Không thể thực thiện")}
                       </Typography>
                     </TableCell>
 
                     <TableCell align='center'>
                       <Button variant='contained' onClick={() => setCurrentReceipt(Receipt)} disabled={Receipt.isPayment === true}>
-                        Gọi trang cart-invoice
+                        Thanh toán lại
                       </Button>
                     </TableCell>
 
