@@ -1,14 +1,12 @@
-import { Fragment, useCallback, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import numeral from 'numeral';
 import PropTypes from 'prop-types';
 import { toast } from 'react-hot-toast';
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
-import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
-import Image01Icon from '@untitled-ui/icons-react/build/esm/Image01';
+import io from 'socket.io-client';
 import {
   Box,
   Button,
+  Dialog,
   Table,
   TableBody,
   TableCell,
@@ -18,7 +16,7 @@ import {
   Typography
 } from '@mui/material';
 import { Scrollbar } from '../../../components/scrollbar';
-import ReceiptRegisterDialog from './receipt-register-dialog';
+import { CartInvoices } from '../cart/cart-invoices';
 
 export const ReceiptLearnerListTable = (props) => {
   const {
@@ -32,11 +30,46 @@ export const ReceiptLearnerListTable = (props) => {
     ...other
   } = props;
   const [currentReceipt, setCurrentReceipt] = useState(null);
+  const socket = io(`${process.env.NEXT_PUBLIC_SERVER_API}`);
+  const [loading, setLoading] = useState(true);
+
+  const handleClose = () => setCurrentReceipt(null);
+
+  const paymentConfirm = useCallback(() => {
+        socket.on('payment', (receipt) => {
+            if (currentReceipt.id && receipt.id === currentReceipt.id) {
+                setLoading(false)
+            }
+        });
+
+        return () => {
+            socket.off('payment');
+        };
+    }, [currentReceipt])
+
+    useEffect(() => {
+        paymentConfirm()
+    }, [currentReceipt !== null]);
+
+  useEffect(() => {console.log(currentReceipt)}, [currentReceipt]);
 
   return (
     <div {...other}>
       {
-        currentReceipt !== null && <ReceiptRegisterDialog open={currentReceipt !== null} setRegisterDialog={setCurrentReceipt} setReload={onRegisterReceipt} receipt={currentReceipt}/>
+          currentReceipt && 
+              <Dialog
+                  open={currentReceipt !== null}
+                  onClose={handleClose}
+              >
+                  <Box>
+                      <CartInvoices
+                          invoices={currentReceipt.courses.map(course => ({courseName: course.name, price: course.price, salePercent: course.salePercent}))}                          
+                          loading={loading}
+                          receiptId={`${currentReceipt.id}`.padStart(3, '0')}
+                          paymentConfirm={paymentConfirm}
+                      />
+                  </Box>
+              </Dialog>
       }
       <Scrollbar>
         <Table sx={{ minWidth: 1200 }}>
@@ -44,9 +77,6 @@ export const ReceiptLearnerListTable = (props) => {
             <TableRow>
               <TableCell align='center'>
                 ID
-              </TableCell>
-              <TableCell width="10%" align='center'>
-                ID người học
               </TableCell>
               <TableCell width="40%" align='center'>
                 Thông tin các khóa học
@@ -74,15 +104,6 @@ export const ReceiptLearnerListTable = (props) => {
                   >
                     <TableCell width="5%" align='center'>
                       {Receipt.id}
-                    </TableCell>
-                    <TableCell>
-                      <Typography
-                        color="textSecondary"
-                        variant="body2"
-                        textAlign={"center"}
-                      >
-                      {Receipt.learnerId}
-                      </Typography>
                     </TableCell>
                     <TableCell>
                       <Box border={'1px solid'} borderRadius={2}>

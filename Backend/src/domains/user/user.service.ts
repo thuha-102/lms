@@ -318,8 +318,10 @@ export class UserService {
       const learnerId = receipt.learnerId
   
       const prosmiseRegister = receipt.Course.map(course => tx.registerCourse.create({data: {Learner: connectRelation(learnerId), Course: connectRelation(course.id)}}))
-  
       await Promise.all(prosmiseRegister)
+
+      const deleteCart = receipt.Course.map(course => tx.cart.deleteMany({where: {courseId: course.id, learnerId: learnerId}}));
+      await Promise.all(deleteCart);
 
       await tx.receipt.update({where: {id: receiptId}, data: {isPayment: true}})
     })

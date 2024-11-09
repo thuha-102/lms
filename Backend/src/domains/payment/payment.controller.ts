@@ -36,8 +36,6 @@ export class PaymentController {
 
   @Get('my-receipt')
   async getUserListPayments(@Query('learnerId', ParseIntPipe) learnerId: number, @Query('isPayment') isPayment: string) {
-    console.log(learnerId)
-    console.log(isPayment)
     return await this.paymentService.findByUser({learnerId, isPayment});
   }
 

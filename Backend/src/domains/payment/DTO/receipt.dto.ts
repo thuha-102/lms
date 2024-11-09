@@ -7,7 +7,9 @@ export class ReceiptDTO {
   createdAt: string;
   courses: {
     id: number,
-    name: string
+    name: string,
+    price: number,
+    salePercent: number,
   }[] ;
 
   static selectField(): Prisma.ReceiptSelect {
@@ -18,7 +20,9 @@ export class ReceiptDTO {
       Course: {
         select: {
           id: true,
-          name: true
+          name: true,
+          price: true,
+          salePercent: true
         },
       },
       isPayment: true,
@@ -26,7 +30,7 @@ export class ReceiptDTO {
   }
 
   static fromEntity(e: Prisma.ReceiptGetPayload<{ include: { Course: true } }>): ReceiptDTO {
-    const courses = e.Course.map((c) => ({id: c.id, name: c.name}));
+    const courses = e.Course.map((c) => ({id: c.id, name: c.name, price: c.price, salePercent: c.salePercent}));
 
     return {
       id: e.id,

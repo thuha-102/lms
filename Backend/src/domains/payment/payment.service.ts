@@ -41,9 +41,20 @@ export class PaymentService {
         data: { isPayment: true },
         select: { learnerId: true, Course: { select: { id: true } } },
       });
-
-      for (let i = 0; i < willRegister.Course.length; i++)
+      
+      let registeredCourse = []
+      for (let i = 0; i < willRegister.Course.length; i++){
         await this.userService.registerCourse(willRegister.learnerId, willRegister.Course[i].id);
+        
+        // cancel receipt have a course that is already bought
+        registeredCourse.push(willRegister.Course[i].id);
+      }
+
+      const learnerUnpaidReceipts = await tx.receipt.findMany({where: {learnerId: willRegister.learnerId, isPayment: false}, select: {id: true, Course: {select: {id: true}}}})
+      const failedReceipts = learnerUnpaidReceipts.filter(unpaidReceipt => unpaidReceipt.Course.some(course => registeredCourse.includes(course.id)))
+
+      for (let i = 0; i < failedReceipts.length; i++)
+        await tx.receipt.update({where: {id: failedReceipts[i].id}, data: {isPayment: true, note: "Payment failed because one or more courses are already registered"}})
 
       return { id: receiptId, isPayment: true };
     });
@@ -81,7 +92,6 @@ export class PaymentService {
 
   async findByUser(query: {learnerId: number, isPayment: string}){
     const condition: Prisma.ReceiptFindManyArgs['where'] = {isPayment: query.isPayment === 'true' ? true : query.isPayment === 'false' ? false : undefined, Learner: {User: {id: query.learnerId }}}
-    console.log(condition)
 
     const receipt = await this.prismaService.receipt.findMany({
       where: condition,

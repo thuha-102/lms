@@ -46,6 +46,8 @@ export const CartInvoices = (props) => {
     getAccountBank()
   }, [])
 
+  useEffect(() => {console.log("invoice", invoices)}, [invoices])
+
   return (
     <Card sx={{minHeight: 700, minWidth: 600}}>
       <CardHeader
