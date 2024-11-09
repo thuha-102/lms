@@ -28,6 +28,11 @@ class PaymentApi {
     updateAccountbank(request) {
         return axios.patch(`${apiUrl}/bank-account`, request)
     }
+
+    getReceiptsByUserId(learnerId, isPayment) {
+        if(!isPayment) return axios.get(`${apiUrl}/my-receipt?learnerId=${learnerId}`);
+        return axios.get(`${apiUrl}/my-receipt?learnerId=${learnerId}&isPayment=${isPayment}`);
+    }
 }
 
 export const paymentApi = new PaymentApi();

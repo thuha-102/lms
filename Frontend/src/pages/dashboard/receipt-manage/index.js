@@ -15,11 +15,13 @@ import {
 } from '@mui/material';
 import { BreadcrumbsSeparator } from '../../../components/breadcrumbs-separator';
 import { useMounted } from '../../../hooks/use-mounted';
+import { useAuth } from '../../../hooks/use-auth';
 import { usePageView } from '../../../hooks/use-page-view';
 import { Layout as DashboardLayout } from '../../../layouts/dashboard';
 import { paths } from '../../../paths';
 import { ReceiptManageListSearch } from '../../../sections/dashboard/receipt-manage/receipt-manage-list-search';
 import { ReceiptManageListTable } from '../../../sections/dashboard/receipt-manage/receipt-manage-list-table';
+import { ReceiptLearnerListTable } from '../../../sections/dashboard/receipt-manage/receipt-learner-list-table';
 import { paymentApi } from '../../../api/payment';
 
 const useSearch = () => {
@@ -38,8 +40,9 @@ const useSearch = () => {
   };
 };
 
-const useReceipts = (search, reload) => {
+const useReceipts = (user, search, reload) => {
   const isMounted = useMounted();
+  // const { user } = useAuth();
   const [state, setState] = useState({
     Receipts: [],
     ReceiptsCount: 0
@@ -47,8 +50,8 @@ const useReceipts = (search, reload) => {
 
   const getReceipts = useCallback(async () => {
     try {
-        const response = await paymentApi.getReceipts(search.learnerName, search.filters.isPayment?.length !== 0 ? search.filters.isPayment : undefined);
-        
+        const response = user?.accountType === "ADMIN" ? await paymentApi.getReceipts(search.learnerName, search.filters.isPayment?.length !== 0 ? search.filters.isPayment : undefined)
+                                                        : await paymentApi.getReceiptsByUserId(user.id, search.filters.isPayment?.length !== 0 ? search.filters.isPayment : undefined);
         if (isMounted()) {
         setState({
             Receipts: response.data,
@@ -70,8 +73,9 @@ const useReceipts = (search, reload) => {
 
 const ReceiptList = () => {
   const { search, updateSearch } = useSearch();
+  const { user } = useAuth();
   const [ reload, setReload] = useState(false);
-  const { Receipts, ReceiptsCount } = useReceipts(search, reload);
+  const { Receipts, ReceiptsCount } = useReceipts(user, search, reload);
 
   usePageView();
 
@@ -152,7 +156,7 @@ const ReceiptList = () => {
             </Stack>
             <Card>
               <ReceiptManageListSearch onFiltersChange={handleFiltersChange} onSearchChange={handleSearchChange}/>
-              <ReceiptManageListTable
+              {user?.accountType === "ADMIN" ? <ReceiptManageListTable
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
                 onRegisterReceipt={setReload}
@@ -161,6 +165,16 @@ const ReceiptList = () => {
                 ReceiptsCount={ReceiptsCount}
                 rowsPerPage={search.rowsPerPage}
               />
+              : <ReceiptLearnerListTable
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                onRegisterReceipt={setReload}
+                page={search.page}
+                Receipts={Receipts}
+                ReceiptsCount={ReceiptsCount}
+                rowsPerPage={search.rowsPerPage}
+              />
+              }
             </Card>
           </Stack>
         </Container>
