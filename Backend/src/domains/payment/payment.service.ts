@@ -78,4 +78,16 @@ export class PaymentService {
 
     return receipt.map(receipt => ReceiptDTO.fromEntity(receipt))
   }
+
+  async findByUser(query: {learnerId: number, isPayment: string}){
+    const condition: Prisma.ReceiptFindManyArgs['where'] = {isPayment: query.isPayment === 'true' ? true : query.isPayment === 'false' ? false : undefined, Learner: {User: {id: query.learnerId }}}
+    console.log(condition)
+
+    const receipt = await this.prismaService.receipt.findMany({
+      where: condition,
+      select: ReceiptDTO.selectField()
+    })
+
+    return receipt.map(receipt => ReceiptDTO.fromEntity(receipt))
+  }
 }

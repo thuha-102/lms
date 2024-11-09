@@ -165,6 +165,15 @@ export const getSections = (t, accountType) => [
             <ShoppingCartIcon />
           </SvgIcon>
         )
+      },
+      {
+        title: t(tokens.nav.receipt_manage),
+        path: paths.dashboard.receipt_manage,
+        icon: (
+          <SvgIcon fontSize="small">
+            <ReceiptLongIcon />
+          </SvgIcon>
+        )
       }]: [],
     ]
   },
