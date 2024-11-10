@@ -1,7 +1,7 @@
 
 /** @type {import('next').NextConfig} */
 
-const { withNextVideo } = require('next-video/process')
+// const { withNextVideo } = require('next-video/process')
 
 
 const config = {
@@ -45,7 +45,7 @@ const withTM = require('next-transpile-modules')([
 
 module.exports = {
   ...withTM(config), 
-  ...withNextVideo(config),
+  // ...withNextVideo(config),
   images: {
     unoptimized: true
   },

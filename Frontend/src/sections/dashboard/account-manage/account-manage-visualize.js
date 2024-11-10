@@ -1,32 +1,12 @@
-import PropTypes from 'prop-types';
-import InfoCircleIcon from '@untitled-ui/icons-react/build/esm/InfoCircle';
 import {
-  Box,
-  Button,
-  Card,
   CardContent,
   CardHeader,
-  Divider,
-  Stack,
-  SvgIcon,
-  Tooltip,
-  Typography,
-  TableBody,
   TableCell,
-  TableHead,
-  TablePagination,
   TableRow,
-  TextField,
   Unstable_Grid2 as Grid
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { LineChart } from '@mui/x-charts/LineChart';
-import { Chart } from '../../../components/chart';
-import { Gauge, gaugeClasses } from '@mui/x-charts/Gauge';
-
 import { BarChart } from '@mui/x-charts/BarChart';
-import { alignProperty } from '@mui/material/styles/cssUtils';
-// import { dataset, valueFormatter } from '../dataset/weather';
 
 const dataset = [
   {

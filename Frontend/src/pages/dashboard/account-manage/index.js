@@ -21,7 +21,6 @@ import { Layout as DashboardLayout } from '../../../layouts/dashboard';
 import { paths } from '../../../paths';
 import { AccountManageListSearch } from '../../../sections/dashboard/account-manage/account-manage-list-search';
 import { AccountManageListTable } from '../../../sections/dashboard/account-manage/account-manage-list-table';
-import { applyPagination } from '../../../utils/apply-pagination';
 
 const useSearch = () => {
   const [search, setSearch] = useState({
@@ -158,25 +157,6 @@ const AccountList = () => {
                   </Link>
                 </Breadcrumbs>
               </Stack>
-              {/* <Stack
-                alignItems="center"
-                direction="row"
-                spacing={3}
-              >
-                <Button
-                  component={NextLink}
-                  // Thay đổi đường dẫn để lưu vào db
-                  href={`${paths.dashboard.lm_manage}/create`}
-                  startIcon={(
-                    <SvgIcon>
-                      <PlusIcon />
-                    </SvgIcon>
-                  )}
-                  variant="contained"
-                >
-                  Thêm tài liệu học tập
-                </Button>
-              </Stack> */}
             </Stack>
             <Card>
               <AccountManageListSearch onFiltersChange={handleFiltersChange} onSearchChange={handleSearchChange}/>
