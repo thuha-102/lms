@@ -1,30 +1,19 @@
 import { Fragment, useCallback, useState } from 'react';
-import numeral from 'numeral';
 import PropTypes from 'prop-types';
 import { toast } from 'react-hot-toast';
-import ChevronDownIcon from '@untitled-ui/icons-react/build/esm/ChevronDown';
-import ChevronRightIcon from '@untitled-ui/icons-react/build/esm/ChevronRight';
 import DotsHorizontalIcon from '@untitled-ui/icons-react/build/esm/DotsHorizontal';
 import PersonIcon from '@mui/icons-material/Person';
-import DeleteIcon from '@mui/icons-material/Delete';
-import Image01Icon from '@untitled-ui/icons-react/build/esm/Image01';
 import NavigateNextRoundedIcon from '@mui/icons-material/NavigateNextRounded';
 import {
   Avatar,
   Box,
   Button,
   CardContent,
-  Checkbox,
   Divider,
   Grid,
   IconButton,
-  InputAdornment,
-  LinearProgress,
-  MenuItem,
-  FormControlLabel,
   Stack,
   SvgIcon,
-  Switch,
   Table,
   TableBody,
   TableCell,
@@ -36,40 +25,9 @@ import {
 } from '@mui/material';
 import { blue, grey, green } from '@mui/material/colors';
 import { Scrollbar } from '../../../components/scrollbar';
-import { SeverityPill } from '../../../components/severity-pill';
-import { FileIcon } from '../../../components/file-icon';
 import { useRouter } from 'next/navigation';
-import { lm_manageApi } from '../../../api/lm-manage';
-import { paths } from '../../../paths';
 import { AccountDeleteDialogAdmin } from './account-delete-dialog-admin';
 import { AccountManageVisualize } from './account-manage-visualize';
-
-const categoryOptions = [
-  // {
-  //   label: 'ADMIN',
-  //   value: 'ADMIN'
-  // },
-  // {
-  //   label: 'INSTRUCTOR',
-  //   value: 'INSTRUCTOR'
-  // },
-  // {
-  //   label: 'LEARNER',
-  //   value: 'LEARNER'
-  // }
-  // {
-  //   label: 'WORD',
-  //   value: 'WORD'
-  // },
-  // {
-  //   label: 'CODE',
-  //   value: 'CODE'
-  // },
-  // {
-  //   label: 'PPT',
-  //   value: 'PPT'
-  // }
-];
 
 export const AccountManageListTable = (props) => {
   const {
@@ -143,10 +101,6 @@ export const AccountManageListTable = (props) => {
     setCurrentAccount({...currentAccount, state:!currentAccount.state});
   }
 
-  // useEffect({
-    
-  // },[])
-
   return (
     <div {...other}>
       {
@@ -179,12 +133,6 @@ export const AccountManageListTable = (props) => {
               <TableCell>
                 Tiến độ
               </TableCell>
-              {/* <TableCell>
-                Trạng thái
-              </TableCell> */}
-              {/* <TableCell width="25%">
-                Đánh giá
-              </TableCell> */}
               <TableCell align="right">
               </TableCell>
             </TableRow>
@@ -192,12 +140,8 @@ export const AccountManageListTable = (props) => {
           <TableBody>
             {Accounts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((Account) => {
-              // const isCurrent = Account.id === currentAccount.id;
-              // const price = numeral(Account.price).format(`${Account.currency}0,0.00`);
-              // const quantityColor = Account.quantity >= 10 ? 'success' : 'error';
               const statusColor = Account.state === true ? 'success' : 'error';
               const hasManyVariants = Account.variants > 1;
-              // const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
 
               return (
                 <Fragment key={Account.id}>
@@ -208,17 +152,6 @@ export const AccountManageListTable = (props) => {
                     <TableCell width="5%" align='center'>
                       <IconButton 
                         aria-label="edit"   
-                        // onClick={() => {
-                        //   // Chuyển đổi mảng các đối tượng thành chuỗi JSON trước khi lưu vào localStorage
-                        //   /* localStorage.setItem('updateSequenceCourseIds', JSON.stringify(TypeLearner.courses.map((course) => ({
-                        //   //   id: course.id,
-                        //   //   name: course.name
-                        //   // }))));
-                        //   */
-                          
-                        //   // Điều hướng đến trang khác
-                        //   // router.push(`${paths.dashboard.learning_path_manage}/updated/${TypeLearner.typeLearnerId}`);
-                        // }} 
                         onClick={() => handleAccountToggle(Account, false, true)}
                       >
                         <NavigateNextRoundedIcon />
@@ -234,24 +167,6 @@ export const AccountManageListTable = (props) => {
                           display: 'flex'
                         }}
                       >
-                        {/* {Account.image
-                          ? ( */}
-                            {/* <Box
-                              sx={{
-                                alignItems: 'center',
-                                backgroundColor: 'neutral.50',
-                                backgroundImage: `url(/assets/products/product-1.png)`,
-                                backgroundPosition: 'center',
-                                backgroundSize: 'cover',
-                                borderRadius: 1,
-                                display: 'flex',
-                                height: 80,
-                                justifyContent: 'center',
-                                overflow: 'hidden',
-                                width: 80
-                              }}
-                            /> */}
-                              {/* <FileIcon extension={Account.type}/> */}
                               {Account.accountType == "LEARNER" ? 
                               <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
                                 <PersonIcon />
@@ -267,111 +182,31 @@ export const AccountManageListTable = (props) => {
                                 <PersonIcon />
                               </Avatar> : <></>
                               }  
-                          {/* )
-                          : (
-                            <Box
-                              sx={{
-                                alignItems: 'center',
-                                backgroundColor: 'neutral.50',
-                                borderRadius: 1,
-                                display: 'flex',
-                                height: 80,
-                                justifyContent: 'center',
-                                width: 80
-                              }}
-                            >
-                              <SvgIcon>
-                                <Image01Icon />
-                              </SvgIcon>
-                            </Box>
-                          )} */}
                         <Box
                           sx={{
                             cursor: 'pointer',
                             ml: 2
                           }}
                         >
-                          {/* <Typography variant="subtitle1">
-                            {Account.name}
-                          </Typography> */}
                           <Typography variant="subtitle2">
                             {Account.username}
                           </Typography>
-                          {/* <Typography
-                            color="text.secondary"
-                            variant="body2"
-                          >
-                            Vai trò: {Account.accountType}
-                          </Typography> */}
                         </Box>
                       </Box>
                     </TableCell>
-                    <TableCell
-                      // sx={{justifyContent: 'center', alignItems: 'center'}}
-                      // align='center'
-                    >
+                    <TableCell>
                       <Typography variant="subtitle2">
                         {Account.createdAt}
                       </Typography>
                       <Typography variant="subtitle2">
                         {Account.typeLearner}
                       </Typography>
-                      {/* <LinearProgress
-                        value={Account.quantity}
-                        variant="determinate"
-                        color={quantityColor}
-                        sx={{
-                          height: 8,
-                          width: 36
-                        }}
-                      />
-                      <Typography
-                        color="text.secondary"
-                        variant="body2"
-                      >
-                        {Account.quantity}
-                        {' '}
-                        in stock
-                        {hasManyVariants && ` in ${Account.variants} variants`}
-                      </Typography> */}
-                      {/* <Stack space={4}>
-                        <Typography variant="subtitle2">
-                          Email: {Account.email} 
-                        </Typography>
-                        <Typography variant="subtitle2">
-                          Tuổi: {Account.age}
-                        </Typography>
-                        <Typography variant="subtitle2">
-                          Giới tính: {Account.gender}
-                        </Typography>
-                        <Typography variant="subtitle2">
-                          Topic: {Account.accountType}
-                        </Typography> 
-                        <Typography variant="subtitle2">
-                          Ngôn ngữ: {Account.language}
-                        </Typography>
-                      </Stack> */}
                     </TableCell>
                     <TableCell>
                       {Account.avg_score}
                     </TableCell>
                     <TableCell>
-                      
                     </TableCell>
-                    {/* <TableCell>
-                      
-                    </TableCell> */}
-                    {/* <TableCell>
-                      <SeverityPill color={statusColor}>
-                        {Account.state ? "ACTIVE": "INACTIVE"}
-                      </SeverityPill>
-                      <Typography
-                        color="textSecondary"
-                        variant="body2"
-                      >
-                        {Account.state}
-                      </Typography>
-                    </TableCell>  */}
                     <TableCell align="right">
                       <IconButton onClick={() => handleAccountToggle(Account, true, false)}   >
                         <SvgIcon>
@@ -380,8 +215,6 @@ export const AccountManageListTable = (props) => {
                       </IconButton>
                     </TableCell>
                   </TableRow>
-                  {/* {isCurrent && (() => setVisibilityChecked(Account.state))()}
-                  {console.log(visibilityChecked)} */}
                   {openVisualization && currentAccount && Account.id === currentAccount.id && <AccountManageVisualize 
                                                                                                 Account={Account}
                                                                                                 handleAccountClose={handleAccountClose}
@@ -476,27 +309,6 @@ export const AccountManageListTable = (props) => {
                                     name="email"
                                   />
                                 </Grid>
-                                {/* <Grid
-                                  item
-                                  md={6}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    defaultValue={Account.category}
-                                    fullWidth
-                                    label="Loại hình"
-                                    select
-                                  >
-                                    {categoryOptions.map((option) => (
-                                      <MenuItem
-                                        key={option.value}
-                                        value={option.value}
-                                        >
-                                        {option.label}
-                                      </MenuItem>
-                                    ))}
-                                  </TextField>
-                                </Grid> */}
                               </Grid>
                             </Grid>
                             <Grid
@@ -507,86 +319,6 @@ export const AccountManageListTable = (props) => {
                               <Typography variant="h6">
                                 Mô tả
                               </Typography>
-                              {/* <Divider sx={{ my: 2 }} />
-                              <Grid
-                                container
-                                spacing={3}
-                              >
-                                <Grid
-                                  item
-                                  md={6}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    defaultValue={'LEARNER'}
-                                    fullWidth
-                                    label="Vai trò"
-                                    name="Accounttype"
-                                    select
-                                  >
-                                    {categoryOptions.map((option) => (
-                                      <MenuItem
-                                        key={option.value}
-                                        value={option.value}
-                                        >
-                                        {option.label}
-                                      </MenuItem>
-                                    ))}
-                                  </TextField>
-                                </Grid>
-                                <Grid
-                                  item
-                                  md={6}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    // defaultValue={Account.age}
-                                    fullWidth
-                                    label="Tuổi"
-                                    name="age"
-                                    disabled
-                                    InputProps={{
-                                      startAdornment: (
-                                        <InputAdornment position="start">
-                                          {Account.age} 
-                                        </InputAdornment>
-                                      )
-                                    }}
-                                    type="number"
-                                  />
-                                </Grid>
-                                <Grid
-                                  item
-                                  md={6}
-                                  xs={12}
-                                  sx={{
-                                    alignItems: 'center',
-                                    display: 'flex'
-                                  }}
-                                >
-                                  <FormControlLabel
-                                    control={<Switch
-                                              checked={currentAccount.state}
-                                              onChange={handleVisibilityChange}
-                                              inputProps={{ 'aria-label': 'controlled' }}
-                                            />}
-                                    label="Trạng thái"
-                                  />
-                                  {console.log(currentAccount)}
-                                </Grid> */}
-                                {/* <Grid
-                                  item
-                                  md={6}
-                                  xs={12}
-                                >
-                                  <TextField
-                                    defaultValue={Account.accountType}
-                                    fullWidth
-                                    label="Vai trò"
-                                    name="topicTitle"
-                                  />
-                                </Grid> 
-                              </Grid>*/}
                             </Grid>
                           </Grid>
                         </CardContent>
@@ -616,7 +348,6 @@ export const AccountManageListTable = (props) => {
                               Đóng
                             </Button>
                           </Stack>
-                          {/* <div> */}
                             <Button
                               onClick={() => handleAccountDelete(Account.id)}
                               color="error"
@@ -625,7 +356,6 @@ export const AccountManageListTable = (props) => {
                             >
                               Xoá vĩnh viễn
                             </Button>
-                          {/* </div> */}
                         </Stack>
                       </TableCell>
                     </TableRow>

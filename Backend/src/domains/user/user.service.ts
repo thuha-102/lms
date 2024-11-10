@@ -323,6 +323,16 @@ export class UserService {
       const deleteCart = receipt.Course.map(course => tx.cart.deleteMany({where: {courseId: course.id, learnerId: learnerId}}));
       await Promise.all(deleteCart);
 
+      //Cancel receipt have a course that is be registered
+      const courseIds = receipt.Course.map(course => course.id);
+      const learnerReceipt = (await tx.receipt.findMany({where: {learnerId: learnerId}, select: {id: true, Course: {select: {id: true}}}})).map(receipt => ({id: receipt.id, courseIds: receipt.Course.map(course => course.id)}));
+
+      for (const receipt of learnerReceipt) {
+        if (!receipt.courseIds.some(id => courseIds.includes(id))) continue;
+
+        await tx.receipt.update({where: {id: receipt.id}, data: {isPayment: true, note: "Payment failed because one or more courses are already registered"}})
+      }
+
       await tx.receipt.update({where: {id: receiptId}, data: {isPayment: true}})
     })
     return;
