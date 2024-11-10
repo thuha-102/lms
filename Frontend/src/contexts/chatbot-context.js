@@ -39,7 +39,13 @@ const initializeChatbot = async () => {
   }
 };
 
-const initialChatbot = initializeChatbot();
+// const initialChatbot = initializeChatbot();
+const initialChatbot = {
+  conversationId: '',
+  chatContent: [],
+  recommendQues: [],
+};
+
 
 const initialState = {
   ...initialChatbot,
