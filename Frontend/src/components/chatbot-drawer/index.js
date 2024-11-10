@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import XIcon from '@untitled-ui/icons-react/build/esm/X';
 import { Drawer, IconButton, Stack, SvgIcon, Typography, Box, Input, Button, Chip, CircularProgress, Rating } from '@mui/material';
 import { Scrollbar } from '../scrollbar';
-import { cozeChatbotApi } from "../../api/Coze-chatbot";
+import { cozeChatbotApi } from "../../api/coze-chatbot";
 import { useAuth } from "../../hooks/use-auth"
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import { FinalRating } from "./final-rating";
