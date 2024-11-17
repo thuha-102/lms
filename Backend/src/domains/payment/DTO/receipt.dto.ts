@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 export class ReceiptDTO {
   id: number;
   isPayment: boolean;
+  note: string;
   learnerId: number;
   createdAt: string;
   courses: {
@@ -17,6 +18,7 @@ export class ReceiptDTO {
       id: true,
       learnerId: true,
       createdAt: true,
+      note: true,
       Course: {
         select: {
           id: true,
@@ -37,6 +39,7 @@ export class ReceiptDTO {
       createdAt: e.createdAt.toLocaleDateString(),
       isPayment: e.isPayment,
       learnerId: e.learnerId,
+      note: e.note,
       courses: courses,
     };
   }

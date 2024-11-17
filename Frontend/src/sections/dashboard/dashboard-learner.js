@@ -10,7 +10,7 @@ import { useSettings } from "../../hooks/use-settings";
 import ArrowRightIcon from '@untitled-ui/icons-react/build/esm/ArrowRight';
 import ArrowUpwardOutlinedIcon from '@mui/icons-material/ArrowUpwardOutlined';
 import { paths } from "../../paths";
-import { cozeChatbotApi } from "../../api/Coze-chatbot";
+import { cozeChatbotApi } from "../../api/coze-chatbot";
 
 const useListCourses = (id) => {
   const isMounted = useMounted();
