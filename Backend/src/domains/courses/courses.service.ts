@@ -104,7 +104,7 @@ export class CourseService {
             pass: course.passPercent <= registered.percentOfStudying,
             nextCourseId: nextCourseId,
             inSequenceCourse: sequenceCourse ? true : false,
-            lastCourse: sequenceCourse ? sequenceCourse.at(-1).courseId === id : null
+            lastCourse: sequenceCourse.length !== 0 ? sequenceCourse.at(-1).courseId === id : null
           },
           inCart: inCart ? true : false,
         };

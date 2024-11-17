@@ -154,7 +154,7 @@ const Page = () => {
                         <CartInvoices 
                             invoices={cart.filter(_c => paymentCourse.includes(_c.courseId))}                             
                             loading={loading}
-                            receiptId={`${receiptId}`.padStart(3, '0')}
+                            receiptId={`${receiptId}`.padStart(4, '0')}
                             paymentConfirm={paymentConfirm}
                         />
                     </Box>

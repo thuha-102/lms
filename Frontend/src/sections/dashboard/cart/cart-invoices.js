@@ -31,7 +31,7 @@ import { paymentApi } from '../../../api/payment';
 import Link from 'next/link';
 
 export const CartInvoices = (props) => {
-  const { invoices, loading, paymentConfirm, ...other } = props;
+  const { invoices, loading, paymentConfirm, receiptId, ...other } = props;
   const totalPrice = invoices.reduce((sum, item) => sum + item.price*(1 - item.salePercent), 0)
   const [bankAccount, setBankAccount] = useState("")
   const [bankName, setBankName] = useState("")
@@ -137,7 +137,7 @@ export const CartInvoices = (props) => {
         {
           loading ?
             <CardContent component="section" align='center'>
-              <img src={`https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAccount}&amount=${totalPrice}&des=DH00${1}`}/>
+              <img src={`https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAccount}&amount=${totalPrice}&des=DH${receiptId}`}/>
               {/* <img src={`https://qr.sepay.vn/img?bank=${bankName}&acc=${bankAccount}&amount=${totalPrice}&des=TKPSEP`}/> */}
             </CardContent>
           :
@@ -167,5 +167,6 @@ export const CartInvoices = (props) => {
 };
 
 CartInvoices.propTypes = {
-  invoices: PropTypes.array
+  invoices: PropTypes.array,
+  receiptId: PropTypes.string
 };
