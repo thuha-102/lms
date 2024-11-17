@@ -37,7 +37,7 @@ export const ReceiptLearnerListTable = (props) => {
 
   const paymentConfirm = useCallback(() => {
         socket.on('payment', (receipt) => {
-            if (currentReceipt.id && receipt.id === currentReceipt.id) {
+            if (currentReceipt && currentReceipt.id && receipt.id === currentReceipt.id) {
                 setLoading(false)
             }
         });
@@ -138,7 +138,7 @@ export const ReceiptLearnerListTable = (props) => {
 
                     <TableCell align='center'>
                       <Button variant='contained' onClick={() => setCurrentReceipt(Receipt)} disabled={Receipt.isPayment === true}>
-                        Gọi trang cart-invoice
+                        Thanh toán
                       </Button>
                     </TableCell>
 

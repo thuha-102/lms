@@ -21,7 +21,8 @@ import {
   Rating,
   Stack,
   SvgIcon,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material';
 import { lm_manageApi } from '../../../../api/lm-manage';
 import { BreadcrumbsSeparator } from '../../../../components/breadcrumbs-separator';
@@ -145,6 +146,7 @@ const useSearch = () => {
 const LessonList = () => {
   const { search, updateSearch } = useSearch();
   const { user } = useAuth();
+  const theme = useTheme();
   // const { LMs, LMsCount } = useLMs(search);
   const dispatch = useDispatch()
   const courseUrl = window.location.href.split('/');
@@ -393,12 +395,14 @@ const LessonList = () => {
                 }
                 {
                   !registered && user?.accountType === 'LEARNER' && price !== 0 &&  (
-                    salePercent === 0 ? 
+                    salePercent !== 0 ?   
                     <Stack direction={'row'} spacing={2} alignItems={'center'} padding={1} borderRadius={2} border={'1px solid'}>
-                      <Typography variant='h5' color={'red'}>{`-${salePercent*100}%`}</Typography>
+                      <Box padding={1} bgcolor={theme.palette.primary.main}>
+                        <Typography variant='h5' color={'white'}>{`-${salePercent*100}%`}</Typography>
+                      </Box>
                       <Stack>
                         <Typography variant='h6' sx={{textDecoration: 'line-through', textAlign: 'right'}}>{`${price.toLocaleString('en-DE')} ₫`}</Typography>
-                        <Typography variant='h2'>{`${(price*(1 - salePercent)).toLocaleString('en-DE')} ₫`}</Typography>
+                        <Typography variant='h2'>{salePercent < 1 ? `${(price*(1 - salePercent)).toLocaleString('en-DE')} ₫` : 'FREE'}</Typography>
                       </Stack>
                     </Stack>
                     :
